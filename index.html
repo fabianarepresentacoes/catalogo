@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fabiana Representações | Iluminação Decorativa & LED</title>
+  <title>Fabiana Iluminação | Iluminação Decorativa & LED</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -96,7 +96,7 @@
       <path id="wmArcTop" d="M 65,250 A 185,185 0 0,1 435,250" fill="none"/>
       <path id="wmArcBottom" d="M 435,250 A 185,185 0 0,1 65,250" fill="none"/>
       <text fill="currentColor" font-size="34" font-weight="800" letter-spacing="3.5">
-        <textPath href="#wmArcTop" startOffset="50%" text-anchor="middle">Fabiana Representações</textPath>
+        <textPath href="#wmArcTop" startOffset="50%" text-anchor="middle">Fabiana Iluminação</textPath>
       </text>
       <text fill="currentColor" font-size="28" font-weight="600" letter-spacing="2.5">
         <textPath href="#wmArcBottom" startOffset="50%" text-anchor="middle">Iluminação Decorativa</textPath>
@@ -120,7 +120,7 @@
     <header class="sticky top-0 z-40 glass-header border-b border-brand-border/80">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
         
-        <!-- Logo Oficial Fabiana Representações -->
+        <!-- Logo Oficial Fabiana Iluminação -->
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-full border border-brand-gold/40 bg-slate-950 p-1 flex items-center justify-center shadow-lg shadow-brand-gold/10 overflow-hidden">
             <svg class="w-full h-full text-brand-gold" viewBox="0 0 500 500" fill="none" stroke="currentColor">
@@ -129,7 +129,7 @@
               <path id="hdrArcTop" d="M 65,250 A 185,185 0 0,1 435,250" fill="none"/>
               <path id="hdrArcBottom" d="M 435,250 A 185,185 0 0,1 65,250" fill="none"/>
               <text fill="currentColor" font-size="34" font-weight="800" letter-spacing="3.5">
-                <textPath href="#hdrArcTop" startOffset="50%" text-anchor="middle">Fabiana Representações</textPath>
+                <textPath href="#hdrArcTop" startOffset="50%" text-anchor="middle">Fabiana Iluminação</textPath>
               </text>
               <text fill="currentColor" font-size="28" font-weight="600" letter-spacing="2.5">
                 <textPath href="#hdrArcBottom" startOffset="50%" text-anchor="middle">Iluminação Decorativa</textPath>
@@ -148,7 +148,7 @@
 
           <div>
             <h1 class="text-lg sm:text-xl font-black tracking-tight text-white leading-tight">
-              FABIANA <span class="text-brand-gold">REPRESENTAÇÕES</span>
+              FABIANA <span class="text-brand-gold">Iluminação</span>
             </h1>
             <p class="text-[11px] text-slate-400 font-medium tracking-wide flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -220,7 +220,7 @@
   <!-- RODAPÉ -->
   <footer class="relative z-10 bg-slate-950 border-t border-slate-900 py-6 text-slate-500 text-xs text-center">
     <div class="max-w-7xl mx-auto px-4 space-y-2">
-      <p class="text-slate-400 font-semibold">Fabiana Representações — Iluminação Decorativa & LED</p>
+      <p class="text-slate-400 font-semibold">Fabiana Iluminação — Iluminação Decorativa & LED</p>
       <p class="text-slate-600">Catálogo digital exclusivo para clientes. Todos os direitos reservados.</p>
     </div>
   </footer>
@@ -296,7 +296,7 @@
             price: parseFloat((cols[3] || '0').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0,
             specs: cols[4] || '',
             desc: cols[5] || cols[4] || '',
-            image: cols[6] || 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Representacoes'
+            image: cols[6] || 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Iluminacao'
           });
         }
       }
@@ -407,7 +407,7 @@
 
       grid.innerHTML = filtered.map(p => {
         const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const fallbackImg = 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Representacoes';
+        const fallbackImg = 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Iluminacao';
 
         return `
           <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden hover:border-brand-gold/50 transition-all duration-300 flex flex-col justify-between led-glow-hover group">
@@ -462,7 +462,7 @@
       if (!p) return;
 
       const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const fallbackImg = 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Representacoes';
+      const fallbackImg = 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Iluminacao';
 
       document.getElementById("detailModalContent").innerHTML = `
         <div class="space-y-4">
@@ -588,7 +588,7 @@
       const clientName = document.getElementById("clientName").value.trim();
       const clientObs = document.getElementById("clientObs").value.trim();
 
-      let msg = `*SOLICITAÇÃO DE ORÇAMENTO — FABIANA REPRESENTAÇÕES*\n`;
+      let msg = `*SOLICITAÇÃO DE ORÇAMENTO — FABIANA Iluminação*\n`;
       if (clientName) msg += `*Cliente:* ${clientName}\n`;
       msg += `------------------------------------\n\n`;
 
