@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fabiana Iluminação | Iluminação Decorativa & LED</title>
+  <title>LumiFa Iluminação | Iluminação Decorativa & LED</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -92,7 +92,7 @@
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-xl border border-brand-border bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden">
             <!-- COLOQUE SEU LINK DO GITHUB NA TAG ABAIXO -->
-            <img src="imagens/logo.png" alt="Fabiana Iluminação" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <img src="logo.png" alt="LumiFa Iluminação" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             <!-- Ícone de apoio caso o arquivo logo.png ainda não exista na pasta -->
             <div class="hidden w-full h-full bg-amber-50 text-brand-gold rounded-lg items-center justify-center font-bold text-xl">
               <i class="fa-solid fa-lightbulb"></i>
@@ -100,8 +100,9 @@
           </div>
 
           <div>
-            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
-              FABIANA <span class="text-brand-gold">Iluminação</span>
+            <!-- NOME DA MARCA FORMATADO COMO "LumiFa" -->
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight leading-tight">
+              <span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> <span class="text-slate-600 font-semibold text-base sm:text-lg">Iluminação</span>
             </h1>
             <p class="text-[11px] text-slate-500 font-medium tracking-wide flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -175,7 +176,7 @@
   <!-- RODAPÉ -->
   <footer class="relative z-10 bg-white border-t border-slate-200 py-6 text-slate-500 text-xs text-center">
     <div class="max-w-7xl mx-auto px-4 space-y-1.5">
-      <p class="text-slate-700 font-bold">Fabiana Iluminação — Iluminação Decorativa & LED</p>
+      <p class="text-slate-700 font-bold"><span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> Iluminação — Iluminação Decorativa & LED</p>
       <p class="text-slate-400">Catálogo digital exclusivo para clientes. Todos os direitos reservados.</p>
     </div>
   </footer>
@@ -259,7 +260,7 @@
             price: parseFloat((cols[3] || '0').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0,
             specs: cols[4] || '',
             desc: cols[5] || cols[4] || '',
-            image: cols[6] || 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=Fabiana+Iluminacao'
+            image: cols[6] || 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao'
           });
         }
       }
@@ -370,7 +371,7 @@
 
       grid.innerHTML = filtered.map(p => {
         const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=Fabiana+Iluminacao';
+        const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao';
 
         return `
           <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
@@ -425,7 +426,7 @@
       if (!p) return;
 
       const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=Fabiana+Iluminacao';
+      const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao';
       const imgSrc = p.image || fallbackImg;
 
       document.getElementById("detailModalContent").innerHTML = `
@@ -573,7 +574,7 @@
       const clientName = document.getElementById("clientName").value.trim();
       const clientObs = document.getElementById("clientObs").value.trim();
 
-      let msg = `*SOLICITAÇÃO DE ORÇAMENTO — FABIANA Iluminação*\n`;
+      let msg = `*SOLICITAÇÃO DE ORÇAMENTO — LUMIFA Iluminação*\n`;
       if (clientName) msg += `*Cliente:* ${clientName}\n`;
       msg += `------------------------------------\n\n`;
 
