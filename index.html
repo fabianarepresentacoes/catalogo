@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,16 +15,17 @@
 
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
             brand: {
-              gold: '#E5A93C',
-              goldHover: '#C8902A',
-              darkBg: '#090B0E',
-              cardBg: '#121620',
-              border: '#1F2636'
+              gold: '#D4AF37',        /* Dourado elegante */
+              goldHover: '#B89020',   /* Dourado mais escuro */
+              bg: '#F8FAFC',          /* Fundo da página em cinza ultra claro */
+              card: '#FFFFFF',        /* Cards brancos */
+              border: '#E2E8F0',      /* Bordas suaves */
+              textPrimary: '#0F172A', /* Texto escuro e legível */
+              textSecondary: '#64748B'
             }
           },
           fontFamily: {
@@ -37,37 +38,29 @@
 
   <style>
     body {
-      background-color: #080a0f;
-      color: #E2E8F0;
+      background-color: #F8FAFC;
+      color: #0F172A;
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
     }
 
-    /* Marca D'água do Logo Oficial no Fundo */
-    .watermark-bg {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(85vw, 550px);
-      height: min(85vw, 550px);
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.045;
-    }
-
     .glass-header {
-      background: rgba(8, 10, 15, 0.90);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
-    .led-glow-hover {
-      transition: all 0.3s ease;
+    .card-shadow {
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
     }
-    .led-glow-hover:hover {
-      box-shadow: 0 0 25px rgba(229, 169, 60, 0.2);
-      border-color: rgba(229, 169, 60, 0.4);
+
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px -5px rgba(212, 175, 55, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+      border-color: rgba(212, 175, 55, 0.5);
     }
 
     ::-webkit-scrollbar {
@@ -75,102 +68,62 @@
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #080a0f;
+      background: #F1F5F9;
     }
     ::-webkit-scrollbar-thumb {
-      background: #1f2636;
+      background: #CBD5E1;
       border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #e5a93c;
+      background: #D4AF37;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between relative selection:bg-brand-gold selection:text-slate-950">
-
-  <!-- MARCA D'ÁGUA DE FUNDO (LOGO OFICIAL EM VETOR SVG) -->
-  <div class="watermark-bg flex items-center justify-center">
-    <svg class="w-full h-full text-white" viewBox="0 0 500 500" fill="none" stroke="currentColor">
-      <circle cx="250" cy="250" r="230" stroke-width="10"/>
-      <circle cx="250" cy="250" r="215" stroke-width="3"/>
-      <path id="wmArcTop" d="M 65,250 A 185,185 0 0,1 435,250" fill="none"/>
-      <path id="wmArcBottom" d="M 435,250 A 185,185 0 0,1 65,250" fill="none"/>
-      <text fill="currentColor" font-size="34" font-weight="800" letter-spacing="3.5">
-        <textPath href="#wmArcTop" startOffset="50%" text-anchor="middle">Fabiana Iluminação</textPath>
-      </text>
-      <text fill="currentColor" font-size="28" font-weight="600" letter-spacing="2.5">
-        <textPath href="#wmArcBottom" startOffset="50%" text-anchor="middle">Iluminação Decorativa</textPath>
-      </text>
-      <circle cx="250" cy="250" r="130" stroke-width="6"/>
-      <path d="M 220,130 L 220,370 M 220,170 L 300,170 M 220,240 L 280,240 M 230,280 L 230,360 M 230,280 L 285,280 C 310,280 310,315 285,315 L 230,315 M 270,315 L 320,365" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M 185,130 L 185,240" stroke-width="3"/>
-      <path d="M 185,240 C 170,250 170,270 185,280 C 200,270 200,250 185,240 Z" fill="none" stroke-width="4"/>
-      <line x1="170" y1="260" x2="160" y2="260" stroke-width="3"/>
-      <line x1="200" y1="260" x2="210" y2="260" stroke-width="3"/>
-      <path d="M 315,130 L 315,220" stroke-width="3"/>
-      <path d="M 280,250 A 35,35 0 0,1 350,250 Z" fill="none" stroke-width="5"/>
-      <line x1="280" y1="250" x2="350" y2="250" stroke-width="4"/>
-    </svg>
-  </div>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-brand-gold selection:text-white">
 
   <!-- CONTEÚDO PRINCIPAL -->
   <div class="relative z-10 flex-grow">
 
     <!-- CABEÇALHO DA PÁGINA -->
-    <header class="sticky top-0 z-40 glass-header border-b border-brand-border/80">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+    <header class="sticky top-0 z-40 glass-header border-b border-brand-border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         
-        <!-- Logo Oficial Fabiana Iluminação -->
+        <!-- Área da Logo Oficial (PNG do GitHub) -->
         <div class="flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-full border border-brand-gold/40 bg-slate-950 p-1 flex items-center justify-center shadow-lg shadow-brand-gold/10 overflow-hidden">
-            <svg class="w-full h-full text-brand-gold" viewBox="0 0 500 500" fill="none" stroke="currentColor">
-              <circle cx="250" cy="250" r="230" stroke-width="12"/>
-              <circle cx="250" cy="250" r="215" stroke-width="4"/>
-              <path id="hdrArcTop" d="M 65,250 A 185,185 0 0,1 435,250" fill="none"/>
-              <path id="hdrArcBottom" d="M 435,250 A 185,185 0 0,1 65,250" fill="none"/>
-              <text fill="currentColor" font-size="34" font-weight="800" letter-spacing="3.5">
-                <textPath href="#hdrArcTop" startOffset="50%" text-anchor="middle">Fabiana Iluminação</textPath>
-              </text>
-              <text fill="currentColor" font-size="28" font-weight="600" letter-spacing="2.5">
-                <textPath href="#hdrArcBottom" startOffset="50%" text-anchor="middle">Iluminação Decorativa</textPath>
-              </text>
-              <circle cx="250" cy="250" r="130" stroke-width="6"/>
-              <path d="M 220,130 L 220,370 M 220,170 L 300,170 M 220,240 L 280,240 M 230,280 L 230,360 M 230,280 L 285,280 C 310,280 310,315 285,315 L 230,315 M 270,315 L 320,365" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M 185,130 L 185,240" stroke-width="3"/>
-              <path d="M 185,240 C 170,250 170,270 185,280 C 200,270 200,250 185,240 Z" fill="none" stroke-width="4"/>
-              <line x1="170" y1="260" x2="160" y2="260" stroke-width="3"/>
-              <line x1="200" y1="260" x2="210" y2="260" stroke-width="3"/>
-              <path d="M 315,130 L 315,220" stroke-width="3"/>
-              <path d="M 280,250 A 35,35 0 0,1 350,250 Z" fill="none" stroke-width="5"/>
-              <line x1="280" y1="250" x2="350" y2="250" stroke-width="4"/>
-            </svg>
+          <div class="w-12 h-12 rounded-xl border border-brand-border bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden">
+            <!-- COLOQUE SEU LINK DO GITHUB NA TAG ABAIXO -->
+            <img src="imagens/logo.png" alt="Fabiana Iluminação" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <!-- Ícone de apoio caso o arquivo logo.png ainda não exista na pasta -->
+            <div class="hidden w-full h-full bg-amber-50 text-brand-gold rounded-lg items-center justify-center font-bold text-xl">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
           </div>
 
           <div>
-            <h1 class="text-lg sm:text-xl font-black tracking-tight text-white leading-tight">
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
               FABIANA <span class="text-brand-gold">Iluminação</span>
             </h1>
-            <p class="text-[11px] text-slate-400 font-medium tracking-wide flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <p class="text-[11px] text-slate-500 font-medium tracking-wide flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               Iluminação Decorativa & Soluções LED
             </p>
           </div>
         </div>
 
-        <!-- Botão de Solicitador de Orçamento -->
-        <button onclick="toggleCartModal()" class="relative px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-brand-goldHover text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-brand-gold/20 hover:brightness-110 active:scale-95 transition flex items-center gap-2">
+        <!-- Botão de Orçamento -->
+        <button onclick="toggleCartModal()" class="relative px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-brand-goldHover text-white font-bold text-xs sm:text-sm shadow-md hover:brightness-105 active:scale-95 transition flex items-center gap-2">
           <i class="fa-solid fa-cart-shopping text-sm"></i>
           <span class="hidden sm:inline">Meu Orçamento</span>
-          <span id="cartBadge" class="bg-slate-950 text-brand-gold text-[11px] px-2 py-0.5 rounded-full font-black">0</span>
+          <span id="cartBadge" class="bg-slate-900 text-white text-[11px] px-2 py-0.5 rounded-full font-black">0</span>
         </button>
 
       </div>
     </header>
 
-    <!-- ÁREA DE PESQUISA E CATEGORIAS (FIXA AO ROLAR) -->
-    <section class="sticky top-[73px] z-30 glass-header py-3 transition-all">
+    <!-- ÁREA DE PESQUISA E CATEGORIAS (FIXA AO ROLAR A PÁGINA) -->
+    <section class="sticky top-[65px] z-30 glass-header py-3 border-b border-brand-border/60 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-brand-cardBg/90 border border-brand-border rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="bg-white border border-brand-border rounded-2xl p-4 shadow-sm">
           
           <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="relative w-full md:w-1/2">
@@ -179,21 +132,21 @@
               </div>
               <input type="text" id="searchInput" oninput="renderProducts()" 
                      placeholder="Digite o CÓDIGO (ex: LED-101) ou o nome do produto..." 
-                     class="w-full pl-10 pr-10 py-3 bg-slate-950 border border-slate-700/80 focus:border-brand-gold rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
-              <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-white">
+                     class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
+              <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
 
-            <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-3 text-xs text-slate-400">
+            <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-3 text-xs text-slate-500">
               <span id="productCountText">Carregando catálogo...</span>
-              <button onclick="resetFilters()" class="text-brand-gold hover:underline flex items-center gap-1">
+              <button onclick="resetFilters()" class="text-brand-gold hover:underline flex items-center gap-1 font-semibold">
                 <i class="fa-solid fa-arrows-rotate"></i> Limpar Filtro
               </button>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 overflow-x-auto pt-4 pb-1 scrollbar-none" id="categoryTabs">
+          <div class="flex items-center gap-2 overflow-x-auto pt-3 pb-0.5 scrollbar-none" id="categoryTabs">
             <!-- Renderizado via JS -->
           </div>
 
@@ -203,15 +156,15 @@
 
     <!-- GRID DOS PRODUTOS DO CATÁLOGO -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <!-- Renderizado via JS -->
       </div>
 
-      <div id="emptyState" class="hidden text-center py-16 bg-brand-cardBg/40 rounded-2xl border border-dashed border-brand-border">
-        <i class="fa-solid fa-lightbulb text-5xl text-slate-700 mb-4"></i>
-        <h3 class="text-base font-bold text-slate-300">Nenhum produto foi encontrado</h3>
+      <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200 shadow-sm">
+        <i class="fa-solid fa-lightbulb text-5xl text-slate-300 mb-4"></i>
+        <h3 class="text-base font-bold text-slate-700">Nenhum produto foi encontrado</h3>
         <p class="text-slate-500 text-xs mt-1">Verifique o código digitado ou altere a categoria selecionada.</p>
-        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-800 text-brand-gold hover:bg-slate-700 rounded-xl text-xs font-semibold transition">
+        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl text-xs font-bold transition">
           Ver todos os produtos
         </button>
       </div>
@@ -220,17 +173,17 @@
   </div>
 
   <!-- RODAPÉ -->
-  <footer class="relative z-10 bg-slate-950 border-t border-slate-900 py-6 text-slate-500 text-xs text-center">
-    <div class="max-w-7xl mx-auto px-4 space-y-2">
-      <p class="text-slate-400 font-semibold">Fabiana Iluminação — Iluminação Decorativa & LED</p>
-      <p class="text-slate-600">Catálogo digital exclusivo para clientes. Todos os direitos reservados.</p>
+  <footer class="relative z-10 bg-white border-t border-slate-200 py-6 text-slate-500 text-xs text-center">
+    <div class="max-w-7xl mx-auto px-4 space-y-1.5">
+      <p class="text-slate-700 font-bold">Fabiana Iluminação — Iluminação Decorativa & LED</p>
+      <p class="text-slate-400">Catálogo digital exclusivo para clientes. Todos os direitos reservados.</p>
     </div>
   </footer>
 
   <!-- MODAL: DETALHES -->
-  <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
-      <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center z-10">
+  <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+      <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center z-10">
         <i class="fa-solid fa-xmark"></i>
       </button>
       <div id="detailModalContent" class="p-6"></div>
@@ -238,40 +191,40 @@
   </div>
 
   <!-- MODAL: LIGHTBOX / ZOOM DA IMAGEM EM ECRÃ INTEIRO -->
-  <div id="lightboxModal" class="fixed inset-0 z-50 hidden bg-slate-950/95 backdrop-blur-lg flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
-    <button onclick="closeLightboxModal()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold hover:text-slate-950 flex items-center justify-center z-50 transition">
+  <div id="lightboxModal" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
+    <button onclick="closeLightboxModal()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold flex items-center justify-center z-50 transition">
       <i class="fa-solid fa-xmark text-lg"></i>
     </button>
     <img id="lightboxImg" src="" alt="Imagem ampliada" class="max-w-full max-h-[92vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 scale-100" onclick="event.stopPropagation()">
   </div>
 
   <!-- MODAL: CARRINHO / WHATSAPP -->
-  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex justify-end">
-    <div class="bg-brand-cardBg border-l border-brand-border w-full max-w-md h-full flex flex-col shadow-2xl">
-      <div class="p-5 border-b border-brand-border flex items-center justify-between bg-slate-950">
+  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex justify-end">
+    <div class="bg-white border-l border-slate-200 w-full max-w-md h-full flex flex-col shadow-2xl">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div class="flex items-center gap-2.5">
           <i class="fa-solid fa-cart-shopping text-brand-gold text-lg"></i>
-          <h2 class="text-base font-bold text-white">Seu Orçamento</h2>
+          <h2 class="text-base font-bold text-slate-900">Seu Orçamento</h2>
         </div>
-        <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+        <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300 flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <div id="cartItemsList" class="flex-grow p-5 overflow-y-auto space-y-3"></div>
 
-      <div class="p-5 border-t border-brand-border bg-slate-950 space-y-4">
+      <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-4">
         <div class="flex items-center justify-between text-sm">
-          <span class="text-slate-400">Total Estimado:</span>
+          <span class="text-slate-500 font-medium">Total Estimado:</span>
           <span id="cartTotal" class="text-lg font-black text-brand-gold">R$ 0,00</span>
         </div>
 
         <div class="space-y-2">
-          <input type="text" id="clientName" placeholder="Seu Nome ou Empresa (Opcional)" class="w-full px-3.5 py-2.5 bg-brand-cardBg border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-brand-gold">
-          <textarea id="clientObs" placeholder="Observação (ex: Voltagem, cor da luz 3000K/4000K)..." rows="2" class="w-full px-3.5 py-2.5 bg-brand-cardBg border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-brand-gold"></textarea>
+          <input type="text" id="clientName" placeholder="Seu Nome ou Empresa (Opcional)" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold">
+          <textarea id="clientObs" placeholder="Observação (ex: Voltagem, cor da luz 3000K/4000K)..." rows="2" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold"></textarea>
         </div>
 
-        <button onclick="sendWhatsAppOrder()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+        <button onclick="sendWhatsAppOrder()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
           <i class="fa-brands fa-whatsapp text-lg"></i>
           Enviar Orçamento no WhatsApp
         </button>
@@ -306,7 +259,7 @@
             price: parseFloat((cols[3] || '0').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0,
             specs: cols[4] || '',
             desc: cols[5] || cols[4] || '',
-            image: cols[6] || 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Iluminacao'
+            image: cols[6] || 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=Fabiana+Iluminacao'
           });
         }
       }
@@ -357,8 +310,8 @@
         return `
           <button onclick="selectCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
             isActive 
-              ? 'bg-brand-gold text-slate-950 font-bold shadow-md shadow-brand-gold/20' 
-              : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-brand-gold text-white font-bold shadow-sm' 
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
           }">
             ${cat}
           </button>
@@ -417,46 +370,46 @@
 
       grid.innerHTML = filtered.map(p => {
         const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const fallbackImg = 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Iluminacao';
+        const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=Fabiana+Iluminacao';
 
         return `
-          <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden hover:border-brand-gold/50 transition-all duration-300 flex flex-col justify-between led-glow-hover group">
-            <div class="relative h-48 bg-slate-950 overflow-hidden cursor-pointer" onclick="openDetailModal('${p.code}')">
+          <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
+            <div class="relative h-52 bg-slate-50 overflow-hidden cursor-pointer" onclick="openDetailModal('${p.code}')">
               <img src="${p.image || fallbackImg}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${fallbackImg}'">
               
-              <span class="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md border border-brand-gold/40 text-brand-gold text-[11px] font-black px-2.5 py-1 rounded-lg">
+              <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md border border-slate-200 text-slate-800 text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm">
                 CÓD: ${p.code}
               </span>
 
-              <span class="absolute bottom-3 right-3 bg-slate-900/90 text-slate-300 text-[10px] font-semibold px-2 py-0.5 rounded border border-slate-700">
+              <span class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded">
                 ${p.category}
               </span>
             </div>
 
             <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
               <div>
-                <h3 class="font-bold text-xs sm:text-sm text-slate-100 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer" onclick="openDetailModal('${p.code}')">
+                <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug" onclick="openDetailModal('${p.code}')">
                   ${p.name}
                 </h3>
                 
                 ${p.specs ? `
-                  <p class="text-[10px] text-slate-400 mt-1.5 line-clamp-1 bg-slate-950/60 px-2 py-1 rounded border border-slate-800">
+                  <p class="text-[10px] text-slate-500 mt-2 line-clamp-1 bg-slate-50 px-2 py-1 rounded border border-slate-200/60">
                     <i class="fa-solid fa-sliders text-brand-gold mr-1"></i> ${p.specs}
                   </p>
                 ` : ''}
               </div>
 
-              <div class="pt-2 border-t border-brand-border flex items-center justify-between gap-2">
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                 <div>
-                  <span class="block text-[9px] text-slate-500 uppercase font-semibold">Valor</span>
+                  <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">Valor</span>
                   <span class="text-sm sm:text-base font-black text-brand-gold">${formattedPrice}</span>
                 </div>
 
                 <div class="flex items-center gap-1.5">
-                  <button onclick="openDetailModal('${p.code}')" title="Ver Detalhes" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs">
+                  <button onclick="openDetailModal('${p.code}')" title="Ver Detalhes" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  <button onclick="addToCart('${p.code}')" class="px-3 h-8 rounded-lg bg-brand-gold hover:bg-brand-goldHover text-slate-950 font-bold text-xs flex items-center gap-1">
+                  <button onclick="addToCart('${p.code}')" class="px-3 h-8 rounded-lg bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center gap-1 shadow-sm transition">
                     <i class="fa-solid fa-plus"></i> Orçar
                   </button>
                 </div>
@@ -472,20 +425,20 @@
       if (!p) return;
 
       const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const fallbackImg = 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Iluminacao';
+      const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=Fabiana+Iluminacao';
       const imgSrc = p.image || fallbackImg;
 
       document.getElementById("detailModalContent").innerHTML = `
         <div class="space-y-4">
           <!-- IMAGEM EM PROPORÇÃO REAL COM BOTÃO DE ZOOM -->
-          <div class="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center p-2 group">
+          <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center p-2 group">
             <img src="${imgSrc}" 
                  alt="${p.name}" 
                  class="w-auto h-auto max-w-full max-h-[60vh] object-contain rounded-lg transition-all cursor-zoom-in" 
                  onclick="openLightboxModal('${imgSrc}')"
                  onerror="this.src='${fallbackImg}'">
             
-            <button onclick="openLightboxModal('${imgSrc}')" title="Ver em Ecrã Inteiro" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-lg bg-slate-950/80 hover:bg-brand-gold hover:text-slate-950 border border-slate-700 text-slate-300 text-xs font-semibold backdrop-blur-md transition flex items-center gap-1.5">
+            <button onclick="openLightboxModal('${imgSrc}')" title="Ver em Ecrã Inteiro" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-lg bg-white/90 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold backdrop-blur-md transition flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-expand"></i>
               <span>Ecrã Inteiro</span>
             </button>
@@ -493,23 +446,23 @@
 
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs font-bold px-2 py-0.5 rounded">CÓD: ${p.code}</span>
-              <span class="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded">${p.category}</span>
+              <span class="bg-amber-50 border border-amber-200 text-brand-gold text-xs font-extrabold px-2 py-0.5 rounded">CÓD: ${p.code}</span>
+              <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded font-medium">${p.category}</span>
             </div>
-            <h2 class="text-base font-bold text-white">${p.name}</h2>
+            <h2 class="text-base font-bold text-slate-900">${p.name}</h2>
             <div class="text-xl font-black text-brand-gold mt-1">${formattedPrice}</div>
           </div>
 
           ${p.specs ? `
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
-              <span class="font-bold text-slate-400 block mb-0.5">Especificações:</span>
-              <p class="text-slate-200">${p.specs}</p>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+              <span class="font-bold text-slate-600 block mb-0.5">Especificações:</span>
+              <p class="text-slate-800">${p.specs}</p>
             </div>
           ` : ''}
 
-          <p class="text-xs text-slate-300 leading-relaxed">${p.desc || 'Sem descrição cadastrada.'}</p>
+          <p class="text-xs text-slate-600 leading-relaxed">${p.desc || 'Sem descrição cadastrada.'}</p>
 
-          <button onclick="addToCart('${p.code}'); closeDetailModal();" class="w-full py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-slate-950 font-bold text-xs flex items-center justify-center gap-2">
+          <button onclick="addToCart('${p.code}'); closeDetailModal();" class="w-full py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
             <i class="fa-solid fa-cart-plus"></i> Adicionar ao Orçamento
           </button>
         </div>
@@ -576,8 +529,8 @@
 
       if (cart.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-12 text-slate-500 text-xs">
-            <i class="fa-solid fa-cart-flatbed text-3xl mb-2 text-slate-700"></i>
+          <div class="text-center py-12 text-slate-400 text-xs">
+            <i class="fa-solid fa-cart-flatbed text-3xl mb-2 text-slate-300"></i>
             <p>Seu orçamento está vazio.</p>
           </div>
         `;
@@ -592,17 +545,17 @@
         grandTotal += itemTotal;
 
         return `
-          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-3 text-xs">
+          <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-3 text-xs shadow-sm">
             <div>
-              <span class="font-bold text-brand-gold">[${item.product.code}]</span>
-              <h4 class="font-bold text-slate-200 line-clamp-1">${item.product.name}</h4>
-              <p class="text-brand-gold font-semibold mt-0.5">R$ ${itemTotal.toFixed(2)}</p>
+              <span class="font-extrabold text-brand-gold">[${item.product.code}]</span>
+              <h4 class="font-bold text-slate-800 line-clamp-1">${item.product.name}</h4>
+              <p class="text-brand-gold font-bold mt-0.5">R$ ${itemTotal.toFixed(2)}</p>
             </div>
 
-            <div class="flex items-center border border-slate-700 rounded-lg bg-slate-900">
-              <button onclick="changeQty('${item.product.code}', -1)" class="px-2 py-0.5 text-slate-400 hover:text-white">-</button>
-              <span class="px-2 font-bold text-white">${item.qty}</span>
-              <button onclick="changeQty('${item.product.code}', 1)" class="px-2 py-0.5 text-slate-400 hover:text-white">+</button>
+            <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50">
+              <button onclick="changeQty('${item.product.code}', -1)" class="px-2 py-0.5 text-slate-500 hover:text-slate-900 font-bold">-</button>
+              <span class="px-2 font-black text-slate-800">${item.qty}</span>
+              <button onclick="changeQty('${item.product.code}', 1)" class="px-2 py-0.5 text-slate-500 hover:text-slate-900 font-bold">+</button>
             </div>
           </div>
         `;
