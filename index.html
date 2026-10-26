@@ -167,7 +167,7 @@
       </div>
     </header>
 
-    <!-- ÁREA DE PESQUISA E CATEGORIAS (AGORA FIXA AO ROLAR A PÁGINA) -->
+    <!-- ÁREA DE PESQUISA E CATEGORIAS (FIXA AO ROLAR) -->
     <section class="sticky top-[73px] z-30 glass-header py-3 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-brand-cardBg/90 border border-brand-border rounded-2xl p-4 sm:p-5 shadow-xl">
@@ -235,6 +235,14 @@
       </button>
       <div id="detailModalContent" class="p-6"></div>
     </div>
+  </div>
+
+  <!-- MODAL: LIGHTBOX / ZOOM DA IMAGEM EM ECRÃ INTEIRO -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 hidden bg-slate-950/95 backdrop-blur-lg flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
+    <button onclick="closeLightboxModal()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold hover:text-slate-950 flex items-center justify-center z-50 transition">
+      <i class="fa-solid fa-xmark text-lg"></i>
+    </button>
+    <img id="lightboxImg" src="" alt="Imagem ampliada" class="max-w-full max-h-[92vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 scale-100" onclick="event.stopPropagation()">
   </div>
 
   <!-- MODAL: CARRINHO / WHATSAPP -->
@@ -465,12 +473,24 @@
 
       const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
       const fallbackImg = 'https://via.placeholder.com/600x400/121620/e5a93c?text=Fabiana+Iluminacao';
+      const imgSrc = p.image || fallbackImg;
 
       document.getElementById("detailModalContent").innerHTML = `
         <div class="space-y-4">
-          <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 h-56">
-            <img src="${p.image || fallbackImg}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">
+          <!-- IMAGEM EM PROPORÇÃO REAL COM BOTÃO DE ZOOM -->
+          <div class="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center p-2 group">
+            <img src="${imgSrc}" 
+                 alt="${p.name}" 
+                 class="w-auto h-auto max-w-full max-h-[60vh] object-contain rounded-lg transition-all cursor-zoom-in" 
+                 onclick="openLightboxModal('${imgSrc}')"
+                 onerror="this.src='${fallbackImg}'">
+            
+            <button onclick="openLightboxModal('${imgSrc}')" title="Ver em Ecrã Inteiro" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-lg bg-slate-950/80 hover:bg-brand-gold hover:text-slate-950 border border-slate-700 text-slate-300 text-xs font-semibold backdrop-blur-md transition flex items-center gap-1.5">
+              <i class="fa-solid fa-expand"></i>
+              <span>Ecrã Inteiro</span>
+            </button>
           </div>
+
           <div>
             <div class="flex items-center gap-2 mb-1">
               <span class="bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs font-bold px-2 py-0.5 rounded">CÓD: ${p.code}</span>
@@ -500,6 +520,16 @@
 
     function closeDetailModal() {
       document.getElementById("detailModal").classList.add("hidden");
+    }
+
+    function openLightboxModal(imgUrl) {
+      const img = document.getElementById("lightboxImg");
+      img.src = imgUrl;
+      document.getElementById("lightboxModal").classList.remove("hidden");
+    }
+
+    function closeLightboxModal() {
+      document.getElementById("lightboxModal").classList.add("hidden");
     }
 
     function addToCart(code) {
