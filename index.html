@@ -91,9 +91,7 @@
         <!-- Área da Logo Oficial (PNG do GitHub) -->
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-xl border border-brand-border bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden">
-            <!-- COLOQUE SEU LINK DO GITHUB NA TAG ABAIXO -->
             <img src="logo.png" alt="LumiFa Iluminação" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <!-- Ícone de apoio caso o arquivo logo.png ainda não exista na pasta -->
             <div class="hidden w-full h-full bg-amber-50 text-brand-gold rounded-lg items-center justify-center font-bold text-xl">
               <i class="fa-solid fa-lightbulb"></i>
             </div>
@@ -173,6 +171,12 @@
 
   </div>
 
+  <!-- BOTÃO FLUTUANTE MINIMALISTA: VOLTAR AO TOPO -->
+  <button id="scrollToTopBtn" onclick="scrollToTop()" title="Voltar ao topo"
+          class="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-slate-900 text-white shadow-lg hover:bg-brand-gold hover:shadow-brand-gold/30 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 active:scale-90 border border-slate-700/50">
+    <i class="fa-solid fa-arrow-up text-sm"></i>
+  </button>
+
   <!-- RODAPÉ -->
   <footer class="relative z-10 bg-white border-t border-slate-200 py-6 text-slate-500 text-xs text-center">
     <div class="max-w-7xl mx-auto px-4 space-y-1.5">
@@ -244,6 +248,22 @@
     window.onload = function() {
       fetchProductsData();
     };
+
+    // Controle do Botão Flutuante de Voltar ao Topo
+    window.onscroll = function() {
+      const btn = document.getElementById("scrollToTopBtn");
+      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        btn.classList.remove("opacity-0", "pointer-events-none");
+        btn.classList.add("opacity-100", "pointer-events-auto");
+      } else {
+        btn.classList.remove("opacity-100", "pointer-events-auto");
+        btn.classList.add("opacity-0", "pointer-events-none");
+      }
+    };
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     function parseCSV(text) {
       const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -324,6 +344,7 @@
       selectedCategory = cat;
       renderCategoryTabs();
       renderProducts();
+      scrollToTop(); // Sobe automaticamente para o topo ao alterar a categoria
     }
 
     function clearSearch() {
@@ -336,6 +357,7 @@
       selectedCategory = "Todos";
       renderCategoryTabs();
       renderProducts();
+      scrollToTop();
     }
 
     function renderProducts() {
