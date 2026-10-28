@@ -7,11 +7,14 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Fontes & Ícones -->
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PapaParse: Leitura segura de CSV do Google Sheets (previne quebras por vírgula/quebra de linha) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -19,12 +22,13 @@
         extend: {
           colors: {
             brand: {
-              gold: '#D4AF37',        /* Dourado elegante */
-              goldHover: '#B89020',   /* Dourado mais escuro */
-              bg: '#F8FAFC',          /* Fundo da página em cinza ultra claro */
+              gold: '#D4AF37',        /* Dourado Nobre */
+              goldHover: '#B89020',   /* Dourado Escuro */
+              goldLight: '#FDFBF7',   /* Dourado ultra suave para fundos */
+              bg: '#F8FAFC',          /* Fundo suave off-white */
               card: '#FFFFFF',        /* Cards brancos */
-              border: '#E2E8F0',      /* Bordas suaves */
-              textPrimary: '#0F172A', /* Texto escuro e legível */
+              border: '#E2E8F0',      /* Bordas elegantes */
+              textPrimary: '#0F172A',
               textSecondary: '#64748B'
             }
           },
@@ -45,22 +49,30 @@
     }
 
     .glass-header {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
     .card-shadow {
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
     }
 
     .card-hover {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 25px -5px rgba(212, 175, 55, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
-      border-color: rgba(212, 175, 55, 0.5);
+      transform: translateY(-5px);
+      box-shadow: 0 16px 30px -6px rgba(212, 175, 55, 0.18), 0 8px 12px -4px rgba(15, 23, 42, 0.04);
+      border-color: rgba(212, 175, 55, 0.45);
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
     ::-webkit-scrollbar {
@@ -72,7 +84,7 @@
     }
     ::-webkit-scrollbar-thumb {
       background: #CBD5E1;
-      border-radius: 3px;
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #D4AF37;
@@ -84,31 +96,29 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <div class="relative z-10 flex-grow">
 
-    <!-- CABEÇALHO DA PÁGINA -->
-    <header class="sticky top-0 z-40 glass-header border-b border-brand-border">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+    <!-- CABEÇALHO PRINCIPAL -->
+    <header class="sticky top-0 z-40 glass-header border-b border-brand-border/80 shadow-sm transition-all">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
         
-        <!-- Área da Logo Oficial (PNG do GitHub) -->
+        <!-- Logo LumiFa -->
         <div class="flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-xl border border-brand-border bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden">
-            <!-- CAMINHO APONTANDO DIRETO PARA imagens/logo.png -->
-            <img src="imagens/logo.png" alt="LumiFa Iluminação" class="w-full h-full object-contain">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl border border-brand-border bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden">
+            <img src="imagens/logo.png" alt="LumiFa Iluminação" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-lightbulb text-brand-gold text-2xl\'></i>';">
           </div>
 
           <div>
-            <!-- NOME DA MARCA FORMATADO COMO "LumiFa" -->
             <h1 class="text-lg sm:text-xl font-extrabold tracking-tight leading-tight">
               <span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> <span class="text-slate-600 font-semibold text-base sm:text-lg">Iluminação</span>
             </h1>
-            <p class="text-[11px] text-slate-500 font-medium tracking-wide flex items-center gap-1.5">
+            <p class="text-[11px] text-slate-500 font-medium tracking-wide flex items-center gap-1.5 mt-0.5">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Iluminação Decorativa | Comercial | Industrial | Residencial & Soluções LED
+              <span class="hidden sm:inline">Iluminação Decorativa | Comercial | Industrial |</span> Soluções em LED
             </p>
           </div>
         </div>
 
-        <!-- Botão de Orçamento -->
-        <button onclick="toggleCartModal()" class="relative px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-brand-goldHover text-white font-bold text-xs sm:text-sm shadow-md hover:brightness-105 active:scale-95 transition flex items-center gap-2">
+        <!-- Botão de Orçamento / Carrinho -->
+        <button onclick="toggleCartModal()" class="relative px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldHover text-white font-bold text-xs sm:text-sm shadow-md shadow-brand-gold/20 hover:brightness-105 active:scale-95 transition flex items-center gap-2.5">
           <i class="fa-solid fa-cart-shopping text-sm"></i>
           <span class="hidden sm:inline">Meu Orçamento</span>
           <span id="cartBadge" class="bg-slate-900 text-white text-[11px] px-2 py-0.5 rounded-full font-black">0</span>
@@ -117,51 +127,66 @@
       </div>
     </header>
 
-    <!-- ÁREA DE PESQUISA E CATEGORIAS (FIXA AO ROLAR A PÁGINA) -->
-    <section class="sticky top-[65px] z-30 glass-header py-3 border-b border-brand-border/60 transition-all">
+    <!-- ÁREA DE PESQUISA E CATEGORIAS (FIXA AO ROLAR) -->
+    <section class="sticky top-[69px] z-30 glass-header py-3.5 border-b border-brand-border/60 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white border border-brand-border rounded-2xl p-4 shadow-sm">
+        <div class="bg-white border border-brand-border/90 rounded-2xl p-4 shadow-sm">
           
-          <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div class="flex flex-col md:flex-row gap-3.5 items-center justify-between">
+            <!-- Barra de Busca -->
             <div class="relative w-full md:w-1/2">
               <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
               </div>
               <input type="text" id="searchInput" oninput="renderProducts()" 
-                     placeholder="Digite o CÓDIGO (ex: LED-101) ou o nome do produto..." 
+                     placeholder="Buscar por código (ex: PROD-001), nome, pendente, 3000K..." 
                      class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
               <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
-                <i class="fa-solid fa-xmark"></i>
+                <i class="fa-solid fa-circle-xmark text-sm"></i>
               </button>
             </div>
 
+            <!-- Contador e Limpar -->
             <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-3 text-xs text-slate-500">
-              <span id="productCountText">Carregando catálogo...</span>
-              <button onclick="resetFilters()" class="text-brand-gold hover:underline flex items-center gap-1 font-semibold">
-                <i class="fa-solid fa-arrows-rotate"></i> Limpar Filtro
+              <span id="productCountText" class="font-medium text-slate-600">Carregando catálogo...</span>
+              <button onclick="resetFilters()" class="text-brand-gold hover:text-brand-goldHover flex items-center gap-1 font-semibold transition">
+                <i class="fa-solid fa-arrows-rotate"></i> Limpar Filtros
               </button>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 overflow-x-auto pt-3 pb-0.5 scrollbar-none" id="categoryTabs">
-            <!-- Renderizado via JS -->
+          <!-- Pílulas de Categorias -->
+          <div class="flex items-center gap-2 overflow-x-auto pt-3.5 pb-0.5 no-scrollbar" id="categoryTabs">
+            <!-- Gerado via JavaScript -->
           </div>
 
         </div>
       </div>
     </section>
 
-    <!-- GRID DOS PRODUTOS DO CATÁLOGO -->
+    <!-- GRID DE PRODUTOS -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Renderizado via JS -->
+      <!-- Skeleton Loading -->
+      <div id="loading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
       </div>
 
-      <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200 shadow-sm">
-        <i class="fa-solid fa-lightbulb text-5xl text-slate-300 mb-4"></i>
-        <h3 class="text-base font-bold text-slate-700">Nenhum produto foi encontrado</h3>
-        <p class="text-slate-500 text-xs mt-1">Verifique o código digitado ou altere a categoria selecionada.</p>
-        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl text-xs font-bold transition">
+      <!-- Container do Grid Real -->
+      <div id="productGrid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <!-- Cards gerados via JavaScript -->
+      </div>
+
+      <!-- Estado Vazio -->
+      <div id="emptyState" class="hidden text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm my-6">
+        <div class="w-16 h-16 bg-amber-50 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+          <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800">Nenhum produto foi encontrado</h3>
+        <p class="text-slate-500 text-xs mt-1 max-w-sm mx-auto">Verifique o termo pesquisado ou selecione outra categoria acima.</p>
+        <button onclick="resetFilters()" class="mt-4 px-5 py-2.5 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl text-xs font-bold transition">
           Ver todos os produtos
         </button>
       </div>
@@ -169,65 +194,70 @@
 
   </div>
 
-  <!-- BOTÃO FLUTUANTE MINIMALISTA: VOLTAR AO TOPO -->
+  <!-- BOTÃO FLUTUANTE VOLTAR AO TOPO -->
   <button id="scrollToTopBtn" onclick="scrollToTop()" title="Voltar ao topo"
-          class="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-slate-900 text-white shadow-lg hover:bg-brand-gold hover:shadow-brand-gold/30 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 active:scale-90 border border-slate-700/50">
+          class="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-slate-900 text-white shadow-xl hover:bg-brand-gold hover:shadow-brand-gold/30 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 active:scale-90 border border-slate-700/50">
     <i class="fa-solid fa-arrow-up text-sm"></i>
   </button>
 
   <!-- RODAPÉ -->
-  <footer class="relative z-10 bg-white border-t border-slate-200 py-6 text-slate-500 text-xs text-center">
+  <footer class="relative z-10 bg-white border-t border-slate-200/80 py-8 text-slate-500 text-xs text-center">
     <div class="max-w-7xl mx-auto px-4 space-y-1.5">
-      <p class="text-slate-700 font-bold"><span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> Iluminação — Iluminação Decorativa & LED</p>
-      <p class="text-slate-400">Catálogo digital exclusivo para clientes. Todos os direitos reservados.</p>
+      <p class="text-slate-800 font-bold tracking-tight text-sm"><span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> Iluminação</p>
+      <p class="text-slate-400">Catálogo digital para lojistas, profissionais e clientes. Todos os direitos reservados.</p>
     </div>
   </footer>
 
-  <!-- MODAL: DETALHES -->
+  <!-- MODAL: DETALHES COMPLETOS DO PRODUTO -->
   <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
-      <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center z-10">
-        <i class="fa-solid fa-xmark"></i>
+    <div class="bg-white border border-slate-100 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+      <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center z-10 transition">
+        <i class="fa-solid fa-xmark text-sm"></i>
       </button>
-      <div id="detailModalContent" class="p-6"></div>
+      <div id="detailModalContent" class="p-6 sm:p-8"></div>
     </div>
   </div>
 
-  <!-- MODAL: LIGHTBOX / ZOOM DA IMAGEM EM ECRÃ INTEIRO -->
-  <div id="lightboxModal" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
-    <button onclick="closeLightboxModal()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold flex items-center justify-center z-50 transition">
+  <!-- MODAL: LIGHTBOX / ZOOM DA IMAGEM EM TELA CHEIA -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 hidden bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
+    <button onclick="closeLightboxModal()" class="absolute top-5 right-5 w-11 h-11 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold flex items-center justify-center z-50 transition">
       <i class="fa-solid fa-xmark text-lg"></i>
     </button>
-    <img id="lightboxImg" src="" alt="Imagem ampliada" class="max-w-full max-h-[92vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 scale-100" onclick="event.stopPropagation()">
+    <img id="lightboxImg" src="" alt="Imagem ampliada" class="max-w-full max-h-[92vh] object-contain rounded-2xl shadow-2xl transition-transform duration-300 scale-100" onclick="event.stopPropagation()">
   </div>
 
-  <!-- MODAL: CARRINHO / WHATSAPP -->
+  <!-- MODAL: CARRINHO / ORÇAMENTO NO WHATSAPP -->
   <div id="cartModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex justify-end">
     <div class="bg-white border-l border-slate-200 w-full max-w-md h-full flex flex-col shadow-2xl">
       <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div class="flex items-center gap-2.5">
-          <i class="fa-solid fa-cart-shopping text-brand-gold text-lg"></i>
-          <h2 class="text-base font-bold text-slate-900">Seu Orçamento</h2>
+          <div class="w-8 h-8 rounded-xl bg-amber-50 text-brand-gold flex items-center justify-center font-bold">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Seu Orçamento</h2>
+            <p class="text-[11px] text-slate-400">Revise os itens selecionados</p>
+          </div>
         </div>
-        <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300 flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
+        <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-slate-200/70 text-slate-600 hover:bg-slate-300 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
 
       <div id="cartItemsList" class="flex-grow p-5 overflow-y-auto space-y-3"></div>
 
-      <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-4">
+      <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-3.5">
         <div class="flex items-center justify-between text-sm">
           <span class="text-slate-500 font-medium">Total Estimado:</span>
-          <span id="cartTotal" class="text-lg font-black text-brand-gold">R$ 0,00</span>
+          <span id="cartTotal" class="text-xl font-extrabold text-brand-gold">R$ 0,00</span>
         </div>
 
         <div class="space-y-2">
-          <input type="text" id="clientName" placeholder="Seu Nome ou Empresa (Opcional)" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold">
-          <textarea id="clientObs" placeholder="Observação (ex: Voltagem, cor da luz 3000K/4000K)..." rows="2" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold"></textarea>
+          <input type="text" id="clientName" placeholder="Seu Nome ou Nome da Empresa (Opcional)" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30">
+          <textarea id="clientObs" placeholder="Observações (ex: Dúvidas sobre voltagem, 3000K ou 6000K, acabamento)..." rows="2" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"></textarea>
         </div>
 
-        <button onclick="sendWhatsAppOrder()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
+        <button onclick="sendWhatsAppOrder()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2">
           <i class="fa-brands fa-whatsapp text-lg"></i>
           Enviar Orçamento no WhatsApp
         </button>
@@ -236,8 +266,9 @@
   </div>
 
   <script>
-    const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzJ_n9tb1R1v1eBH3i8n_ogSORXAI7qzFeaeJVIUs0_ZQdhFnzyyLvQdaaCqBwia_6bGCXW-5s32aB/pub?output=csv"; 
-    const WHATSAPP_NUMBER = "5511959781849"; 
+    // URL de publicação CSV do seu Google Sheets
+    const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzJ_n9tb1R1v1eBH3i8n_ogSORXAI7qzFeaeJVIUs0_ZQdhFnzyyLvQdaaCqBwia_6bGCXW-5s32aB/pub?output=csv";
+    const WHATSAPP_NUMBER = "5511959781849";
 
     let products = [];
     let cart = [];
@@ -247,7 +278,7 @@
       fetchProductsData();
     };
 
-    // Controle do Botão Flutuante de Voltar ao Topo
+    // Botão flutuante voltar ao topo
     window.onscroll = function() {
       const btn = document.getElementById("scrollToTopBtn");
       if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
@@ -263,49 +294,49 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function parseCSV(text) {
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      if (lines.length < 2) return [];
-
-      const list = [];
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-        if (cols.length >= 2) {
-          list.push({
-            code: cols[0] || `COD-${i}`,
-            name: cols[1] || 'Produto LED',
-            category: cols[2] || 'Geral',
-            price: parseFloat((cols[3] || '0').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0,
-            specs: cols[4] || '',
-            desc: cols[5] || cols[4] || '',
-            image: cols[6] || 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao'
-          });
-        }
-      }
-      return list;
-    }
-
+    // Leitura à prova de falhas com PapaParse (evita bug de vírgulas e quebras de linha nas descrições)
     function fetchProductsData() {
-      if (GOOGLE_SHEETS_CSV_URL && GOOGLE_SHEETS_CSV_URL.trim() !== "") {
-        fetch(GOOGLE_SHEETS_CSV_URL + '&t=' + new Date().getTime())
-          .then(res => res.text())
-          .then(csvText => {
-            const parsed = parseCSV(csvText);
-            if (parsed.length > 0) {
-              products = parsed;
-            }
-            initCatalog();
-          })
-          .catch(err => {
-            console.error("Erro ao carregar Google Sheets:", err);
-            initCatalog();
-          });
-      } else {
+      if (!GOOGLE_SHEETS_CSV_URL || GOOGLE_SHEETS_CSV_URL.trim() === "") {
         initCatalog();
+        return;
       }
+
+      Papa.parse(GOOGLE_SHEETS_CSV_URL + '&t=' + new Date().getTime(), {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          if (results.data && results.data.length > 0) {
+            products = results.data.map((row, idx) => {
+              // Normaliza as chaves do cabeçalho para minúsculas
+              const item = {};
+              for (let k in row) {
+                item[k.trim().toLowerCase()] = row[k] ? row[k].trim() : "";
+              }
+
+              return {
+                code: item.codigo || `COD-${idx + 1}`,
+                name: item.nome || item.codigo || 'Produto Iluminação LED',
+                category: item.categoria || 'Geral',
+                price: parseFloat((item.preco || '0').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0,
+                specs: item.especificacoes || '',
+                desc: item.descricao || item.especificacoes || '',
+                image: item.imagem || 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao'
+              };
+            }).filter(p => p.code !== "");
+          }
+          initCatalog();
+        },
+        error: function(err) {
+          console.error("Erro ao carregar dados via PapaParse:", err);
+          initCatalog();
+        }
+      });
     }
 
     function initCatalog() {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('productGrid').classList.remove('hidden');
       renderCategoryTabs();
       renderProducts();
       updateCartBadge();
@@ -327,10 +358,10 @@
       container.innerHTML = categories.map(cat => {
         const isActive = cat === selectedCategory;
         return `
-          <button onclick="selectCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+          <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
             isActive 
-              ? 'bg-brand-gold text-white font-bold shadow-sm' 
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+              ? 'bg-brand-gold text-white font-bold shadow-md shadow-brand-gold/20 scale-[1.02]' 
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900 border border-slate-200/70'
           }">
             ${cat}
           </button>
@@ -342,7 +373,7 @@
       selectedCategory = cat;
       renderCategoryTabs();
       renderProducts();
-      scrollToTop(); // Sobe automaticamente para o topo ao alterar a categoria
+      scrollToTop();
     }
 
     function clearSearch() {
@@ -370,6 +401,8 @@
         const matchesQuery = 
           p.code.toLowerCase().includes(query) ||
           p.name.toLowerCase().includes(query) ||
+          p.specs.toLowerCase().includes(query) ||
+          p.desc.toLowerCase().includes(query) ||
           (p.category && p.category.toLowerCase().includes(query));
 
         return matchesCat && matchesQuery;
@@ -379,7 +412,7 @@
       const emptyState = document.getElementById("emptyState");
       const countText = document.getElementById("productCountText");
 
-      countText.innerText = `${filtered.length} produto(s) encontrado(s)`;
+      countText.innerText = `${filtered.length} produto(s) exibido(s)`;
 
       if (filtered.length === 0) {
         grid.innerHTML = "";
@@ -395,46 +428,57 @@
 
         return `
           <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
-            <div class="relative h-52 bg-slate-50 overflow-hidden cursor-pointer" onclick="openDetailModal('${p.code}')">
-              <img src="${p.image || fallbackImg}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${fallbackImg}'">
+            
+            <!-- Imagem e Badges -->
+            <div class="relative aspect-square bg-slate-50/80 overflow-hidden cursor-pointer flex items-center justify-center p-3" onclick="openDetailModal('${p.code}')">
+              <img src="${p.image || fallbackImg}" 
+                   alt="${p.name}" 
+                   loading="lazy"
+                   class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" 
+                   onerror="this.src='${fallbackImg}'">
               
-              <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md border border-slate-200 text-slate-800 text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm">
-                CÓD: ${p.code}
+              <span class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">
+                ${p.code}
               </span>
 
-              <span class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+              <span class="absolute bottom-2.5 right-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">
                 ${p.category}
               </span>
             </div>
 
-            <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+            <!-- Dados do Produto -->
+            <div class="p-3.5 sm:p-4 flex-grow flex flex-col justify-between space-y-3">
               <div>
-                <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug" onclick="openDetailModal('${p.code}')">
+                <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug" 
+                    onclick="openDetailModal('${p.code}')" 
+                    title="${p.name}">
                   ${p.name}
                 </h3>
                 
                 ${p.specs ? `
-                  <p class="text-[10px] text-slate-500 mt-2 line-clamp-1 bg-slate-50 px-2 py-1 rounded border border-slate-200/60">
-                    <i class="fa-solid fa-sliders text-brand-gold mr-1"></i> ${p.specs}
+                  <p class="text-[10px] text-slate-500 mt-2 line-clamp-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/50">
+                    <i class="fa-solid fa-sliders text-brand-gold/80 mr-1"></i> ${p.specs}
                   </p>
                 ` : ''}
               </div>
 
-              <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <!-- Preço e Ações -->
+              <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
                 <div>
                   <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">Valor</span>
                   <span class="text-sm sm:text-base font-black text-brand-gold">${formattedPrice}</span>
                 </div>
 
                 <div class="flex items-center gap-1.5">
-                  <button onclick="openDetailModal('${p.code}')" title="Ver Detalhes" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition">
+                  <button onclick="openDetailModal('${p.code}')" title="Ver Detalhes Técnicos" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition active:scale-90">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  <button onclick="addToCart('${p.code}')" class="px-3 h-8 rounded-lg bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center gap-1 shadow-sm transition">
-                    <i class="fa-solid fa-plus"></i> Orçar
+                  <button onclick="addToCart('${p.code}')" class="px-2.5 sm:px-3 h-8 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95">
+                    <i class="fa-solid fa-plus"></i> <span class="hidden xs:inline">Orçar</span>
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         `;
@@ -450,42 +494,52 @@
       const imgSrc = p.image || fallbackImg;
 
       document.getElementById("detailModalContent").innerHTML = `
-        <div class="space-y-4">
-          <!-- IMAGEM EM PROPORÇÃO REAL COM BOTÃO DE ZOOM -->
-          <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center p-2 group">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
+          
+          <!-- Foto Ampliada com Botão de Ecrã Inteiro -->
+          <div class="relative rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/80 flex items-center justify-center p-3 group aspect-square">
             <img src="${imgSrc}" 
                  alt="${p.name}" 
-                 class="w-auto h-auto max-w-full max-h-[60vh] object-contain rounded-lg transition-all cursor-zoom-in" 
+                 class="w-full h-full object-contain rounded-xl transition-all cursor-zoom-in" 
                  onclick="openLightboxModal('${imgSrc}')"
                  onerror="this.src='${fallbackImg}'">
             
-            <button onclick="openLightboxModal('${imgSrc}')" title="Ver em Ecrã Inteiro" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-lg bg-white/90 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold backdrop-blur-md transition flex items-center gap-1.5 shadow-sm">
+            <button onclick="openLightboxModal('${imgSrc}')" title="Ver em Tela Cheia" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-white/95 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold backdrop-blur-md transition flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-expand"></i>
-              <span>Ecrã Inteiro</span>
+              <span>Zoom</span>
             </button>
           </div>
 
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="bg-amber-50 border border-amber-200 text-brand-gold text-xs font-extrabold px-2 py-0.5 rounded">CÓD: ${p.code}</span>
-              <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded font-medium">${p.category}</span>
+          <!-- Informações Técnicas -->
+          <div class="flex flex-col justify-between h-full space-y-4">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="bg-amber-50 border border-amber-200/60 text-brand-gold text-[11px] font-extrabold px-2.5 py-0.5 rounded-md">CÓD: ${p.code}</span>
+                <span class="text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md font-semibold">${p.category}</span>
+              </div>
+
+              <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-snug">${p.name}</h2>
+              
+              <div class="mt-2.5">
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Preço</span>
+                <div class="text-2xl font-black text-brand-gold">${formattedPrice}</div>
+              </div>
             </div>
-            <h2 class="text-base font-bold text-slate-900">${p.name}</h2>
-            <div class="text-xl font-black text-brand-gold mt-1">${formattedPrice}</div>
+
+            ${p.specs ? `
+              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/70 text-xs">
+                <span class="font-bold text-slate-700 block mb-1">Especificações Técnicas:</span>
+                <p class="text-slate-600 leading-relaxed">${p.specs}</p>
+              </div>
+            ` : ''}
+
+            <p class="text-xs text-slate-500 leading-relaxed">${p.desc || 'Sem observações adicionais.'}</p>
+
+            <button onclick="addToCart('${p.code}'); closeDetailModal();" class="w-full py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-brand-gold/20 transition active:scale-95">
+              <i class="fa-solid fa-cart-plus"></i> Adicionar ao Orçamento
+            </button>
           </div>
 
-          ${p.specs ? `
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
-              <span class="font-bold text-slate-600 block mb-0.5">Especificações:</span>
-              <p class="text-slate-800">${p.specs}</p>
-            </div>
-          ` : ''}
-
-          <p class="text-xs text-slate-600 leading-relaxed">${p.desc || 'Sem descrição cadastrada.'}</p>
-
-          <button onclick="addToCart('${p.code}'); closeDetailModal();" class="w-full py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
-            <i class="fa-solid fa-cart-plus"></i> Adicionar ao Orçamento
-          </button>
         </div>
       `;
 
@@ -550,9 +604,10 @@
 
       if (cart.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-12 text-slate-400 text-xs">
-            <i class="fa-solid fa-cart-flatbed text-3xl mb-2 text-slate-300"></i>
-            <p>Seu orçamento está vazio.</p>
+          <div class="text-center py-16 text-slate-400 text-xs">
+            <i class="fa-solid fa-cart-flatbed text-4xl mb-3 text-slate-300"></i>
+            <p class="font-medium text-slate-600">Seu orçamento está vazio.</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Adicione produtos pelo botão "+ Orçar".</p>
           </div>
         `;
         totalElement.innerText = "R$ 0,00";
@@ -566,17 +621,17 @@
         grandTotal += itemTotal;
 
         return `
-          <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-3 text-xs shadow-sm">
-            <div>
-              <span class="font-extrabold text-brand-gold">[${item.product.code}]</span>
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 text-xs shadow-sm">
+            <div class="flex-grow">
+              <span class="font-extrabold text-brand-gold text-[11px]">[${item.product.code}]</span>
               <h4 class="font-bold text-slate-800 line-clamp-1">${item.product.name}</h4>
-              <p class="text-brand-gold font-bold mt-0.5">R$ ${itemTotal.toFixed(2)}</p>
+              <p class="text-brand-gold font-bold mt-0.5 text-xs">R$ ${itemTotal.toFixed(2)}</p>
             </div>
 
-            <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50">
-              <button onclick="changeQty('${item.product.code}', -1)" class="px-2 py-0.5 text-slate-500 hover:text-slate-900 font-bold">-</button>
+            <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50 overflow-hidden">
+              <button onclick="changeQty('${item.product.code}', -1)" class="px-2.5 py-1 text-slate-500 hover:text-slate-900 font-bold transition">-</button>
               <span class="px-2 font-black text-slate-800">${item.qty}</span>
-              <button onclick="changeQty('${item.product.code}', 1)" class="px-2 py-0.5 text-slate-500 hover:text-slate-900 font-bold">+</button>
+              <button onclick="changeQty('${item.product.code}', 1)" class="px-2.5 py-1 text-slate-500 hover:text-slate-900 font-bold transition">+</button>
             </div>
           </div>
         `;
@@ -594,7 +649,7 @@
       const clientName = document.getElementById("clientName").value.trim();
       const clientObs = document.getElementById("clientObs").value.trim();
 
-      let msg = `*SOLICITAÇÃO DE ORÇAMENTO — LUMIFA Iluminação*\n`;
+      let msg = `*SOLICITAÇÃO DE ORÇAMENTO — LUMIFA ILUMINAÇÃO*\n`;
       if (clientName) msg += `*Cliente:* ${clientName}\n`;
       msg += `------------------------------------\n\n`;
 
