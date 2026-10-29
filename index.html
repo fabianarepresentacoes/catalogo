@@ -390,8 +390,15 @@
     // 1º) DESTAQUES (na ordem desta lista, com selo "Mais vendido")
     // 2º) Marcas em PRIORIDADE_MARCAS (na ordem da lista), pela faixa de códigos PROD-xxxx
     // 3º) Todo o resto, na ordem da planilha
+    // Pesquisa de mercado (out/2026): tipos mais vendidos no varejo online brasileiro
+    // (painéis LED embutir/sobrepor, spots de teto, spots de trilho, lâmpadas bulbo/high power,
+    // refletores, fita COB, espeto de jardim) + modelos Luminatti com destaque no Mercado Livre.
     const DESTAQUES = [
-      // ex.: "PROD-2010", "PROD-2150",
+      "PROD-2306", "PROD-2458", "PROD-2308", "PROD-3178", "PROD-2500", "PROD-3615",
+      "PROD-2274", "PROD-2435", "PROD-2311", "PROD-2607", "PROD-2294", "PROD-3238",
+      "PROD-2506", "PROD-2454", "PROD-2309", "PROD-3600", "PROD-2278", "PROD-3177",
+      "PROD-2065", "PROD-3618", "PROD-2450", "PROD-2534", "PROD-3216", "PROD-3420",
+      "PROD-2604", "PROD-3549",
     ];
     const PRIORIDADE_MARCAS = [
       { marca: "Luminatti", de: 2005, ate: 3716 },
@@ -780,7 +787,7 @@
                  class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                  onerror="imgFallback(this, '${esc(p.image)}')">
             <span class="absolute top-2.5 left-2.5 bg-white border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
-            ${p.featured ? `<span class="absolute top-2.5 right-2.5 bg-gradient-to-r from-brand-brassLight to-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm"><i class="fa-solid fa-fire mr-1"></i>Mais vendido</span>` : ''}
+            ${p.featured ? `<span class="absolute top-2.5 right-2.5 bg-gradient-to-r from-brand-brassLight to-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm"><i class="fa-solid fa-fire mr-1"></i>Mais procurado</span>` : ''}
             <span class="absolute bottom-2.5 right-2.5 bg-slate-900/85 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
           </div>
 
