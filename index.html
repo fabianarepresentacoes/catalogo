@@ -267,6 +267,9 @@
       </div>
 
       <div id="productGrid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
+      <div id="loadMoreSentinel" class="hidden py-8 text-center text-xs text-slate-400">
+        <button onclick="appendMoreProducts()" class="px-5 py-2.5 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl font-bold transition">Carregar mais produtos</button>
+      </div>
 
       <!-- Estado vazio / erro -->
       <div id="emptyState" class="hidden text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm my-6">
@@ -375,6 +378,8 @@
     // ================== CONFIGURAÇÕES ==================
     const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzJ_n9tb1R1v1eBH3i8n_ogSORXAI7qzFeaeJVIUs0_ZQdhFnzyyLvQdaaCqBwia_6bGCXW-5s32aB/pub?output=csv";
     const WHATSAPP_NUMBER = "5511959781849";
+    const THUMBS_FOLDER   = "miniaturas/"; // versões leves (600px .webp) geradas automaticamente a partir de "imagens/"
+    const PAGE_SIZE       = 48;            // quantos produtos aparecem por vez; mais vão carregando ao rolar
     const IMAGES_FOLDER   = "imagens/";   // pasta das fotos no GitHub. Na planilha pode ir só o nome: "PROD-001.jpg"
     const LOGO_CANDIDATES = ["imagens/logo.jpg", "logo.jpg", "imagens/logo.png", "logo.png"];
     const SHOW_BRAND_TEXT = true;       // true = mostra "LumiFa Iluminação" em texto ao lado da logo
@@ -424,6 +429,16 @@
       return IMAGES_FOLDER + encodeURI(v);
     }
 
+    // Miniatura leve para cards e carrinho. Se ainda não existir, cai para a foto original.
+    function thumbOf(src) {
+      if (!src || !src.startsWith(IMAGES_FOLDER)) return src;
+      return THUMBS_FOLDER + src.slice(IMAGES_FOLDER.length).replace(/\.(jpe?g|png|webp)$/i, '') + '.webp';
+    }
+    function imgFallback(img, original) {
+      if (img.dataset.fb) { img.onerror = null; img.src = FALLBACK_IMG; return; }
+      img.dataset.fb = '1'; img.src = original;
+    }
+
     function showToast(text) {
       $('toastText').textContent = text;
       const t = $('toast');
@@ -453,6 +468,14 @@
       let t;
       $('searchInput').addEventListener('input', () => { clearTimeout(t); t = setTimeout(renderProducts, 120); });
       $('sortSelect').addEventListener('change', renderProducts);
+
+      // Rolagem infinita: carrega o próximo lote antes de o cliente chegar ao fim
+      if ('IntersectionObserver' in window) {
+        moreObserver = new IntersectionObserver(entries => {
+          if (entries.some(e => e.isIntersecting) && renderedCount < currentList.length) appendMoreProducts();
+        }, { rootMargin: '1200px 0px' });
+        moreObserver.observe($('loadMoreSentinel'));
+      }
 
       // Delegação de cliques: evita problemas com aspas/apóstrofos nos dados da planilha
       $('productGrid').addEventListener('click', e => {
@@ -574,6 +597,7 @@
       btn.onclick = isError ? () => location.reload() : resetFilters;
       $('emptyState').classList.remove('hidden');
       $('productGrid').innerHTML = '';
+      $('loadMoreSentinel').classList.add('hidden');
       $('productCountText').textContent = isError ? '' : '0 produtos';
     }
 
@@ -704,15 +728,32 @@
 
       $('emptyState').classList.add('hidden');
 
-      grid.innerHTML = filtered.map(p => `
+      currentList = filtered;
+      renderedCount = 0;
+      grid.innerHTML = '';
+      appendMoreProducts();
+    }
+
+    // Acrescenta o próximo lote de cards (chamado ao chegar perto do fim da lista)
+    let currentList = [], renderedCount = 0, moreObserver = null;
+    function appendMoreProducts() {
+      const grid = $('productGrid');
+      const batch = currentList.slice(renderedCount, renderedCount + PAGE_SIZE);
+      renderedCount += batch.length;
+      const sentinel = $('loadMoreSentinel');
+      sentinel.classList.toggle('hidden', renderedCount >= currentList.length);
+      // Reobserva para que, se a sentinela continuar visível (tela grande), o próximo lote venha também
+      if (moreObserver) { moreObserver.unobserve(sentinel); moreObserver.observe(sentinel); }
+      if (!batch.length) return;
+      grid.insertAdjacentHTML('beforeend', batch.map(p => `
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
 
           <div class="relative aspect-square bg-white overflow-hidden cursor-pointer flex items-center justify-center p-3" data-action="open" data-code="${esc(p.code)}">
-            <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"
-                 class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
-                 onerror="this.onerror=null;this.src=FALLBACK_IMG">
-            <span class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
-            <span class="absolute bottom-2.5 right-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
+            <img src="${esc(thumbOf(p.image))}" alt="${esc(p.name)}" loading="lazy" decoding="async" width="600" height="600"
+                 class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                 onerror="imgFallback(this, '${esc(p.image)}')">
+            <span class="absolute top-2.5 left-2.5 bg-white border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
+            <span class="absolute bottom-2.5 right-2.5 bg-slate-900/85 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
           </div>
 
           <div class="p-3.5 sm:p-4 flex-grow flex flex-col justify-between space-y-3">
@@ -741,7 +782,7 @@
             </div>
           </div>
         </div>
-      `).join('');
+      `).join(''));
     }
 
     // ================== MODAIS ==================
@@ -868,7 +909,7 @@
         if (p.price > 0) grandTotal += p.price * item.qty; else hasUnpriced = true;
         return `
           <div class="bg-white p-3 rounded-2xl border border-slate-200 flex items-center gap-3 text-xs shadow-sm">
-            <img src="${esc(p.image)}" alt="" class="w-14 h-14 rounded-xl object-contain mix-blend-multiply bg-white border border-slate-100 shrink-0" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+            <img src="${esc(thumbOf(p.image))}" alt="" loading="lazy" class="w-14 h-14 rounded-xl object-contain bg-white border border-slate-100 shrink-0" onerror="imgFallback(this, '${esc(p.image)}')">
             <div class="flex-grow min-w-0">
               <span class="font-extrabold text-brand-gold text-[11px]">[${esc(p.code)}]</span>
               <h4 class="font-bold text-slate-800 line-clamp-1">${esc(p.name)}</h4>

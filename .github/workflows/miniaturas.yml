@@ -1,0 +1,24 @@
+# Gera automaticamente as miniaturas leves (pasta "miniaturas/") sempre que
+# fotos novas forem enviadas para a pasta "imagens/". Não precisa fazer nada manual.
+name: Gerar miniaturas
+on:
+  push:
+    branches: [main]
+    paths: ['imagens/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  miniaturas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pillow
+      - name: Criar miniaturas que faltam
+        run: python3 .github/scripts/thumbs.py imagens miniaturas
+      - name: Salvar no repositório
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add miniaturas
+          git diff --cached --quiet || (git commit -m "Miniaturas automáticas" && git push)
