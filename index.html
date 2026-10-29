@@ -385,6 +385,31 @@
     const SHOW_BRAND_TEXT = true;       // true = mostra "LumiFa Iluminação" em texto ao lado da logo
     const CART_STORAGE_KEY = "lumifa_cart_v1";
 
+    // ================== ORDEM DE EXIBIÇÃO ==================
+    // A ordem da planilha NÃO precisa ser mexida: o site reordena sozinho na opção "Padrão".
+    // 1º) DESTAQUES (na ordem desta lista, com selo "Mais vendido")
+    // 2º) Marcas em PRIORIDADE_MARCAS (na ordem da lista), pela faixa de códigos PROD-xxxx
+    // 3º) Todo o resto, na ordem da planilha
+    const DESTAQUES = [
+      // ex.: "PROD-2010", "PROD-2150",
+    ];
+    const PRIORIDADE_MARCAS = [
+      { marca: "Luminatti", de: 2005, ate: 3716 },
+    ];
+
+    function codeNumber(code) {
+      const m = String(code || '').match(/(\d+)\s*$/);
+      return m ? parseInt(m[1], 10) : NaN;
+    }
+    // Quanto menor o número, mais para o começo o produto aparece
+    function displayRank(code) {
+      const d = DESTAQUES.indexOf(String(code).trim().toUpperCase());
+      if (d >= 0) return d;
+      const n = codeNumber(code);
+      const b = PRIORIDADE_MARCAS.findIndex(r => n >= r.de && n <= r.ate);
+      return b >= 0 ? 10000 + b : 99999;
+    }
+
     // Placeholder embutido (não depende de site externo)
     const FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><rect width="600" height="600" fill="#F1F5F9"/><g fill="none" stroke="#D4AF37" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M300 190a80 80 0 0 0-50 142c10 9 14 18 14 30v8h72v-8c0-12 4-21 14-30a80 80 0 0 0-50-142z"/><path d="M272 400h56M280 424h40"/></g><text x="300" y="500" font-family="Arial" font-size="26" fill="#94A3B8" text-anchor="middle">LumiFa Iluminação</text></svg>'
@@ -562,6 +587,8 @@
             const searchTags = p.tags.filter(t => norm(t) !== catKey);
             p.haystack = norm([p.code, p.name, rawSpecs, desc, searchTags.join(' ')].join(' '));
             p.order = idx;
+            p.rank = displayRank(p.code);
+            p.featured = p.rank < 10000;
             return p;
           });
           if (!products.length) {
@@ -717,7 +744,7 @@
       if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
       else if (sort === 'priceAsc')  filtered.sort((a, b) => (a.price || Infinity) - (b.price || Infinity));
       else if (sort === 'priceDesc') filtered.sort((a, b) => b.price - a.price);
-      else filtered.sort((a, b) => a.order - b.order);
+      else filtered.sort((a, b) => (a.rank - b.rank) || (a.order - b.order));
 
       const grid = $('productGrid');
       $('productCountText').textContent = `${filtered.length} ${filtered.length === 1 ? 'produto' : 'produtos'}` +
@@ -753,6 +780,7 @@
                  class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                  onerror="imgFallback(this, '${esc(p.image)}')">
             <span class="absolute top-2.5 left-2.5 bg-white border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
+            ${p.featured ? `<span class="absolute top-2.5 right-2.5 bg-gradient-to-r from-brand-brassLight to-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm"><i class="fa-solid fa-fire mr-1"></i>Mais vendido</span>` : ''}
             <span class="absolute bottom-2.5 right-2.5 bg-slate-900/85 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
           </div>
 
