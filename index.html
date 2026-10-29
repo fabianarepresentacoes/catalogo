@@ -94,6 +94,15 @@
       .toolbar-sticky { position: sticky; top: var(--header-h); z-index: 30; }
     }
 
+    /* Celular: impede que o conteúdo do card alargue a coluna (cortava a lateral direita).
+       Só vale abaixo de 640px; a versão web não muda. */
+    @media (max-width: 639px) {
+      #productGrid > * { min-width: 0; }
+      .card-foot { flex-wrap: wrap; row-gap: 0.5rem; }
+      .card-actions { width: 100%; }
+      .card-actions [data-action="add"] { flex: 1 1 auto; justify-content: center; }
+    }
+
     /* ----- CATEGORIAS: carrossel horizontal ----- */
     .cat-scroller { cursor: grab; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
     .cat-scroller.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
@@ -713,12 +722,12 @@
                 </p>` : ''}
             </div>
 
-            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
+            <div class="card-foot pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
               <div>
                 <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">Valor</span>
                 <span class="${p.price > 0 ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'} font-black text-brand-gold">${priceLabel(p.price)}</span>
               </div>
-              <div class="flex items-center gap-1.5">
+              <div class="card-actions flex items-center gap-1.5">
                 <button data-action="open" data-code="${esc(p.code)}" title="Ver detalhes" aria-label="Ver detalhes" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition active:scale-90">
                   <i class="fa-solid fa-eye"></i>
                 </button>
