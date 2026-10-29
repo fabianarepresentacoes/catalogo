@@ -159,10 +159,10 @@
         <!-- Logo (tenta imagens/logo.jpg, logo.jpg, imagens/logo.png, logo.png) -->
         <a href="./" class="flex items-center gap-3 min-w-0" aria-label="LumiFa Iluminação - início">
           <img id="logoImg" src="imagens/logo.jpg" alt="LumiFa Iluminação"
-               class="h-12 sm:h-16 w-auto max-w-[190px] sm:max-w-[280px] object-contain">
+               class="h-12 sm:h-16 w-auto max-w-[120px] sm:max-w-[280px] shrink min-w-0 object-contain">
           <!-- Texto da marca: aparece se a logo não carregar (ou se SHOW_BRAND_TEXT = true) -->
-          <div id="brandText" class="hidden leading-tight">
-            <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight">
+          <div id="brandText" class="hidden leading-tight shrink-0">
+            <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight whitespace-nowrap">
               <span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span>
             </span>
             <span class="block text-[11px] text-slate-500 font-semibold tracking-[0.18em] uppercase -mt-0.5">Iluminação</span>
@@ -368,7 +368,7 @@
     const WHATSAPP_NUMBER = "5511959781849";
     const IMAGES_FOLDER   = "imagens/";   // pasta das fotos no GitHub. Na planilha pode ir só o nome: "PROD-001.jpg"
     const LOGO_CANDIDATES = ["imagens/logo.jpg", "logo.jpg", "imagens/logo.png", "logo.png"];
-    const SHOW_BRAND_TEXT = false;        // true = mostra "LumiFa Iluminação" em texto ao lado da logo
+    const SHOW_BRAND_TEXT = true;       // true = mostra "LumiFa Iluminação" em texto ao lado da logo
     const CART_STORAGE_KEY = "lumifa_cart_v1";
 
     // Placeholder embutido (não depende de site externo)
