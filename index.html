@@ -29,14 +29,21 @@
         extend: {
           colors: {
             brand: {
-              gold: '#D4AF37',
-              goldHover: '#B89020',
+              gold: '#96701A',        /* Latão: textos e botões (contraste ~4,5:1 com branco) */
+              goldHover: '#7A5A12',   /* Latão escuro (hover) */
+              brassLight: '#A67C1F',  /* Início do degradê dos botões */
+              shine: '#D4AF37',       /* Dourado brilhante: só detalhes decorativos / fundo escuro */
               goldLight: '#FDFBF7',
-              bg: '#F8FAFC',
+              bg: '#FAF8F4',          /* Off-white quente */
               card: '#FFFFFF',
-              border: '#E2E8F0',
-              textPrimary: '#0F172A',
-              textSecondary: '#64748B'
+              border: '#E7E2D9',
+              textPrimary: '#1C1917',
+              textSecondary: '#78716C'
+            },
+            /* Cinzas quentes (stone) no lugar dos cinza-azulados (slate) em toda a página */
+            slate: {
+              50: '#FAFAF9', 100: '#F5F5F4', 200: '#E7E5E4', 300: '#D6D3D1', 400: '#A8A29E',
+              500: '#78716C', 600: '#57534E', 700: '#44403C', 800: '#292524', 900: '#1C1917', 950: '#0C0A09'
             }
           },
           fontFamily: {
@@ -52,8 +59,8 @@
     :root { --header-h: 72px; }
 
     body {
-      background-color: #F8FAFC;
-      color: #0F172A;
+      background-color: #FAF8F4;
+      color: #1C1917;
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
     }
@@ -78,8 +85,8 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #F1F5F9; }
-    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: #F5F3EE; }
+    ::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
 
     /* Barra de busca / filtros: fixa somente em telas médias+ (no celular ocupava espaço demais) */
@@ -98,30 +105,30 @@
       border-radius: 0.75rem;
       font-size: 0.75rem;
       font-weight: 600;
-      background: #F1F5F9;
-      color: #475569;
-      border: 1px solid rgba(226, 232, 240, 0.8);
+      background: #F5F3EE;
+      color: #57534E;
+      border: 1px solid rgba(231, 226, 217, 0.9);
       transition: all 0.2s;
     }
-    .cat-pill:hover { background: #E2E8F0; color: #0F172A; }
+    .cat-pill:hover { background: #E7E2D9; color: #1C1917; }
     .cat-pill.active {
-      background: #D4AF37; color: #fff; font-weight: 700; border-color: #D4AF37;
-      box-shadow: 0 4px 10px -2px rgba(212, 175, 55, 0.35);
+      background: linear-gradient(to right, #A67C1F, #96701A); color: #fff; font-weight: 700; border-color: #96701A;
+      box-shadow: 0 4px 10px -2px rgba(150, 112, 26, 0.35);
     }
     .cat-pill .cat-count { opacity: .6; font-weight: 500; margin-left: .25rem; }
     .cat-arrow {
       position: absolute; top: 0; bottom: 0; width: 2.75rem; z-index: 2;
-      display: flex; align-items: center; color: #475569;
+      display: flex; align-items: center; color: #57534E;
       opacity: 0; pointer-events: none; transition: opacity .2s;
     }
     .cat-arrow.visible { opacity: 1; pointer-events: auto; }
     .cat-arrow button {
       width: 1.9rem; height: 1.9rem; border-radius: 9999px; background: #fff;
-      border: 1px solid #E2E8F0; box-shadow: 0 2px 8px rgba(15,23,42,.12);
+      border: 1px solid #E7E2D9; box-shadow: 0 2px 8px rgba(28,25,23,.12);
       display: flex; align-items: center; justify-content: center; font-size: .7rem;
       transition: all .2s;
     }
-    .cat-arrow button:hover { background: #D4AF37; color: #fff; border-color: #D4AF37; }
+    .cat-arrow button:hover { background: #96701A; color: #fff; border-color: #96701A; }
     .cat-arrow.left  { left: 0;  justify-content: flex-start; background: linear-gradient(to right, #fff 55%, transparent); }
     .cat-arrow.right { right: 0; justify-content: flex-end;   background: linear-gradient(to left,  #fff 55%, transparent); }
 
@@ -164,7 +171,7 @@
 
         <!-- Botão de Orçamento -->
         <button onclick="toggleCartModal()" aria-label="Abrir orçamento"
-                class="relative px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldHover text-white font-bold text-xs sm:text-sm shadow-md shadow-brand-gold/20 hover:brightness-105 active:scale-95 transition flex items-center gap-2.5 shrink-0">
+                class="relative px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-brassLight to-brand-gold text-white font-bold text-xs sm:text-sm shadow-md shadow-brand-gold/20 hover:brightness-105 active:scale-95 transition flex items-center gap-2.5 shrink-0">
           <i class="fa-solid fa-clipboard-list text-sm"></i>
           <span class="hidden sm:inline">Meu Orçamento</span>
           <span id="cartBadge" class="bg-slate-900 text-white text-[11px] px-2 py-0.5 rounded-full font-black">0</span>
@@ -278,7 +285,7 @@
 
   <!-- TOAST -->
   <div id="toast" class="toast bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2">
-    <i class="fa-solid fa-circle-check text-brand-gold"></i><span id="toastText"></span>
+    <i class="fa-solid fa-circle-check text-brand-shine"></i><span id="toastText"></span>
   </div>
 
   <!-- RODAPÉ -->
@@ -389,6 +396,15 @@
       return parseFloat(s) || 0;
     }
 
+    const trimSeparators = s => String(s || '').replace(/^[\s/\-–—:|.]+/, '').replace(/[\s/\-–—:|]+$/, '');
+
+    // Remove "ESPECIFICAÇÕES TÉCNICAS:" do começo e o nome do produto repetido
+    function cleanText(s, name) {
+      s = String(s || '').replace(/^\s*especifica[çc][õo]es\s+t[ée]cnicas\s*:\s*/i, '').trim();
+      if (name && s.toLowerCase().startsWith(name.toLowerCase())) s = s.slice(name.length);
+      return trimSeparators(s);
+    }
+
     // Aceita: link completo, link "github.com/.../blob/...", caminho com pasta ou só o nome do arquivo
     function resolveImage(v) {
       v = (v || '').trim();
@@ -492,16 +508,24 @@
           products = (results.data || []).map((row, idx) => {
             const item = {};
             for (const k in row) item[k.trim().toLowerCase()] = row[k] ? String(row[k]).trim() : '';
+            const rawSpecs = item.especificacoes || item['especificações'] || '';
+            const rawDesc = item.descricao || item['descrição'] || rawSpecs;
             const p = {
               code: item.codigo || item['código'] || `COD-${idx + 1}`,
               name: item.nome || item.codigo || 'Produto Iluminação LED',
               category: item.categoria || 'Geral',
               price: parsePrice(item.preco || item['preço']),
-              specs: item.especificacoes || item['especificações'] || '',
-              desc: item.descricao || item['descrição'] || item.especificacoes || '',
               image: resolveImage(item.imagem)
             };
-            p.haystack = norm([p.code, p.name, p.category, p.specs, p.desc].join(' '));
+            // Textos limpos para exibição (sem prefixo "ESPECIFICAÇÕES TÉCNICAS:", sem repetir o nome, sem "Tags:")
+            p.specs = cleanText(rawSpecs, p.name);
+            const tagMatch = rawDesc.match(/\bTags:\s*(.+)$/i);
+            p.tags = tagMatch ? tagMatch[1].split(/\s+-\s+|,/).map(t => t.trim()).filter(Boolean) : [];
+            let desc = cleanText(rawDesc.replace(/\s*\bTags:.*$/i, ''), p.name);
+            if (p.specs && desc.toLowerCase().startsWith(p.specs.toLowerCase())) desc = trimSeparators(desc.slice(p.specs.length));
+            p.desc = desc;
+            // A busca usa os textos originais completos (inclui as tags)
+            p.haystack = norm([p.code, p.name, p.category, rawSpecs, rawDesc].join(' '));
             p.order = idx;
             return p;
           });
@@ -671,9 +695,9 @@
       grid.innerHTML = filtered.map(p => `
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
 
-          <div class="relative aspect-square bg-slate-50/80 overflow-hidden cursor-pointer flex items-center justify-center p-3" data-action="open" data-code="${esc(p.code)}">
+          <div class="relative aspect-square bg-white overflow-hidden cursor-pointer flex items-center justify-center p-3" data-action="open" data-code="${esc(p.code)}">
             <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"
-                 class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                 class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
                  onerror="this.onerror=null;this.src=FALLBACK_IMG">
             <span class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
             <span class="absolute bottom-2.5 right-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
@@ -698,7 +722,7 @@
                 <button data-action="open" data-code="${esc(p.code)}" title="Ver detalhes" aria-label="Ver detalhes" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition active:scale-90">
                   <i class="fa-solid fa-eye"></i>
                 </button>
-                <button data-action="add" data-code="${esc(p.code)}" class="px-3 h-8 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95">
+                <button data-action="add" data-code="${esc(p.code)}" class="px-3 h-8 rounded-xl bg-gradient-to-r from-brand-brassLight to-brand-gold hover:brightness-90 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95">
                   <i class="fa-solid fa-plus"></i> Orçar
                 </button>
               </div>
@@ -714,8 +738,8 @@
       if (!p) return;
       $('detailModalContent').innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-          <div class="relative rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/80 flex items-center justify-center p-3 aspect-square">
-            <img src="${esc(p.image)}" alt="${esc(p.name)}" class="w-full h-full object-contain rounded-xl cursor-zoom-in"
+          <div class="relative rounded-2xl overflow-hidden bg-white border border-slate-200/80 flex items-center justify-center p-3 aspect-square">
+            <img src="${esc(p.image)}" alt="${esc(p.name)}" class="w-full h-full object-contain mix-blend-multiply rounded-xl cursor-zoom-in"
                  onclick="openLightboxModal(this.src)" onerror="this.onerror=null;this.src=FALLBACK_IMG">
             <button onclick="openLightboxModal(this.parentElement.querySelector('img').src)" title="Ver em tela cheia" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-white/95 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-expand"></i><span>Zoom</span>
@@ -743,7 +767,12 @@
 
             <p class="text-xs text-slate-500 leading-relaxed">${esc(p.desc || 'Sem observações adicionais.')}</p>
 
-            <button onclick="addToCart(this.dataset.code); closeDetailModal();" data-code="${esc(p.code)}" class="w-full py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-brand-gold/20 transition active:scale-95">
+            ${p.tags.length ? `
+              <div class="flex flex-wrap gap-1.5">
+                ${p.tags.slice(0, 10).map(t => `<span class="text-[10px] font-semibold text-slate-600 bg-slate-100 border border-slate-200/70 px-2 py-0.5 rounded-md">${esc(t)}</span>`).join('')}
+              </div>` : ''}
+
+            <button onclick="addToCart(this.dataset.code); closeDetailModal();" data-code="${esc(p.code)}" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-brassLight to-brand-gold hover:brightness-90 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-brand-gold/20 transition active:scale-95">
               <i class="fa-solid fa-cart-plus"></i> Adicionar ao orçamento
             </button>
           </div>
@@ -827,7 +856,7 @@
         if (p.price > 0) grandTotal += p.price * item.qty; else hasUnpriced = true;
         return `
           <div class="bg-white p-3 rounded-2xl border border-slate-200 flex items-center gap-3 text-xs shadow-sm">
-            <img src="${esc(p.image)}" alt="" class="w-14 h-14 rounded-xl object-contain bg-slate-50 border border-slate-100 shrink-0" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+            <img src="${esc(p.image)}" alt="" class="w-14 h-14 rounded-xl object-contain mix-blend-multiply bg-white border border-slate-100 shrink-0" onerror="this.onerror=null;this.src=FALLBACK_IMG">
             <div class="flex-grow min-w-0">
               <span class="font-extrabold text-brand-gold text-[11px]">[${esc(p.code)}]</span>
               <h4 class="font-bold text-slate-800 line-clamp-1">${esc(p.name)}</h4>
