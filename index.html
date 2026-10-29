@@ -4,16 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LumiFa Iluminação | Iluminação Decorativa & LED</title>
+  <meta name="description" content="Catálogo digital LumiFa Iluminação: iluminação decorativa, comercial, industrial e soluções em LED. Monte seu orçamento e envie pelo WhatsApp.">
+  <meta name="theme-color" content="#D4AF37">
+  <meta property="og:title" content="LumiFa Iluminação | Catálogo Digital">
+  <meta property="og:description" content="Iluminação decorativa, comercial, industrial e LED. Monte seu orçamento e envie pelo WhatsApp.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="imagens/logo.jpg">
+  <link rel="icon" href="imagens/logo.jpg">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Plus Jakarta Sans -->
+  <!-- Google Fonts: Plus Jakarta Sans (texto) + Cormorant Garamond (títulos) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PapaParse: Leitura segura de CSV do Google Sheets (previne quebras por vírgula/quebra de linha) -->
+  <!-- PapaParse: leitura segura de CSV do Google Sheets -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
   <script>
@@ -22,18 +29,19 @@
         extend: {
           colors: {
             brand: {
-              gold: '#D4AF37',        /* Dourado Nobre */
-              goldHover: '#B89020',   /* Dourado Escuro */
-              goldLight: '#FDFBF7',   /* Dourado ultra suave para fundos */
-              bg: '#F8FAFC',          /* Fundo suave off-white */
-              card: '#FFFFFF',        /* Cards brancos */
-              border: '#E2E8F0',      /* Bordas elegantes */
+              gold: '#D4AF37',
+              goldHover: '#B89020',
+              goldLight: '#FDFBF7',
+              bg: '#F8FAFC',
+              card: '#FFFFFF',
+              border: '#E2E8F0',
               textPrimary: '#0F172A',
               textSecondary: '#64748B'
             }
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Cormorant Garamond"', 'serif'],
           }
         }
       }
@@ -41,6 +49,8 @@
   </script>
 
   <style>
+    :root { --header-h: 72px; }
+
     body {
       background-color: #F8FAFC;
       color: #0F172A;
@@ -57,116 +67,182 @@
     .card-shadow {
       box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
     }
-
-    .card-hover {
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    .card-hover { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
     .card-hover:hover {
       transform: translateY(-5px);
       box-shadow: 0 16px 30px -6px rgba(212, 175, 55, 0.18), 0 8px 12px -4px rgba(15, 23, 42, 0.04);
       border-color: rgba(212, 175, 55, 0.45);
     }
 
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+    /* Barra de busca / filtros: fixa somente em telas médias+ (no celular ocupava espaço demais) */
+    @media (min-width: 768px) {
+      .toolbar-sticky { position: sticky; top: var(--header-h); z-index: 30; }
     }
 
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
+    /* ----- CATEGORIAS: carrossel horizontal ----- */
+    .cat-scroller { cursor: grab; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+    .cat-scroller.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+    .cat-pill {
+      flex: 0 0 auto;               /* nunca encolhe nem quebra: o carrossel rola */
+      scroll-snap-align: start;
+      white-space: nowrap;
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
       background: #F1F5F9;
+      color: #475569;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      transition: all 0.2s;
     }
-    ::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
-      border-radius: 4px;
+    .cat-pill:hover { background: #E2E8F0; color: #0F172A; }
+    .cat-pill.active {
+      background: #D4AF37; color: #fff; font-weight: 700; border-color: #D4AF37;
+      box-shadow: 0 4px 10px -2px rgba(212, 175, 55, 0.35);
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #D4AF37;
+    .cat-pill .cat-count { opacity: .6; font-weight: 500; margin-left: .25rem; }
+    .cat-arrow {
+      position: absolute; top: 0; bottom: 0; width: 2.75rem; z-index: 2;
+      display: flex; align-items: center; color: #475569;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
     }
+    .cat-arrow.visible { opacity: 1; pointer-events: auto; }
+    .cat-arrow button {
+      width: 1.9rem; height: 1.9rem; border-radius: 9999px; background: #fff;
+      border: 1px solid #E2E8F0; box-shadow: 0 2px 8px rgba(15,23,42,.12);
+      display: flex; align-items: center; justify-content: center; font-size: .7rem;
+      transition: all .2s;
+    }
+    .cat-arrow button:hover { background: #D4AF37; color: #fff; border-color: #D4AF37; }
+    .cat-arrow.left  { left: 0;  justify-content: flex-start; background: linear-gradient(to right, #fff 55%, transparent); }
+    .cat-arrow.right { right: 0; justify-content: flex-end;   background: linear-gradient(to left,  #fff 55%, transparent); }
+
+    /* Animações simples (substituem classes que não existem no Tailwind puro) */
+    @keyframes popIn { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
+    .pop-in { animation: popIn .22s ease-out; }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: none; } }
+    .slide-in { animation: slideIn .28s cubic-bezier(.4,0,.2,1); }
+    @keyframes bump { 50% { transform: scale(1.35); } }
+    .bump { animation: bump .3s ease; }
+
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .toast {
+      position: fixed; left: 50%; bottom: 1.5rem; transform: translate(-50%, 20px); z-index: 60;
+      opacity: 0; pointer-events: none; transition: all .3s;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between relative selection:bg-brand-gold selection:text-white">
 
-  <!-- CONTEÚDO PRINCIPAL -->
   <div class="relative z-10 flex-grow">
 
     <!-- CABEÇALHO PRINCIPAL -->
-    <header class="sticky top-0 z-40 glass-header border-b border-brand-border/80 shadow-sm transition-all">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
-        
-        <!-- Logo LumiFa -->
-        <div class="flex items-center gap-3.5">
-          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl border border-brand-border bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden">
-            <img src="imagens/logo.png" alt="LumiFa Iluminação" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-lightbulb text-brand-gold text-2xl\'></i>';">
-          </div>
+    <header id="siteHeader" class="sticky top-0 z-40 glass-header border-b border-brand-border/80 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-4">
 
-          <div>
-            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight leading-tight">
-              <span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> <span class="text-slate-600 font-semibold text-base sm:text-lg">Iluminação</span>
-            </h1>
-            <p class="text-[11px] text-slate-500 font-medium tracking-wide flex items-center gap-1.5 mt-0.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span class="hidden sm:inline">Iluminação Decorativa | Comercial | Industrial |</span> Soluções em LED
-            </p>
+        <!-- Logo (tenta imagens/logo.jpg, logo.jpg, imagens/logo.png, logo.png) -->
+        <a href="./" class="flex items-center gap-3 min-w-0" aria-label="LumiFa Iluminação - início">
+          <img id="logoImg" src="imagens/logo.jpg" alt="LumiFa Iluminação"
+               class="h-12 sm:h-16 w-auto max-w-[190px] sm:max-w-[280px] object-contain">
+          <!-- Texto da marca: aparece se a logo não carregar (ou se SHOW_BRAND_TEXT = true) -->
+          <div id="brandText" class="hidden leading-tight">
+            <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight">
+              <span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span>
+            </span>
+            <span class="block text-[11px] text-slate-500 font-semibold tracking-[0.18em] uppercase -mt-0.5">Iluminação</span>
           </div>
-        </div>
+        </a>
 
-        <!-- Botão de Orçamento / Carrinho -->
-        <button onclick="toggleCartModal()" class="relative px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldHover text-white font-bold text-xs sm:text-sm shadow-md shadow-brand-gold/20 hover:brightness-105 active:scale-95 transition flex items-center gap-2.5">
-          <i class="fa-solid fa-cart-shopping text-sm"></i>
+        <!-- Botão de Orçamento -->
+        <button onclick="toggleCartModal()" aria-label="Abrir orçamento"
+                class="relative px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-gold to-brand-goldHover text-white font-bold text-xs sm:text-sm shadow-md shadow-brand-gold/20 hover:brightness-105 active:scale-95 transition flex items-center gap-2.5 shrink-0">
+          <i class="fa-solid fa-clipboard-list text-sm"></i>
           <span class="hidden sm:inline">Meu Orçamento</span>
           <span id="cartBadge" class="bg-slate-900 text-white text-[11px] px-2 py-0.5 rounded-full font-black">0</span>
         </button>
-
       </div>
     </header>
 
-    <!-- ÁREA DE PESQUISA E CATEGORIAS (FIXA AO ROLAR) -->
-    <section class="sticky top-[69px] z-30 glass-header py-3.5 border-b border-brand-border/60 transition-all">
+    <!-- FAIXA DE APRESENTAÇÃO -->
+    <section class="bg-gradient-to-b from-brand-goldLight to-brand-bg border-b border-brand-border/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-9 text-center">
+        <h1 class="font-serif text-3xl sm:text-4xl font-semibold text-slate-900 leading-tight">
+          Iluminação que valoriza <span class="text-brand-gold">cada ambiente</span>
+        </h1>
+        <p class="mt-2 text-xs sm:text-sm text-slate-500 font-medium">
+          Decorativa <span class="text-brand-gold mx-1">•</span> Comercial <span class="text-brand-gold mx-1">•</span> Industrial <span class="text-brand-gold mx-1">•</span> Soluções em LED
+        </p>
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 text-[11px] sm:text-xs text-slate-500 font-medium">
+          <span><i class="fa-solid fa-magnifying-glass text-brand-gold mr-1.5"></i>Encontre pelo código ou nome</span>
+          <span><i class="fa-solid fa-clipboard-list text-brand-gold mr-1.5"></i>Monte seu orçamento</span>
+          <span><i class="fa-brands fa-whatsapp text-brand-gold mr-1.5"></i>Envie direto pelo WhatsApp</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUSCA, ORDENAÇÃO E CATEGORIAS -->
+    <section class="toolbar-sticky glass-header py-3 sm:py-3.5 border-b border-brand-border/60">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white border border-brand-border/90 rounded-2xl p-4 shadow-sm">
-          
-          <div class="flex flex-col md:flex-row gap-3.5 items-center justify-between">
-            <!-- Barra de Busca -->
-            <div class="relative w-full md:w-1/2">
+        <div class="bg-white border border-brand-border/90 rounded-2xl p-3 sm:p-4 shadow-sm">
+
+          <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+            <!-- Busca -->
+            <div class="relative w-full md:flex-1">
               <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                 <i class="fa-solid fa-magnifying-glass text-sm"></i>
               </div>
-              <input type="text" id="searchInput" oninput="renderProducts()" 
-                     placeholder="Buscar por código (ex: PROD-001), nome, pendente, 3000K..." 
+              <input type="search" id="searchInput" autocomplete="off"
+                     placeholder="Buscar por código, nome, pendente, 3000K..."
                      class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
-              <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
+              <button onclick="clearSearch()" id="clearSearchBtn" aria-label="Limpar busca"
+                      class="hidden absolute inset-y-0 right-0 pr-3 items-center text-slate-400 hover:text-slate-700">
                 <i class="fa-solid fa-circle-xmark text-sm"></i>
               </button>
             </div>
 
-            <!-- Contador e Limpar -->
-            <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-3 text-xs text-slate-500">
-              <span id="productCountText" class="font-medium text-slate-600">Carregando catálogo...</span>
-              <button onclick="resetFilters()" class="text-brand-gold hover:text-brand-goldHover flex items-center gap-1 font-semibold transition">
-                <i class="fa-solid fa-arrows-rotate"></i> Limpar Filtros
+            <div class="flex items-center justify-between md:justify-end gap-3">
+              <!-- Ordenação -->
+              <label class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                <span class="hidden sm:inline">Ordenar</span>
+                <select id="sortSelect" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 font-semibold focus:outline-none focus:border-brand-gold">
+                  <option value="default">Padrão</option>
+                  <option value="name">Nome (A–Z)</option>
+                  <option value="priceAsc">Menor preço</option>
+                  <option value="priceDesc">Maior preço</option>
+                </select>
+              </label>
+
+              <button onclick="resetFilters()" class="text-brand-gold hover:text-brand-goldHover flex items-center gap-1 font-semibold text-xs transition whitespace-nowrap">
+                <i class="fa-solid fa-arrows-rotate"></i> Limpar
               </button>
             </div>
           </div>
 
-          <!-- Pílulas de Categorias -->
-          <div class="flex items-center gap-2 overflow-x-auto pt-3.5 pb-0.5 no-scrollbar" id="categoryTabs">
-            <!-- Gerado via JavaScript -->
+          <!-- Categorias: carrossel com setas, arraste e rolagem do mouse -->
+          <div class="relative mt-3">
+            <div class="cat-arrow left" id="catPrevWrap"><button type="button" id="catPrev" aria-label="Categorias anteriores"><i class="fa-solid fa-chevron-left"></i></button></div>
+            <div id="categoryTabs" role="tablist" aria-label="Categorias"
+                 class="cat-scroller relative flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-0.5"></div>
+            <div class="cat-arrow right" id="catNextWrap"><button type="button" id="catNext" aria-label="Próximas categorias"><i class="fa-solid fa-chevron-right"></i></button></div>
           </div>
 
+          <p id="productCountText" class="mt-2.5 text-[11px] text-slate-400 font-medium" aria-live="polite">Carregando catálogo...</p>
         </div>
       </div>
     </section>
 
     <!-- GRID DE PRODUTOS -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <!-- Skeleton Loading -->
+      <!-- Skeleton -->
       <div id="loading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
@@ -174,496 +250,628 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
       </div>
 
-      <!-- Container do Grid Real -->
-      <div id="productGrid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-        <!-- Cards gerados via JavaScript -->
-      </div>
+      <div id="productGrid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
 
-      <!-- Estado Vazio -->
+      <!-- Estado vazio / erro -->
       <div id="emptyState" class="hidden text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm my-6">
         <div class="w-16 h-16 bg-amber-50 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-          <i class="fa-solid fa-lightbulb"></i>
+          <i id="emptyIcon" class="fa-solid fa-lightbulb"></i>
         </div>
-        <h3 class="text-base font-bold text-slate-800">Nenhum produto foi encontrado</h3>
-        <p class="text-slate-500 text-xs mt-1 max-w-sm mx-auto">Verifique o termo pesquisado ou selecione outra categoria acima.</p>
-        <button onclick="resetFilters()" class="mt-4 px-5 py-2.5 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl text-xs font-bold transition">
+        <h3 id="emptyTitle" class="text-base font-bold text-slate-800">Nenhum produto foi encontrado</h3>
+        <p id="emptyText" class="text-slate-500 text-xs mt-1 max-w-sm mx-auto">Verifique o termo pesquisado ou selecione outra categoria acima.</p>
+        <button id="emptyBtn" onclick="resetFilters()" class="mt-4 px-5 py-2.5 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl text-xs font-bold transition">
           Ver todos os produtos
         </button>
       </div>
     </main>
-
   </div>
 
-  <!-- BOTÃO FLUTUANTE VOLTAR AO TOPO -->
-  <button id="scrollToTopBtn" onclick="scrollToTop()" title="Voltar ao topo"
-          class="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-slate-900 text-white shadow-xl hover:bg-brand-gold hover:shadow-brand-gold/30 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 active:scale-90 border border-slate-700/50">
+  <!-- BOTÕES FLUTUANTES -->
+  <a id="waFab" href="#" target="_blank" rel="noopener" title="Falar no WhatsApp" aria-label="Falar no WhatsApp"
+     class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-600/30 flex items-center justify-center transition active:scale-90">
+    <i class="fa-brands fa-whatsapp text-2xl"></i>
+  </a>
+  <button id="scrollToTopBtn" onclick="scrollToTop()" title="Voltar ao topo" aria-label="Voltar ao topo"
+          class="fixed bottom-[5.25rem] right-6 z-40 w-11 h-11 rounded-full bg-slate-900 text-white shadow-xl hover:bg-brand-gold flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 active:scale-90 border border-slate-700/50">
     <i class="fa-solid fa-arrow-up text-sm"></i>
   </button>
 
+  <!-- TOAST -->
+  <div id="toast" class="toast bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2">
+    <i class="fa-solid fa-circle-check text-brand-gold"></i><span id="toastText"></span>
+  </div>
+
   <!-- RODAPÉ -->
-  <footer class="relative z-10 bg-white border-t border-slate-200/80 py-8 text-slate-500 text-xs text-center">
-    <div class="max-w-7xl mx-auto px-4 space-y-1.5">
-      <p class="text-slate-800 font-bold tracking-tight text-sm"><span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> Iluminação</p>
-      <p class="text-slate-400">Catálogo digital para lojistas, profissionais e clientes. Todos os direitos reservados.</p>
+  <footer class="relative z-10 bg-white border-t border-slate-200/80 py-10 text-slate-500 text-xs text-center">
+    <div class="max-w-7xl mx-auto px-4 space-y-3">
+      <p class="font-serif text-2xl font-bold tracking-tight"><span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> <span class="text-slate-500 font-semibold text-lg">Iluminação</span></p>
+      <p class="text-slate-400">Catálogo digital para lojistas, profissionais e clientes.</p>
+      <a id="footerWa" href="#" target="_blank" rel="noopener"
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold transition">
+        <i class="fa-brands fa-whatsapp text-base"></i> Fale conosco no WhatsApp
+      </a>
+      <p class="text-slate-400 pt-2">© <span id="year"></span> LumiFa Iluminação. Todos os direitos reservados.</p>
     </div>
   </footer>
 
-  <!-- MODAL: DETALHES COMPLETOS DO PRODUTO -->
-  <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-100 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-      <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center z-10 transition">
+  <!-- MODAL: DETALHES DO PRODUTO -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)closeDetailModal()">
+    <div class="pop-in bg-white border border-slate-100 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative">
+      <button onclick="closeDetailModal()" aria-label="Fechar" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center z-10 transition">
         <i class="fa-solid fa-xmark text-sm"></i>
       </button>
       <div id="detailModalContent" class="p-6 sm:p-8"></div>
     </div>
   </div>
 
-  <!-- MODAL: LIGHTBOX / ZOOM DA IMAGEM EM TELA CHEIA -->
-  <div id="lightboxModal" class="fixed inset-0 z-50 hidden bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
-    <button onclick="closeLightboxModal()" class="absolute top-5 right-5 w-11 h-11 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold flex items-center justify-center z-50 transition">
+  <!-- MODAL: ZOOM DA IMAGEM -->
+  <div id="lightboxModal" class="fixed inset-0 z-[55] hidden bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
+    <button onclick="closeLightboxModal()" aria-label="Fechar zoom" class="absolute top-5 right-5 w-11 h-11 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold flex items-center justify-center z-50 transition">
       <i class="fa-solid fa-xmark text-lg"></i>
     </button>
-    <img id="lightboxImg" src="" alt="Imagem ampliada" class="max-w-full max-h-[92vh] object-contain rounded-2xl shadow-2xl transition-transform duration-300 scale-100" onclick="event.stopPropagation()">
+    <img id="lightboxImg" src="" alt="Imagem ampliada" class="max-w-full max-h-[92vh] object-contain rounded-2xl shadow-2xl" onclick="event.stopPropagation()">
   </div>
 
-  <!-- MODAL: CARRINHO / ORÇAMENTO NO WHATSAPP -->
-  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex justify-end">
-    <div class="bg-white border-l border-slate-200 w-full max-w-md h-full flex flex-col shadow-2xl">
+  <!-- MODAL: ORÇAMENTO -->
+  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex justify-end" onclick="if(event.target===this)toggleCartModal()">
+    <div class="slide-in bg-white border-l border-slate-200 w-full max-w-md h-full flex flex-col shadow-2xl">
       <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-xl bg-amber-50 text-brand-gold flex items-center justify-center font-bold">
-            <i class="fa-solid fa-cart-shopping"></i>
+            <i class="fa-solid fa-clipboard-list"></i>
           </div>
           <div>
             <h2 class="text-sm font-bold text-slate-900">Seu Orçamento</h2>
             <p class="text-[11px] text-slate-400">Revise os itens selecionados</p>
           </div>
         </div>
-        <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full bg-slate-200/70 text-slate-600 hover:bg-slate-300 flex items-center justify-center transition">
-          <i class="fa-solid fa-xmark text-sm"></i>
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="clearCart()" id="clearCartBtn" class="text-[11px] text-slate-400 hover:text-red-500 font-semibold transition">Esvaziar</button>
+          <button onclick="toggleCartModal()" aria-label="Fechar" class="w-8 h-8 rounded-full bg-slate-200/70 text-slate-600 hover:bg-slate-300 flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
       </div>
 
       <div id="cartItemsList" class="flex-grow p-5 overflow-y-auto space-y-3"></div>
 
       <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-3.5">
         <div class="flex items-center justify-between text-sm">
-          <span class="text-slate-500 font-medium">Total Estimado:</span>
+          <span class="text-slate-500 font-medium">Total estimado:</span>
           <span id="cartTotal" class="text-xl font-extrabold text-brand-gold">R$ 0,00</span>
         </div>
+        <p id="cartNote" class="hidden text-[11px] text-slate-400 -mt-2">Itens “sob consulta” não entram no total.</p>
 
         <div class="space-y-2">
-          <input type="text" id="clientName" placeholder="Seu Nome ou Nome da Empresa (Opcional)" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30">
-          <textarea id="clientObs" placeholder="Observações (ex: Dúvidas sobre voltagem, 3000K ou 6000K, acabamento)..." rows="2" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"></textarea>
+          <input type="text" id="clientName" placeholder="Seu nome ou nome da empresa (opcional)" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30">
+          <textarea id="clientObs" placeholder="Observações (ex: voltagem, 3000K ou 6000K, acabamento)..." rows="2" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"></textarea>
         </div>
 
         <button onclick="sendWhatsAppOrder()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2">
           <i class="fa-brands fa-whatsapp text-lg"></i>
-          Enviar Orçamento no WhatsApp
+          Enviar orçamento no WhatsApp
         </button>
       </div>
     </div>
   </div>
 
   <script>
-    // URL de publicação CSV do seu Google Sheets
+    // ================== CONFIGURAÇÕES ==================
     const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzJ_n9tb1R1v1eBH3i8n_ogSORXAI7qzFeaeJVIUs0_ZQdhFnzyyLvQdaaCqBwia_6bGCXW-5s32aB/pub?output=csv";
     const WHATSAPP_NUMBER = "5511959781849";
+    const IMAGES_FOLDER   = "imagens/";   // pasta das fotos no GitHub. Na planilha pode ir só o nome: "PROD-001.jpg"
+    const LOGO_CANDIDATES = ["imagens/logo.jpg", "logo.jpg", "imagens/logo.png", "logo.png"];
+    const SHOW_BRAND_TEXT = false;        // true = mostra "LumiFa Iluminação" em texto ao lado da logo
+    const CART_STORAGE_KEY = "lumifa_cart_v1";
+
+    // Placeholder embutido (não depende de site externo)
+    const FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><rect width="600" height="600" fill="#F1F5F9"/><g fill="none" stroke="#D4AF37" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M300 190a80 80 0 0 0-50 142c10 9 14 18 14 30v8h72v-8c0-12 4-21 14-30a80 80 0 0 0-50-142z"/><path d="M272 400h56M280 424h40"/></g><text x="300" y="500" font-family="Arial" font-size="26" fill="#94A3B8" text-anchor="middle">LumiFa Iluminação</text></svg>'
+    );
 
     let products = [];
-    let cart = [];
+    let cart = [];            // [{ product, qty }]
     let selectedCategory = "Todos";
+    let catDragMoved = false;
 
-    window.onload = function() {
-      fetchProductsData();
-    };
+    // ================== UTILITÁRIOS ==================
+    const $ = id => document.getElementById(id);
+    const fmt = n => Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const priceLabel = p => p > 0 ? fmt(p) : 'Sob consulta';
 
-    // Botão flutuante voltar ao topo
-    window.onscroll = function() {
-      const btn = document.getElementById("scrollToTopBtn");
-      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        btn.classList.remove("opacity-0", "pointer-events-none");
-        btn.classList.add("opacity-100", "pointer-events-auto");
-      } else {
-        btn.classList.remove("opacity-100", "pointer-events-auto");
-        btn.classList.add("opacity-0", "pointer-events-none");
-      }
-    };
-
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function parsePrice(raw) {
+      let s = String(raw || '').replace(/[^\d,.-]/g, '');
+      if (!s) return 0;
+      if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+      else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');   // "1.250" = mil duzentos e cinquenta
+      return parseFloat(s) || 0;
     }
 
-    // Leitura à prova de falhas com PapaParse (evita bug de vírgulas e quebras de linha nas descrições)
-    function fetchProductsData() {
-      if (!GOOGLE_SHEETS_CSV_URL || GOOGLE_SHEETS_CSV_URL.trim() === "") {
-        initCatalog();
-        return;
-      }
+    // Aceita: link completo, link "github.com/.../blob/...", caminho com pasta ou só o nome do arquivo
+    function resolveImage(v) {
+      v = (v || '').trim();
+      if (!v) return FALLBACK_IMG;
+      const gh = v.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/i);
+      if (gh) return `https://raw.githubusercontent.com/${gh[1]}/${gh[2]}/${gh[3]}`;
+      if (/^(https?:)?\/\//i.test(v) || v.startsWith('data:') || v.includes('/')) return v;
+      return IMAGES_FOLDER + encodeURI(v);
+    }
 
-      Papa.parse(GOOGLE_SHEETS_CSV_URL + '&t=' + new Date().getTime(), {
+    function showToast(text) {
+      $('toastText').textContent = text;
+      const t = $('toast');
+      t.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    function updateScrollLock() {
+      const open = ['detailModal', 'lightboxModal', 'cartModal'].some(id => !$(id).classList.contains('hidden'));
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+    }
+
+    // ================== INICIALIZAÇÃO ==================
+    window.addEventListener('load', () => {
+      $('year').textContent = new Date().getFullYear();
+      const waBase = `https://wa.me/${WHATSAPP_NUMBER}`;
+      $('waFab').href = waBase + '?text=' + encodeURIComponent('Olá! Vim pelo catálogo da LumiFa Iluminação.');
+      $('footerWa').href = $('waFab').href;
+
+      setupLogo();
+      setupHeaderHeight();
+      setupCategoryScroller();
+      loadCart();
+      fetchProductsData();
+
+      let t;
+      $('searchInput').addEventListener('input', () => { clearTimeout(t); t = setTimeout(renderProducts, 120); });
+      $('sortSelect').addEventListener('change', renderProducts);
+
+      // Delegação de cliques: evita problemas com aspas/apóstrofos nos dados da planilha
+      $('productGrid').addEventListener('click', e => {
+        const el = e.target.closest('[data-action]');
+        if (!el) return;
+        if (el.dataset.action === 'open') openDetailModal(el.dataset.code);
+        if (el.dataset.action === 'add') addToCart(el.dataset.code);
+      });
+      $('cartItemsList').addEventListener('click', e => {
+        const el = e.target.closest('[data-qty]');
+        if (el) changeQty(el.dataset.code, Number(el.dataset.qty));
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      const btn = $('scrollToTopBtn');
+      const show = (document.documentElement.scrollTop || document.body.scrollTop) > 300;
+      btn.classList.toggle('opacity-0', !show);
+      btn.classList.toggle('pointer-events-none', !show);
+    }, { passive: true });
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      if (!$('lightboxModal').classList.contains('hidden')) closeLightboxModal();
+      else if (!$('detailModal').classList.contains('hidden')) closeDetailModal();
+      else if (!$('cartModal').classList.contains('hidden')) toggleCartModal();
+    });
+
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    // ---------- Logo ----------
+    function setupLogo() {
+      const img = $('logoImg');
+      let i = 0;
+      if (SHOW_BRAND_TEXT) $('brandText').classList.remove('hidden');
+      img.onerror = () => {
+        i++;
+        if (i < LOGO_CANDIDATES.length) { img.src = LOGO_CANDIDATES[i]; return; }
+        img.onerror = null;
+        img.classList.add('hidden');
+        $('brandText').classList.remove('hidden');
+      };
+      img.src = LOGO_CANDIDATES[0];
+    }
+
+    // Mantém a barra de busca colada logo abaixo do cabeçalho, qualquer que seja a altura da logo
+    function setupHeaderHeight() {
+      const header = $('siteHeader');
+      const set = () => document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+      set();
+      if ('ResizeObserver' in window) new ResizeObserver(set).observe(header);
+      window.addEventListener('resize', set);
+    }
+
+    // ================== DADOS ==================
+    function fetchProductsData() {
+      Papa.parse(GOOGLE_SHEETS_CSV_URL + '&t=' + Date.now(), {
         download: true,
         header: true,
         skipEmptyLines: true,
-        complete: function(results) {
-          if (results.data && results.data.length > 0) {
-            products = results.data.map((row, idx) => {
-              // Normaliza as chaves do cabeçalho para minúsculas
-              const item = {};
-              for (let k in row) {
-                item[k.trim().toLowerCase()] = row[k] ? row[k].trim() : "";
-              }
-
-              return {
-                code: item.codigo || `COD-${idx + 1}`,
-                name: item.nome || item.codigo || 'Produto Iluminação LED',
-                category: item.categoria || 'Geral',
-                price: parseFloat((item.preco || '0').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0,
-                specs: item.especificacoes || '',
-                desc: item.descricao || item.especificacoes || '',
-                image: item.imagem || 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao'
-              };
-            }).filter(p => p.code !== "");
+        complete: function (results) {
+          products = (results.data || []).map((row, idx) => {
+            const item = {};
+            for (const k in row) item[k.trim().toLowerCase()] = row[k] ? String(row[k]).trim() : '';
+            const p = {
+              code: item.codigo || item['código'] || `COD-${idx + 1}`,
+              name: item.nome || item.codigo || 'Produto Iluminação LED',
+              category: item.categoria || 'Geral',
+              price: parsePrice(item.preco || item['preço']),
+              specs: item.especificacoes || item['especificações'] || '',
+              desc: item.descricao || item['descrição'] || item.especificacoes || '',
+              image: resolveImage(item.imagem)
+            };
+            p.haystack = norm([p.code, p.name, p.category, p.specs, p.desc].join(' '));
+            p.order = idx;
+            return p;
+          });
+          if (!products.length) {
+            initCatalog();
+            showEmpty('Catálogo vazio', 'Não encontramos produtos na planilha. Tente novamente em instantes.', true);
+            return;
           }
+          hydrateCart();
           initCatalog();
         },
-        error: function(err) {
-          console.error("Erro ao carregar dados via PapaParse:", err);
+        error: function (err) {
+          console.error('Erro ao carregar dados:', err);
           initCatalog();
+          showEmpty('Não foi possível carregar o catálogo', 'Verifique sua conexão e tente novamente.', true);
         }
       });
     }
 
     function initCatalog() {
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('productGrid').classList.remove('hidden');
+      $('loading').classList.add('hidden');
+      $('productGrid').classList.remove('hidden');
       renderCategoryTabs();
       renderProducts();
       updateCartBadge();
     }
 
-    function getCategories() {
-      const cats = ["Todos"];
-      products.forEach(p => {
-        if (p.category && !cats.includes(p.category)) {
-          cats.push(p.category);
-        }
-      });
-      return cats;
+    function showEmpty(title, text, isError) {
+      $('emptyTitle').textContent = title;
+      $('emptyText').textContent = text;
+      $('emptyIcon').className = isError ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-lightbulb';
+      const btn = $('emptyBtn');
+      btn.textContent = isError ? 'Tentar novamente' : 'Ver todos os produtos';
+      btn.onclick = isError ? () => location.reload() : resetFilters;
+      $('emptyState').classList.remove('hidden');
+      $('productGrid').innerHTML = '';
+      $('productCountText').textContent = isError ? '' : '0 produtos';
     }
 
+    // ================== CATEGORIAS ==================
+    function getCategories() {
+      const counts = new Map();
+      products.forEach(p => counts.set(p.category, (counts.get(p.category) || 0) + 1));
+      return [['Todos', products.length], ...counts.entries()];
+    }
+
+    // Monta as pílulas UMA vez. Trocar de categoria só muda o destaque,
+    // assim o carrossel não volta para o começo a cada clique.
     function renderCategoryTabs() {
-      const categories = getCategories();
-      const container = document.getElementById("categoryTabs");
-      container.innerHTML = categories.map(cat => {
-        const isActive = cat === selectedCategory;
-        return `
-          <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
-            isActive 
-              ? 'bg-brand-gold text-white font-bold shadow-md shadow-brand-gold/20 scale-[1.02]' 
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900 border border-slate-200/70'
-          }">
-            ${cat}
-          </button>
-        `;
-      }).join('');
+      $('categoryTabs').innerHTML = getCategories().map(([cat, n]) =>
+        `<button type="button" role="tab" class="cat-pill" data-cat="${esc(cat)}">${esc(cat)}<span class="cat-count">${n}</span></button>`
+      ).join('');
+      updateCategoryActive(false);
+      updateCatArrows();
+    }
+
+    function updateCategoryActive(center) {
+      let activeBtn = null;
+      $('categoryTabs').querySelectorAll('.cat-pill').forEach(b => {
+        const on = b.dataset.cat === selectedCategory;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on);
+        if (on) activeBtn = b;
+      });
+      if (center && activeBtn) {
+        const box = $('categoryTabs');
+        box.scrollTo({ left: activeBtn.offsetLeft - (box.clientWidth - activeBtn.offsetWidth) / 2, behavior: 'smooth' });
+      }
+    }
+
+    function updateCatArrows() {
+      const box = $('categoryTabs');
+      const max = box.scrollWidth - box.clientWidth;
+      $('catPrevWrap').classList.toggle('visible', box.scrollLeft > 4);
+      $('catNextWrap').classList.toggle('visible', max > 4 && box.scrollLeft < max - 4);
+    }
+
+    function setupCategoryScroller() {
+      const box = $('categoryTabs');
+
+      box.addEventListener('scroll', updateCatArrows, { passive: true });
+      window.addEventListener('resize', updateCatArrows);
+
+      $('catPrev').onclick = () => box.scrollBy({ left: -box.clientWidth * 0.7, behavior: 'smooth' });
+      $('catNext').onclick = () => box.scrollBy({ left:  box.clientWidth * 0.7, behavior: 'smooth' });
+
+      // Roda do mouse (vertical) rola as categorias para o lado
+      box.addEventListener('wheel', e => {
+        if (box.scrollWidth <= box.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+        e.preventDefault();
+        box.scrollLeft += e.deltaY;
+      }, { passive: false });
+
+      // Arrastar com o mouse
+      let startX = 0, startLeft = 0, down = false;
+      box.addEventListener('pointerdown', e => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        down = true; catDragMoved = false; startX = e.clientX; startLeft = box.scrollLeft;
+      });
+      window.addEventListener('pointermove', e => {
+        if (!down) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 5) { catDragMoved = true; box.classList.add('dragging'); }
+        if (catDragMoved) box.scrollLeft = startLeft - dx;
+      });
+      window.addEventListener('pointerup', () => {
+        if (!down) return;
+        down = false; box.classList.remove('dragging');
+        setTimeout(() => { catDragMoved = false; }, 0);
+      });
+
+      // Clique numa categoria (ignora se foi um arrasto)
+      box.addEventListener('click', e => {
+        const b = e.target.closest('.cat-pill');
+        if (!b || catDragMoved) return;
+        selectCategory(b.dataset.cat);
+      });
     }
 
     function selectCategory(cat) {
       selectedCategory = cat;
-      renderCategoryTabs();
+      updateCategoryActive(true);
       renderProducts();
-      scrollToTop();
     }
 
     function clearSearch() {
-      document.getElementById("searchInput").value = "";
+      $('searchInput').value = '';
       renderProducts();
+      $('searchInput').focus();
     }
 
     function resetFilters() {
-      document.getElementById("searchInput").value = "";
-      selectedCategory = "Todos";
-      renderCategoryTabs();
+      $('searchInput').value = '';
+      $('sortSelect').value = 'default';
+      selectedCategory = 'Todos';
+      updateCategoryActive(true);
       renderProducts();
-      scrollToTop();
     }
 
+    // ================== PRODUTOS ==================
     function renderProducts() {
-      const query = document.getElementById("searchInput").value.toLowerCase().trim();
-      const clearBtn = document.getElementById("clearSearchBtn");
-      
-      if (query.length > 0) clearBtn.classList.remove("hidden");
-      else clearBtn.classList.add("hidden");
+      const rawQuery = $('searchInput').value.trim();
+      const terms = norm(rawQuery).split(/\s+/).filter(Boolean);
+      $('clearSearchBtn').classList.toggle('hidden', !rawQuery);
+      $('clearSearchBtn').classList.toggle('flex', !!rawQuery);
 
-      const filtered = products.filter(p => {
-        const matchesCat = selectedCategory === "Todos" || p.category === selectedCategory;
-        const matchesQuery = 
-          p.code.toLowerCase().includes(query) ||
-          p.name.toLowerCase().includes(query) ||
-          p.specs.toLowerCase().includes(query) ||
-          p.desc.toLowerCase().includes(query) ||
-          (p.category && p.category.toLowerCase().includes(query));
+      let filtered = products.filter(p =>
+        (selectedCategory === 'Todos' || p.category === selectedCategory) &&
+        terms.every(t => p.haystack.includes(t))
+      );
 
-        return matchesCat && matchesQuery;
-      });
+      const sort = $('sortSelect').value;
+      if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+      else if (sort === 'priceAsc')  filtered.sort((a, b) => (a.price || Infinity) - (b.price || Infinity));
+      else if (sort === 'priceDesc') filtered.sort((a, b) => b.price - a.price);
+      else filtered.sort((a, b) => a.order - b.order);
 
-      const grid = document.getElementById("productGrid");
-      const emptyState = document.getElementById("emptyState");
-      const countText = document.getElementById("productCountText");
+      const grid = $('productGrid');
+      $('productCountText').textContent = `${filtered.length} ${filtered.length === 1 ? 'produto' : 'produtos'}` +
+        (selectedCategory !== 'Todos' ? ` em ${selectedCategory}` : '');
 
-      countText.innerText = `${filtered.length} produto(s) exibido(s)`;
+      if (!products.length) return;   // estado de erro/vazio já tratado em showEmpty
+      if (filtered.length === 0) { showEmpty('Nenhum produto foi encontrado', 'Verifique o termo pesquisado ou selecione outra categoria acima.', false); return; }
 
-      if (filtered.length === 0) {
-        grid.innerHTML = "";
-        emptyState.classList.remove("hidden");
-        return;
-      }
+      $('emptyState').classList.add('hidden');
 
-      emptyState.classList.add("hidden");
+      grid.innerHTML = filtered.map(p => `
+        <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
 
-      grid.innerHTML = filtered.map(p => {
-        const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao';
+          <div class="relative aspect-square bg-slate-50/80 overflow-hidden cursor-pointer flex items-center justify-center p-3" data-action="open" data-code="${esc(p.code)}">
+            <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"
+                 class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                 onerror="this.onerror=null;this.src=FALLBACK_IMG">
+            <span class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
+            <span class="absolute bottom-2.5 right-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
+          </div>
 
-        return `
-          <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
-            
-            <!-- Imagem e Badges -->
-            <div class="relative aspect-square bg-slate-50/80 overflow-hidden cursor-pointer flex items-center justify-center p-3" onclick="openDetailModal('${p.code}')">
-              <img src="${p.image || fallbackImg}" 
-                   alt="${p.name}" 
-                   loading="lazy"
-                   class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" 
-                   onerror="this.src='${fallbackImg}'">
-              
-              <span class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">
-                ${p.code}
-              </span>
-
-              <span class="absolute bottom-2.5 right-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">
-                ${p.category}
-              </span>
+          <div class="p-3.5 sm:p-4 flex-grow flex flex-col justify-between space-y-3">
+            <div>
+              <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug"
+                  data-action="open" data-code="${esc(p.code)}" title="${esc(p.name)}">${esc(p.name)}</h3>
+              ${p.specs ? `
+                <p class="text-[10px] text-slate-500 mt-2 line-clamp-2 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/50">
+                  <i class="fa-solid fa-sliders text-brand-gold/80 mr-1"></i>${esc(p.specs)}
+                </p>` : ''}
             </div>
 
-            <!-- Dados do Produto -->
-            <div class="p-3.5 sm:p-4 flex-grow flex flex-col justify-between space-y-3">
+            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
               <div>
-                <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug" 
-                    onclick="openDetailModal('${p.code}')" 
-                    title="${p.name}">
-                  ${p.name}
-                </h3>
-                
-                ${p.specs ? `
-                  <p class="text-[10px] text-slate-500 mt-2 line-clamp-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/50">
-                    <i class="fa-solid fa-sliders text-brand-gold/80 mr-1"></i> ${p.specs}
-                  </p>
-                ` : ''}
+                <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">Valor</span>
+                <span class="${p.price > 0 ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'} font-black text-brand-gold">${priceLabel(p.price)}</span>
               </div>
-
-              <!-- Preço e Ações -->
-              <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
-                <div>
-                  <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">Valor</span>
-                  <span class="text-sm sm:text-base font-black text-brand-gold">${formattedPrice}</span>
-                </div>
-
-                <div class="flex items-center gap-1.5">
-                  <button onclick="openDetailModal('${p.code}')" title="Ver Detalhes Técnicos" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition active:scale-90">
-                    <i class="fa-solid fa-eye"></i>
-                  </button>
-                  <button onclick="addToCart('${p.code}')" class="px-2.5 sm:px-3 h-8 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95">
-                    <i class="fa-solid fa-plus"></i> <span class="hidden xs:inline">Orçar</span>
-                  </button>
-                </div>
+              <div class="flex items-center gap-1.5">
+                <button data-action="open" data-code="${esc(p.code)}" title="Ver detalhes" aria-label="Ver detalhes" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition active:scale-90">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                <button data-action="add" data-code="${esc(p.code)}" class="px-3 h-8 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95">
+                  <i class="fa-solid fa-plus"></i> Orçar
+                </button>
               </div>
-
             </div>
           </div>
-        `;
-      }).join('');
+        </div>
+      `).join('');
     }
 
+    // ================== MODAIS ==================
     function openDetailModal(code) {
       const p = products.find(item => item.code === code);
       if (!p) return;
-
-      const formattedPrice = Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const fallbackImg = 'https://via.placeholder.com/600x400/F1F5F9/D4AF37?text=LumiFa+Iluminacao';
-      const imgSrc = p.image || fallbackImg;
-
-      document.getElementById("detailModalContent").innerHTML = `
+      $('detailModalContent').innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-          
-          <!-- Foto Ampliada com Botão de Ecrã Inteiro -->
-          <div class="relative rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/80 flex items-center justify-center p-3 group aspect-square">
-            <img src="${imgSrc}" 
-                 alt="${p.name}" 
-                 class="w-full h-full object-contain rounded-xl transition-all cursor-zoom-in" 
-                 onclick="openLightboxModal('${imgSrc}')"
-                 onerror="this.src='${fallbackImg}'">
-            
-            <button onclick="openLightboxModal('${imgSrc}')" title="Ver em Tela Cheia" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-white/95 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold backdrop-blur-md transition flex items-center gap-1.5 shadow-sm">
-              <i class="fa-solid fa-expand"></i>
-              <span>Zoom</span>
+          <div class="relative rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/80 flex items-center justify-center p-3 aspect-square">
+            <img src="${esc(p.image)}" alt="${esc(p.name)}" class="w-full h-full object-contain rounded-xl cursor-zoom-in"
+                 onclick="openLightboxModal(this.src)" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+            <button onclick="openLightboxModal(this.parentElement.querySelector('img').src)" title="Ver em tela cheia" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-white/95 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-expand"></i><span>Zoom</span>
             </button>
           </div>
 
-          <!-- Informações Técnicas -->
           <div class="flex flex-col justify-between h-full space-y-4">
             <div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="bg-amber-50 border border-amber-200/60 text-brand-gold text-[11px] font-extrabold px-2.5 py-0.5 rounded-md">CÓD: ${p.code}</span>
-                <span class="text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md font-semibold">${p.category}</span>
+              <div class="flex flex-wrap items-center gap-2 mb-2 pr-8">
+                <span class="bg-amber-50 border border-amber-200/60 text-brand-gold text-[11px] font-extrabold px-2.5 py-0.5 rounded-md">CÓD: ${esc(p.code)}</span>
+                <span class="text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md font-semibold">${esc(p.category)}</span>
               </div>
-
-              <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-snug">${p.name}</h2>
-              
+              <h2 class="font-serif text-2xl font-bold text-slate-900 leading-snug">${esc(p.name)}</h2>
               <div class="mt-2.5">
                 <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Preço</span>
-                <div class="text-2xl font-black text-brand-gold">${formattedPrice}</div>
+                <div class="text-2xl font-black text-brand-gold">${priceLabel(p.price)}</div>
               </div>
             </div>
 
             ${p.specs ? `
               <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/70 text-xs">
-                <span class="font-bold text-slate-700 block mb-1">Especificações Técnicas:</span>
-                <p class="text-slate-600 leading-relaxed">${p.specs}</p>
-              </div>
-            ` : ''}
+                <span class="font-bold text-slate-700 block mb-1">Especificações técnicas</span>
+                <p class="text-slate-600 leading-relaxed">${esc(p.specs)}</p>
+              </div>` : ''}
 
-            <p class="text-xs text-slate-500 leading-relaxed">${p.desc || 'Sem observações adicionais.'}</p>
+            <p class="text-xs text-slate-500 leading-relaxed">${esc(p.desc || 'Sem observações adicionais.')}</p>
 
-            <button onclick="addToCart('${p.code}'); closeDetailModal();" class="w-full py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-brand-gold/20 transition active:scale-95">
-              <i class="fa-solid fa-cart-plus"></i> Adicionar ao Orçamento
+            <button onclick="addToCart(this.dataset.code); closeDetailModal();" data-code="${esc(p.code)}" class="w-full py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-brand-gold/20 transition active:scale-95">
+              <i class="fa-solid fa-cart-plus"></i> Adicionar ao orçamento
             </button>
           </div>
-
-        </div>
-      `;
-
-      document.getElementById("detailModal").classList.remove("hidden");
+        </div>`;
+      $('detailModal').classList.remove('hidden');
+      updateScrollLock();
     }
+    function closeDetailModal() { $('detailModal').classList.add('hidden'); updateScrollLock(); }
 
-    function closeDetailModal() {
-      document.getElementById("detailModal").classList.add("hidden");
+    function openLightboxModal(src) { $('lightboxImg').src = src; $('lightboxModal').classList.remove('hidden'); updateScrollLock(); }
+    function closeLightboxModal() { $('lightboxModal').classList.add('hidden'); updateScrollLock(); }
+
+    // ================== ORÇAMENTO ==================
+    function saveCart() {
+      try { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart.map(i => ({ code: i.product.code, qty: i.qty })))); } catch (e) {}
     }
-
-    function openLightboxModal(imgUrl) {
-      const img = document.getElementById("lightboxImg");
-      img.src = imgUrl;
-      document.getElementById("lightboxModal").classList.remove("hidden");
+    function loadCart() {
+      try { cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]'); } catch (e) { cart = []; }
     }
-
-    function closeLightboxModal() {
-      document.getElementById("lightboxModal").classList.add("hidden");
+    // Converte os itens salvos (só código + qtd) em produtos reais, já com dados atualizados da planilha
+    function hydrateCart() {
+      cart = (cart || []).map(i => ({ product: products.find(p => p.code === i.code), qty: Number(i.qty) || 1 })).filter(i => i.product);
     }
 
     function addToCart(code) {
       const product = products.find(p => p.code === code);
       if (!product) return;
-
       const existing = cart.find(item => item.product.code === code);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({ product, qty: 1 });
-      }
-
-      updateCartBadge();
+      if (existing) existing.qty += 1; else cart.push({ product, qty: 1 });
+      saveCart();
+      updateCartBadge(true);
       renderCartItems();
+      showToast(`${product.code} adicionado ao orçamento`);
     }
 
-    function updateCartBadge() {
-      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cartBadge").innerText = totalQty;
+    function updateCartBadge(animate) {
+      const badge = $('cartBadge');
+      badge.innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+      if (animate) { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
     }
 
     function toggleCartModal() {
-      const modal = document.getElementById("cartModal");
-      modal.classList.toggle("hidden");
-      if (!modal.classList.contains("hidden")) {
-        renderCartItems();
-      }
+      const modal = $('cartModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) renderCartItems();
+      updateScrollLock();
     }
 
     function changeQty(code, delta) {
       const idx = cart.findIndex(item => item.product.code === code);
-      if (idx !== -1) {
-        cart[idx].qty += delta;
-        if (cart[idx].qty <= 0) cart.splice(idx, 1);
-      }
-      updateCartBadge();
-      renderCartItems();
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      saveCart(); updateCartBadge(); renderCartItems();
+    }
+
+    function clearCart() {
+      if (!cart.length || !confirm('Remover todos os itens do orçamento?')) return;
+      cart = []; saveCart(); updateCartBadge(); renderCartItems();
     }
 
     function renderCartItems() {
-      const container = document.getElementById("cartItemsList");
-      const totalElement = document.getElementById("cartTotal");
+      const container = $('cartItemsList');
+      $('clearCartBtn').classList.toggle('hidden', cart.length === 0);
 
       if (cart.length === 0) {
         container.innerHTML = `
           <div class="text-center py-16 text-slate-400 text-xs">
-            <i class="fa-solid fa-cart-flatbed text-4xl mb-3 text-slate-300"></i>
+            <i class="fa-solid fa-clipboard-list text-4xl mb-3 text-slate-300"></i>
             <p class="font-medium text-slate-600">Seu orçamento está vazio.</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">Adicione produtos pelo botão "+ Orçar".</p>
-          </div>
-        `;
-        totalElement.innerText = "R$ 0,00";
+            <p class="text-[11px] text-slate-400 mt-0.5">Adicione produtos pelo botão “+ Orçar”.</p>
+          </div>`;
+        $('cartTotal').innerText = 'R$ 0,00';
+        $('cartNote').classList.add('hidden');
         return;
       }
 
-      let grandTotal = 0;
-
+      let grandTotal = 0, hasUnpriced = false;
       container.innerHTML = cart.map(item => {
-        const itemTotal = item.product.price * item.qty;
-        grandTotal += itemTotal;
-
+        const p = item.product;
+        if (p.price > 0) grandTotal += p.price * item.qty; else hasUnpriced = true;
         return `
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 text-xs shadow-sm">
-            <div class="flex-grow">
-              <span class="font-extrabold text-brand-gold text-[11px]">[${item.product.code}]</span>
-              <h4 class="font-bold text-slate-800 line-clamp-1">${item.product.name}</h4>
-              <p class="text-brand-gold font-bold mt-0.5 text-xs">R$ ${itemTotal.toFixed(2)}</p>
+          <div class="bg-white p-3 rounded-2xl border border-slate-200 flex items-center gap-3 text-xs shadow-sm">
+            <img src="${esc(p.image)}" alt="" class="w-14 h-14 rounded-xl object-contain bg-slate-50 border border-slate-100 shrink-0" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+            <div class="flex-grow min-w-0">
+              <span class="font-extrabold text-brand-gold text-[11px]">[${esc(p.code)}]</span>
+              <h4 class="font-bold text-slate-800 line-clamp-1">${esc(p.name)}</h4>
+              <p class="text-brand-gold font-bold mt-0.5 text-xs">${p.price > 0 ? fmt(p.price * item.qty) : 'Sob consulta'}</p>
             </div>
-
-            <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50 overflow-hidden">
-              <button onclick="changeQty('${item.product.code}', -1)" class="px-2.5 py-1 text-slate-500 hover:text-slate-900 font-bold transition">-</button>
+            <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50 overflow-hidden shrink-0">
+              <button data-code="${esc(p.code)}" data-qty="-1" aria-label="Diminuir" class="px-2.5 py-1 text-slate-500 hover:text-slate-900 font-bold transition">−</button>
               <span class="px-2 font-black text-slate-800">${item.qty}</span>
-              <button onclick="changeQty('${item.product.code}', 1)" class="px-2.5 py-1 text-slate-500 hover:text-slate-900 font-bold transition">+</button>
+              <button data-code="${esc(p.code)}" data-qty="1" aria-label="Aumentar" class="px-2.5 py-1 text-slate-500 hover:text-slate-900 font-bold transition">+</button>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
 
-      totalElement.innerText = grandTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      $('cartTotal').innerText = grandTotal > 0 ? fmt(grandTotal) : 'Sob consulta';
+      $('cartNote').classList.toggle('hidden', !(hasUnpriced && grandTotal > 0));
     }
 
     function sendWhatsAppOrder() {
-      if (cart.length === 0) {
-        alert("Adicione produtos ao orçamento primeiro.");
-        return;
-      }
+      if (cart.length === 0) { showToast('Adicione produtos ao orçamento primeiro'); return; }
 
-      const clientName = document.getElementById("clientName").value.trim();
-      const clientObs = document.getElementById("clientObs").value.trim();
+      const clientName = $('clientName').value.trim();
+      const clientObs = $('clientObs').value.trim();
 
       let msg = `*SOLICITAÇÃO DE ORÇAMENTO — LUMIFA ILUMINAÇÃO*\n`;
+      msg += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
       if (clientName) msg += `*Cliente:* ${clientName}\n`;
       msg += `------------------------------------\n\n`;
 
-      let total = 0;
+      let total = 0, hasUnpriced = false;
       cart.forEach((item, idx) => {
-        const sub = item.product.price * item.qty;
-        total += sub;
-        msg += `${idx + 1}. *[${item.product.code}]* ${item.product.name}\n`;
-        msg += `   Qtd: ${item.qty}x | Val. Unit: R$ ${item.product.price.toFixed(2)} | Subtotal: R$ ${sub.toFixed(2)}\n\n`;
+        const p = item.product;
+        msg += `${idx + 1}. *[${p.code}]* ${p.name}\n`;
+        if (p.price > 0) {
+          const sub = p.price * item.qty;
+          total += sub;
+          msg += `   Qtd: ${item.qty}x | Unit.: ${fmt(p.price)} | Subtotal: ${fmt(sub)}\n\n`;
+        } else {
+          hasUnpriced = true;
+          msg += `   Qtd: ${item.qty}x | Valor: sob consulta\n\n`;
+        }
       });
 
       msg += `------------------------------------\n`;
-      msg += `*TOTAL ESTIMADO:* R$ ${total.toFixed(2)}\n`;
-
+      msg += total > 0 ? `*TOTAL ESTIMADO:* ${fmt(total)}${hasUnpriced ? ' (+ itens sob consulta)' : ''}\n` : `*TOTAL:* sob consulta\n`;
       if (clientObs) msg += `\n*Obs:* ${clientObs}\n`;
       msg += `\nAguardo confirmação de disponibilidade.`;
 
