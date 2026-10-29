@@ -295,6 +295,12 @@
     <i class="fa-solid fa-arrow-up text-sm"></i>
   </button>
 
+  <!-- MODO EQUIPE (só aparece depois de digitar a senha) -->
+  <div id="teamBar" class="hidden fixed bottom-6 left-4 z-40 bg-slate-900 text-white text-[11px] font-semibold pl-3 pr-1.5 py-1.5 rounded-xl shadow-2xl items-center gap-2">
+    <i class="fa-solid fa-user-lock text-brand-shine"></i><span>Modo equipe</span>
+    <button onclick="teamLogout()" class="ml-1 px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20">Sair</button>
+  </div>
+
   <!-- TOAST -->
   <div id="toast" class="toast bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2">
     <i class="fa-solid fa-circle-check text-brand-shine"></i><span id="toastText"></span>
@@ -384,6 +390,8 @@
     const LOGO_CANDIDATES = ["imagens/logo.jpg", "logo.jpg", "imagens/logo.png", "logo.png"];
     const SHOW_BRAND_TEXT = true;       // true = mostra "LumiFa Iluminação" em texto ao lado da logo
     const CART_STORAGE_KEY = "lumifa_cart_v1";
+    const TEAM_DATA_URL   = "equipe.dat";        // códigos originais das parceiras, protegidos por senha
+    const TEAM_PASS_KEY   = "lumifa_equipe_v1";  // guarda a senha só no aparelho da equipe
 
     // ================== ORDEM DE EXIBIÇÃO ==================
     // A ordem da planilha NÃO precisa ser mexida: o site reordena sozinho na opção "Padrão".
@@ -426,6 +434,7 @@
     let cart = [];            // [{ product, qty }]
     let selectedCategory = "Todos";
     let catDragMoved = false;
+    let teamMap = null;      // { "PROD-001": [parceira, código original, página PDF, preço tabela] }
 
     // ================== UTILITÁRIOS ==================
     const $ = id => document.getElementById(id);
@@ -496,6 +505,7 @@
       setupCategoryScroller();
       loadCart();
       fetchProductsData();
+      initTeamMode();
 
       let t;
       $('searchInput').addEventListener('input', () => { clearTimeout(t); t = setTimeout(renderProducts, 120); });
@@ -562,6 +572,93 @@
       window.addEventListener('resize', set);
     }
 
+    // ================== MODO EQUIPE ==================
+    // Para entrar: abrir o site com #equipe no fim do endereço e digitar a senha.
+    // Os códigos ficam criptografados em equipe.dat; sem a senha ninguém consegue ler.
+    const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+    async function decryptTeamData(pass) {
+      const pkg = await (await fetch(TEAM_DATA_URL + '?t=' + Date.now())).json();
+      const enc = new TextEncoder();
+      const base = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey']);
+      const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(pkg.salt), iterations: pkg.it, hash: 'SHA-256' },
+        base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(pkg.iv) }, key, b64(pkg.data));
+      return JSON.parse(new TextDecoder().decode(plain));
+    }
+
+    async function teamLogin(pass, silent) {
+      try {
+        teamMap = await decryptTeamData(pass);
+        try { localStorage.setItem(TEAM_PASS_KEY, pass); } catch (e) {}
+        $('teamBar').classList.remove('hidden'); $('teamBar').classList.add('flex');
+        applyTeam();
+        if (!silent) showToast('Modo equipe ativado');
+        return true;
+      } catch (e) {
+        teamMap = null;
+        try { localStorage.removeItem(TEAM_PASS_KEY); } catch (_) {}
+        if (!silent) showToast('Senha incorreta');
+        return false;
+      }
+    }
+
+    function initTeamMode() {
+      let saved = null;
+      try { saved = localStorage.getItem(TEAM_PASS_KEY); } catch (e) {}
+      if (saved) teamLogin(saved, true);
+      const ask = () => {
+        if (!/^#equipe$/i.test(location.hash)) return;
+        history.replaceState(null, '', location.pathname + location.search);
+        if (teamMap) { showToast('Modo equipe já está ativo'); return; }
+        const pass = prompt('Senha da equipe:');
+        if (pass) teamLogin(pass.trim(), false);
+      };
+      ask();
+      window.addEventListener('hashchange', ask);
+    }
+
+    function teamLogout() {
+      teamMap = null;
+      try { localStorage.removeItem(TEAM_PASS_KEY); } catch (e) {}
+      $('teamBar').classList.add('hidden'); $('teamBar').classList.remove('flex');
+      products.forEach(p => { p.team = null; p.haystack = p.baseHaystack || p.haystack; });
+      if (products.length) renderProducts();
+      showToast('Modo equipe desativado');
+    }
+
+    // Junta os códigos originais aos produtos e deixa a busca encontrar por eles
+    function applyTeam() {
+      if (!teamMap || !products.length) return;
+      products.forEach(p => {
+        const t = teamMap[p.code];
+        p.baseHaystack = p.baseHaystack || p.haystack;
+        p.team = t ? { partner: t[0], orig: t[1], page: t[2], table: t[3] } : null;
+        p.haystack = p.team ? p.baseHaystack + ' ' + norm(p.team.orig + ' ' + p.team.partner) : p.baseHaystack;
+      });
+      renderProducts();
+    }
+
+    function teamCardHtml(p) {
+      if (!p.team) return '';
+      return `<p class="mt-1.5 text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/70 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+        <i class="fa-solid fa-lock text-[9px]"></i>${esc(p.team.partner)} · ${esc(p.team.orig || '—')}</p>`;
+    }
+
+    function teamModalHtml(p) {
+      if (!p.team) return '';
+      const row = (k, v) => v ? `<div><span class="text-indigo-400 font-bold uppercase tracking-wider text-[9px] block">${k}</span><span class="font-bold text-indigo-900">${esc(v)}</span></div>` : '';
+      return `
+        <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-3.5 text-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-indigo-800"><i class="fa-solid fa-lock mr-1"></i>Só para a equipe</span>
+            ${p.team.orig ? `<button onclick="navigator.clipboard && navigator.clipboard.writeText(this.dataset.c).then(()=>showToast('Código copiado'))" data-c="${esc(p.team.orig)}" class="px-2 py-1 rounded-lg bg-indigo-600 text-white text-[10px] font-bold"><i class="fa-regular fa-copy mr-1"></i>Copiar código</button>` : ''}
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            ${row('Parceira', p.team.partner)}${row('Código original', p.team.orig)}${row('Página do PDF', p.team.page)}${row('Preço de tabela', p.team.table)}
+          </div>
+        </div>`;
+    }
+
     // ================== DADOS ==================
     function fetchProductsData() {
       Papa.parse(GOOGLE_SHEETS_CSV_URL + '&t=' + Date.now(), {
@@ -603,6 +700,7 @@
             showEmpty('Catálogo vazio', 'Não encontramos produtos na planilha. Tente novamente em instantes.', true);
             return;
           }
+          applyTeam();
           hydrateCart();
           initCatalog();
         },
@@ -795,6 +893,7 @@
             <div>
               <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug"
                   data-action="open" data-code="${esc(p.code)}" title="${esc(p.name)}">${esc(p.name)}</h3>
+              ${teamCardHtml(p)}
               ${p.specs ? `
                 <p class="text-[10px] text-slate-500 mt-2 line-clamp-2 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/50">
                   <i class="fa-solid fa-sliders text-brand-gold/80 mr-1"></i>${esc(p.specs)}
@@ -846,6 +945,8 @@
                 <div class="text-2xl font-black text-brand-gold">${priceLabel(p.price)}</div>
               </div>
             </div>
+
+            ${teamModalHtml(p)}
 
             ${p.specs ? `
               <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/70 text-xs">
