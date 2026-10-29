@@ -533,8 +533,11 @@
             let desc = cleanText(rawDesc.replace(/\s*\bTags:.*$/i, ''), p.name);
             if (p.specs && desc.toLowerCase().startsWith(p.specs.toLowerCase())) desc = trimSeparators(desc.slice(p.specs.length));
             p.desc = desc;
-            // A busca usa os textos originais completos (inclui as tags)
-            p.haystack = norm([p.code, p.name, p.category, rawSpecs, rawDesc].join(' '));
+            // A busca olha código, nome, especificações, descrição e tags — mas NÃO a categoria
+            // (nem a tag que repete a categoria), senão buscar "ventilador" trazia tudo de "Plafons & Ventiladores".
+            const catKey = norm(p.category);
+            const searchTags = p.tags.filter(t => norm(t) !== catKey);
+            p.haystack = norm([p.code, p.name, rawSpecs, desc, searchTags.join(' ')].join(' '));
             p.order = idx;
             return p;
           });
