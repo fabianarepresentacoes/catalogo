@@ -23,28 +23,47 @@
   <!-- PapaParse: leitura segura de CSV do Google Sheets -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
+  <!-- TEMA: aplica claro/escuro ANTES de desenhar a página (evita "piscar" branco) -->
   <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('lumifa_theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      if (t === 'dark') document.documentElement.classList.add('dark');
+    })();
+  </script>
+
+  <script>
+    // Cores que mudam com o tema leem variáveis CSS (definidas em :root e html.dark, no <style> abaixo)
+    const v = name => `rgb(var(--${name}) / <alpha-value>)`;
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             brand: {
-              gold: '#96701A',        /* Latão: textos e botões (contraste ~4,5:1 com branco) */
+              gold: '#96701A',        /* Latão: fundo dos botões (texto branco) — igual nos dois temas */
               goldHover: '#7A5A12',   /* Latão escuro (hover) */
               brassLight: '#A67C1F',  /* Início do degradê dos botões */
               shine: '#D4AF37',       /* Dourado brilhante: só detalhes decorativos / fundo escuro */
-              goldLight: '#FDFBF7',
-              bg: '#FAF8F4',          /* Off-white quente */
-              card: '#FFFFFF',
-              border: '#E7E2D9',
+              accent: v('accent'),            /* Dourado para TEXTOS: latão no claro, dourado vivo no escuro */
+              accentHover: v('accent-hover'),
+              goldLight: v('gold-light'),
+              bg: v('page'),
+              card: v('surface'),
+              border: v('line'),
               textPrimary: '#1C1917',
               textSecondary: '#78716C'
             },
-            /* Cinzas quentes (stone) no lugar dos cinza-azulados (slate) em toda a página */
+            surface: v('surface'),    /* fundo de cards, caixas e modais */
+            stage: v('stage'),        /* "vitrine" atrás das fotos dos produtos */
+            /* Cinzas quentes (stone). No modo escuro a escala se inverte sozinha. */
             slate: {
-              50: '#FAFAF9', 100: '#F5F5F4', 200: '#E7E5E4', 300: '#D6D3D1', 400: '#A8A29E',
-              500: '#78716C', 600: '#57534E', 700: '#44403C', 800: '#292524', 900: '#1C1917', 950: '#0C0A09'
-            }
+              50: v('s50'), 100: v('s100'), 200: v('s200'), 300: v('s300'), 400: v('s400'),
+              500: v('s500'), 600: v('s600'), 700: v('s700'), 800: v('s800'), 900: v('s900'), 950: v('s950')
+            },
+            /* Tons escuros FIXOS (selos, toast, fundo dos modais) — não mudam com o tema */
+            ink: { 700: '#44403C', 800: '#292524', 900: '#1C1917', 950: '#0C0A09' },
+            amber: { 50: v('amber50'), 200: v('amber200') }
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
@@ -56,17 +75,91 @@
   </script>
 
   <style>
-    :root { --header-h: 72px; }
+    /* ================== CORES DO TEMA ==================
+       Claro: off-white quente + latão.  Escuro: "showroom à noite" — carvão quente + dourado aceso.
+       Valores em "R G B" para o Tailwind aplicar transparências (ex.: border-slate-200/80). */
+    :root {
+      --header-h: 72px;
+      color-scheme: light;
+      --page: 250 248 244;  --surface: 255 255 255;  --stage: 255 255 255;
+      --line: 231 226 217;  --gold-light: 253 251 247;
+      --accent: 150 112 26; --accent-hover: 122 90 18;
+      --amber50: 255 251 235; --amber200: 253 230 138;
+      --s50: 250 250 249; --s100: 245 245 244; --s200: 231 229 228; --s300: 214 211 209; --s400: 168 162 158;
+      --s500: 120 113 108; --s600: 87 83 78; --s700: 68 64 60; --s800: 41 37 36; --s900: 28 25 23; --s950: 12 10 9;
+      --glass: rgba(255, 255, 255, 0.94);
+      --pill-bg: #F5F3EE; --pill-text: #57534E; --pill-line: rgba(231, 226, 217, 0.9);
+      --pill-hover-bg: #E7E2D9; --pill-hover-text: #1C1917;
+      --scroll-track: #F5F3EE; --scroll-thumb: #D6D3D1;
+    }
+    html.dark {
+      color-scheme: dark;
+      --page: 20 17 14;     --surface: 30 26 22;    --stage: 236 231 222;
+      --line: 58 51 43;     --gold-light: 36 29 18;
+      --accent: 217 180 74; --accent-hover: 236 203 112;
+      --amber50: 46 37 20;  --amber200: 102 82 36;
+      /* escala de cinzas invertida: o que era fundo claro vira fundo escuro, e texto escuro vira claro */
+      --s50: 26 23 20; --s100: 38 34 29; --s200: 52 46 40; --s300: 74 66 58; --s400: 128 120 111;
+      --s500: 163 155 146; --s600: 194 186 176; --s700: 214 207 198; --s800: 232 226 217; --s900: 245 240 232; --s950: 251 248 243;
+      --glass: rgba(24, 21, 17, 0.9);
+      --pill-bg: #262019; --pill-text: #C2BAB0; --pill-line: rgba(74, 66, 58, 0.9);
+      --pill-hover-bg: #342C22; --pill-hover-text: #F5F0E8;
+      --scroll-track: #1A1714; --scroll-thumb: #4A423A;
+    }
 
     body {
-      background-color: #FAF8F4;
-      color: #1C1917;
+      background-color: rgb(var(--page));
+      color: rgb(var(--s900));
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
     }
 
+    /* Troca suave de tema (só durante o clique, para não pesar no resto) */
+    html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
+      transition: background-color .35s ease, border-color .35s ease, color .35s ease !important;
+    }
+
+    /* ----- Ajustes específicos do modo escuro ----- */
+    /* No escuro usa a logo dourada (imagens/logo-escuro.png). Se ela faltar e cair na logo preta,
+       a preta é invertida para traço claro e o fundo branco "some" no cabeçalho escuro. */
+    html.dark #logoImg:not([src*="logo-escuro"]) { filter: invert(1) sepia(.18) brightness(.97); mix-blend-mode: screen; }
+    /* Faixa de apresentação ganha um brilho dourado, como luz vinda do teto */
+    html.dark .hero {
+      background: radial-gradient(ellipse 70% 120% at 50% -20%, rgba(212, 175, 55, 0.16), transparent 70%), rgb(var(--page));
+    }
+    /* Fotos com fundo branco se fundem na "vitrine" marfim (sem quadrado branco estourado) */
+    html.dark .img-stage img { mix-blend-mode: multiply; }
+    html.dark .card-shadow { box-shadow: 0 4px 18px -4px rgba(0, 0, 0, 0.45); }
+    html.dark .card-hover:hover {
+      box-shadow: 0 18px 36px -8px rgba(212, 175, 55, 0.16), 0 0 0 1px rgba(212, 175, 55, 0.35);
+    }
+    html.dark #toast { box-shadow: 0 10px 30px rgba(0,0,0,.5); border: 1px solid #3A332B; }
+    html.dark #scrollToTopBtn { background-color: #2A241D; border-color: #4A423A; }
+    /* Rodapé: botão de WhatsApp e área da equipe com tons próprios para fundo escuro */
+    html.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.12); }
+    html.dark .hover\:bg-emerald-100:hover { background-color: rgba(16, 185, 129, 0.2); }
+    html.dark .text-emerald-700 { color: #34D399; }
+    html.dark .bg-indigo-50 { background-color: rgba(99, 102, 241, 0.12); }
+    html.dark .border-indigo-200, html.dark .border-indigo-200\/70 { border-color: rgba(129, 140, 248, 0.32); }
+    html.dark .text-indigo-700, html.dark .text-indigo-800, html.dark .text-indigo-900 { color: #C7D2FE; }
+    html.dark .text-indigo-400 { color: #A5B4FC; }
+
+    /* ----- Botão claro/escuro ----- */
+    .theme-toggle {
+      width: 2.6rem; height: 2.6rem; border-radius: 9999px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgb(var(--s100)); color: rgb(var(--s600));
+      border: 1px solid rgb(var(--line));
+      transition: all .2s;
+    }
+    .theme-toggle:hover { color: rgb(var(--accent)); border-color: rgb(var(--accent) / .5); }
+    .theme-toggle:active { transform: scale(.92); }
+    .theme-toggle .fa-sun { display: none; }
+    html.dark .theme-toggle .fa-moon { display: none; }
+    html.dark .theme-toggle .fa-sun { display: inline-block; color: #D4AF37; }
+
     .glass-header {
-      background: rgba(255, 255, 255, 0.94);
+      background: var(--glass);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
@@ -85,8 +178,8 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #F5F3EE; }
-    ::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: var(--scroll-track); }
+    ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
 
     /* Barra de busca / filtros: fixa somente em telas médias+ (no celular ocupava espaço demais) */
@@ -114,12 +207,12 @@
       border-radius: 0.75rem;
       font-size: 0.75rem;
       font-weight: 600;
-      background: #F5F3EE;
-      color: #57534E;
-      border: 1px solid rgba(231, 226, 217, 0.9);
+      background: var(--pill-bg);
+      color: var(--pill-text);
+      border: 1px solid var(--pill-line);
       transition: all 0.2s;
     }
-    .cat-pill:hover { background: #E7E2D9; color: #1C1917; }
+    .cat-pill:hover { background: var(--pill-hover-bg); color: var(--pill-hover-text); }
     .cat-pill.active {
       background: linear-gradient(to right, #A67C1F, #96701A); color: #fff; font-weight: 700; border-color: #96701A;
       box-shadow: 0 4px 10px -2px rgba(150, 112, 26, 0.35);
@@ -127,19 +220,19 @@
     .cat-pill .cat-count { opacity: .6; font-weight: 500; margin-left: .25rem; }
     .cat-arrow {
       position: absolute; top: 0; bottom: 0; width: 2.75rem; z-index: 2;
-      display: flex; align-items: center; color: #57534E;
+      display: flex; align-items: center; color: rgb(var(--s600));
       opacity: 0; pointer-events: none; transition: opacity .2s;
     }
     .cat-arrow.visible { opacity: 1; pointer-events: auto; }
     .cat-arrow button {
-      width: 1.9rem; height: 1.9rem; border-radius: 9999px; background: #fff;
-      border: 1px solid #E7E2D9; box-shadow: 0 2px 8px rgba(28,25,23,.12);
+      width: 1.9rem; height: 1.9rem; border-radius: 9999px; background: rgb(var(--surface));
+      border: 1px solid rgb(var(--line)); box-shadow: 0 2px 8px rgba(28,25,23,.12);
       display: flex; align-items: center; justify-content: center; font-size: .7rem;
       transition: all .2s;
     }
     .cat-arrow button:hover { background: #96701A; color: #fff; border-color: #96701A; }
-    .cat-arrow.left  { left: 0;  justify-content: flex-start; background: linear-gradient(to right, #fff 55%, transparent); }
-    .cat-arrow.right { right: 0; justify-content: flex-end;   background: linear-gradient(to left,  #fff 55%, transparent); }
+    .cat-arrow.left  { left: 0;  justify-content: flex-start; background: linear-gradient(to right, rgb(var(--surface)) 55%, transparent); }
+    .cat-arrow.right { right: 0; justify-content: flex-end;   background: linear-gradient(to left,  rgb(var(--surface)) 55%, transparent); }
 
     /* Animações simples (substituem classes que não existem no Tailwind puro) */
     @keyframes popIn { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
@@ -172,35 +265,42 @@
           <!-- Texto da marca: aparece se a logo não carregar (ou se SHOW_BRAND_TEXT = true) -->
           <div id="brandText" class="hidden leading-tight shrink-0">
             <span class="font-serif text-2xl sm:text-3xl font-bold tracking-tight whitespace-nowrap">
-              <span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span>
+              <span class="text-brand-accent">Lumi</span><span class="text-slate-900">Fa</span>
             </span>
             <span class="block text-[11px] text-slate-500 font-semibold tracking-[0.18em] uppercase -mt-0.5">Iluminação</span>
           </div>
         </a>
+
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <!-- Botão modo claro / escuro -->
+        <button type="button" id="themeToggle" onclick="toggleTheme()" class="theme-toggle" aria-label="Ativar modo escuro" title="Modo escuro">
+          <i class="fa-solid fa-moon text-sm"></i><i class="fa-solid fa-sun text-sm"></i>
+        </button>
 
         <!-- Botão de Orçamento -->
         <button onclick="toggleCartModal()" aria-label="Abrir orçamento"
                 class="relative px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-brassLight to-brand-gold text-white font-bold text-xs sm:text-sm shadow-md shadow-brand-gold/20 hover:brightness-105 active:scale-95 transition flex items-center gap-2.5 shrink-0">
           <i class="fa-solid fa-clipboard-list text-sm"></i>
           <span class="hidden sm:inline">Meu Orçamento</span>
-          <span id="cartBadge" class="bg-slate-900 text-white text-[11px] px-2 py-0.5 rounded-full font-black">0</span>
+          <span id="cartBadge" class="bg-ink-900 text-white text-[11px] px-2 py-0.5 rounded-full font-black">0</span>
         </button>
+        </div>
       </div>
     </header>
 
     <!-- FAIXA DE APRESENTAÇÃO -->
-    <section class="bg-gradient-to-b from-brand-goldLight to-brand-bg border-b border-brand-border/50">
+    <section class="hero bg-gradient-to-b from-brand-goldLight to-brand-bg border-b border-brand-border/50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-9 text-center">
         <h1 class="font-serif text-3xl sm:text-4xl font-semibold text-slate-900 leading-tight">
-          Iluminação que valoriza <span class="text-brand-gold">cada ambiente</span>
+          Iluminação que valoriza <span class="text-brand-accent">cada ambiente</span>
         </h1>
         <p class="mt-2 text-xs sm:text-sm text-slate-500 font-medium">
-          Decorativa <span class="text-brand-gold mx-1">•</span> Comercial <span class="text-brand-gold mx-1">•</span> Industrial <span class="text-brand-gold mx-1">•</span> Soluções em LED
+          Decorativa <span class="text-brand-accent mx-1">•</span> Comercial <span class="text-brand-accent mx-1">•</span> Industrial <span class="text-brand-accent mx-1">•</span> Soluções em LED
         </p>
         <div class="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 text-[11px] sm:text-xs text-slate-500 font-medium">
-          <span><i class="fa-solid fa-magnifying-glass text-brand-gold mr-1.5"></i>Encontre pelo código ou nome</span>
-          <span><i class="fa-solid fa-clipboard-list text-brand-gold mr-1.5"></i>Monte seu orçamento</span>
-          <span><i class="fa-brands fa-whatsapp text-brand-gold mr-1.5"></i>Envie direto pelo WhatsApp</span>
+          <span><i class="fa-solid fa-magnifying-glass text-brand-accent mr-1.5"></i>Encontre pelo código ou nome</span>
+          <span><i class="fa-solid fa-clipboard-list text-brand-accent mr-1.5"></i>Monte seu orçamento</span>
+          <span><i class="fa-brands fa-whatsapp text-brand-accent mr-1.5"></i>Envie direto pelo WhatsApp</span>
         </div>
       </div>
     </section>
@@ -208,7 +308,7 @@
     <!-- BUSCA, ORDENAÇÃO E CATEGORIAS -->
     <section class="toolbar-sticky glass-header py-3 sm:py-3.5 border-b border-brand-border/60">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white border border-brand-border/90 rounded-2xl p-3 sm:p-4 shadow-sm">
+        <div class="bg-surface border border-brand-border/90 rounded-2xl p-3 sm:p-4 shadow-sm">
 
           <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
             <!-- Busca -->
@@ -218,7 +318,7 @@
               </div>
               <input type="search" id="searchInput" autocomplete="off"
                      placeholder="Buscar por código, nome, pendente, 3000K..."
-                     class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
+                     class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-surface rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-gold/20 transition">
               <button onclick="clearSearch()" id="clearSearchBtn" aria-label="Limpar busca"
                       class="hidden absolute inset-y-0 right-0 pr-3 items-center text-slate-400 hover:text-slate-700">
                 <i class="fa-solid fa-circle-xmark text-sm"></i>
@@ -237,7 +337,7 @@
                 </select>
               </label>
 
-              <button onclick="resetFilters()" class="text-brand-gold hover:text-brand-goldHover flex items-center gap-1 font-semibold text-xs transition whitespace-nowrap">
+              <button onclick="resetFilters()" class="text-brand-accent hover:text-brand-accentHover flex items-center gap-1 font-semibold text-xs transition whitespace-nowrap">
                 <i class="fa-solid fa-arrows-rotate"></i> Limpar
               </button>
             </div>
@@ -260,25 +360,25 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <!-- Skeleton -->
       <div id="loading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
+        <div class="bg-surface p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
+        <div class="bg-surface p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
+        <div class="bg-surface p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
+        <div class="bg-surface p-4 rounded-2xl border border-slate-100 shadow-sm animate-pulse h-80"></div>
       </div>
 
       <div id="productGrid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
       <div id="loadMoreSentinel" class="hidden py-8 text-center text-xs text-slate-400">
-        <button onclick="appendMoreProducts()" class="px-5 py-2.5 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl font-bold transition">Carregar mais produtos</button>
+        <button onclick="appendMoreProducts()" class="px-5 py-2.5 bg-slate-100 text-brand-accent hover:bg-slate-200 rounded-xl font-bold transition">Carregar mais produtos</button>
       </div>
 
       <!-- Estado vazio / erro -->
-      <div id="emptyState" class="hidden text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm my-6">
-        <div class="w-16 h-16 bg-amber-50 text-brand-gold rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+      <div id="emptyState" class="hidden text-center py-20 bg-surface rounded-3xl border border-dashed border-slate-200 shadow-sm my-6">
+        <div class="w-16 h-16 bg-amber-50 text-brand-accent rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
           <i id="emptyIcon" class="fa-solid fa-lightbulb"></i>
         </div>
         <h3 id="emptyTitle" class="text-base font-bold text-slate-800">Nenhum produto foi encontrado</h3>
         <p id="emptyText" class="text-slate-500 text-xs mt-1 max-w-sm mx-auto">Verifique o termo pesquisado ou selecione outra categoria acima.</p>
-        <button id="emptyBtn" onclick="resetFilters()" class="mt-4 px-5 py-2.5 bg-slate-100 text-brand-gold hover:bg-slate-200 rounded-xl text-xs font-bold transition">
+        <button id="emptyBtn" onclick="resetFilters()" class="mt-4 px-5 py-2.5 bg-slate-100 text-brand-accent hover:bg-slate-200 rounded-xl text-xs font-bold transition">
           Ver todos os produtos
         </button>
       </div>
@@ -291,25 +391,25 @@
     <i class="fa-brands fa-whatsapp text-2xl"></i>
   </a>
   <button id="scrollToTopBtn" onclick="scrollToTop()" title="Voltar ao topo" aria-label="Voltar ao topo"
-          class="fixed bottom-[5.25rem] right-6 z-40 w-11 h-11 rounded-full bg-slate-900 text-white shadow-xl hover:bg-brand-gold flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 active:scale-90 border border-slate-700/50">
+          class="fixed bottom-[5.25rem] right-6 z-40 w-11 h-11 rounded-full bg-ink-900 text-white shadow-xl hover:bg-brand-gold flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 active:scale-90 border border-ink-700/50">
     <i class="fa-solid fa-arrow-up text-sm"></i>
   </button>
 
   <!-- MODO EQUIPE (só aparece depois de digitar a senha) -->
-  <div id="teamBar" class="hidden fixed bottom-6 left-4 z-40 bg-slate-900 text-white text-[11px] font-semibold pl-3 pr-1.5 py-1.5 rounded-xl shadow-2xl items-center gap-2">
+  <div id="teamBar" class="hidden fixed bottom-6 left-4 z-40 bg-ink-900 text-white text-[11px] font-semibold pl-3 pr-1.5 py-1.5 rounded-xl shadow-2xl items-center gap-2">
     <i class="fa-solid fa-user-lock text-brand-shine"></i><span>Modo equipe</span>
     <button onclick="teamLogout()" class="ml-1 px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20">Sair</button>
   </div>
 
   <!-- TOAST -->
-  <div id="toast" class="toast bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2">
+  <div id="toast" class="toast bg-ink-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2">
     <i class="fa-solid fa-circle-check text-brand-shine"></i><span id="toastText"></span>
   </div>
 
   <!-- RODAPÉ -->
-  <footer class="relative z-10 bg-white border-t border-slate-200/80 py-10 text-slate-500 text-xs text-center">
+  <footer class="relative z-10 bg-surface border-t border-slate-200/80 py-10 text-slate-500 text-xs text-center">
     <div class="max-w-7xl mx-auto px-4 space-y-3">
-      <p class="font-serif text-2xl font-bold tracking-tight"><span class="text-brand-gold">Lumi</span><span class="text-slate-900">Fa</span> <span class="text-slate-500 font-semibold text-lg">Iluminação</span></p>
+      <p class="font-serif text-2xl font-bold tracking-tight"><span class="text-brand-accent">Lumi</span><span class="text-slate-900">Fa</span> <span class="text-slate-500 font-semibold text-lg">Iluminação</span></p>
       <p class="text-slate-400">Catálogo digital para lojistas, profissionais e clientes.</p>
       <a id="footerWa" href="#" target="_blank" rel="noopener"
          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold transition">
@@ -320,8 +420,8 @@
   </footer>
 
   <!-- MODAL: DETALHES DO PRODUTO -->
-  <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)closeDetailModal()">
-    <div class="pop-in bg-white border border-slate-100 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative">
+  <div id="detailModal" class="fixed inset-0 z-50 hidden bg-ink-900/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)closeDetailModal()">
+    <div class="pop-in bg-surface border border-slate-100 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative">
       <button onclick="closeDetailModal()" aria-label="Fechar" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center z-10 transition">
         <i class="fa-solid fa-xmark text-sm"></i>
       </button>
@@ -330,19 +430,19 @@
   </div>
 
   <!-- MODAL: ZOOM DA IMAGEM -->
-  <div id="lightboxModal" class="fixed inset-0 z-[55] hidden bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
-    <button onclick="closeLightboxModal()" aria-label="Fechar zoom" class="absolute top-5 right-5 w-11 h-11 rounded-full bg-slate-800/80 text-white hover:bg-brand-gold flex items-center justify-center z-50 transition">
+  <div id="lightboxModal" class="fixed inset-0 z-[55] hidden bg-ink-950/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightboxModal()">
+    <button onclick="closeLightboxModal()" aria-label="Fechar zoom" class="absolute top-5 right-5 w-11 h-11 rounded-full bg-ink-800/80 text-white hover:bg-brand-gold flex items-center justify-center z-50 transition">
       <i class="fa-solid fa-xmark text-lg"></i>
     </button>
     <img id="lightboxImg" src="" alt="Imagem ampliada" class="max-w-full max-h-[92vh] object-contain rounded-2xl shadow-2xl" onclick="event.stopPropagation()">
   </div>
 
   <!-- MODAL: ORÇAMENTO -->
-  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex justify-end" onclick="if(event.target===this)toggleCartModal()">
-    <div class="slide-in bg-white border-l border-slate-200 w-full max-w-md h-full flex flex-col shadow-2xl">
+  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-ink-900/60 backdrop-blur-sm flex justify-end" onclick="if(event.target===this)toggleCartModal()">
+    <div class="slide-in bg-surface border-l border-slate-200 w-full max-w-md h-full flex flex-col shadow-2xl">
       <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-amber-50 text-brand-gold flex items-center justify-center font-bold">
+          <div class="w-8 h-8 rounded-xl bg-amber-50 text-brand-accent flex items-center justify-center font-bold">
             <i class="fa-solid fa-clipboard-list"></i>
           </div>
           <div>
@@ -363,13 +463,13 @@
       <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-3.5">
         <div class="flex items-center justify-between text-sm">
           <span class="text-slate-500 font-medium">Total estimado:</span>
-          <span id="cartTotal" class="text-xl font-extrabold text-brand-gold">R$ 0,00</span>
+          <span id="cartTotal" class="text-xl font-extrabold text-brand-accent">R$ 0,00</span>
         </div>
         <p id="cartNote" class="hidden text-[11px] text-slate-400 -mt-2">Itens “sob consulta” não entram no total.</p>
 
         <div class="space-y-2">
-          <input type="text" id="clientName" placeholder="Seu nome ou nome da empresa (opcional)" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30">
-          <textarea id="clientObs" placeholder="Observações (ex: voltagem, 3000K ou 6000K, acabamento)..." rows="2" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"></textarea>
+          <input type="text" id="clientName" placeholder="Seu nome ou nome da empresa (opcional)" class="w-full px-3.5 py-2.5 bg-surface border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30">
+          <textarea id="clientObs" placeholder="Observações (ex: voltagem, 3000K ou 6000K, acabamento)..." rows="2" class="w-full px-3.5 py-2.5 bg-surface border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30"></textarea>
         </div>
 
         <button onclick="sendWhatsAppOrder()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2">
@@ -388,6 +488,8 @@
     const PAGE_SIZE       = 48;            // quantos produtos aparecem por vez; mais vão carregando ao rolar
     const IMAGES_FOLDER   = "imagens/";   // pasta das fotos no GitHub. Na planilha pode ir só o nome: "PROD-001.jpg"
     const LOGO_CANDIDATES = ["imagens/logo.jpg", "logo.jpg", "imagens/logo.png", "logo.png"];
+    const LOGO_DARK       = "imagens/logo-escuro.png";  // logo dourada (fundo transparente) usada no modo escuro
+    const THEME_KEY       = "lumifa_theme";             // "light" ou "dark", guardado no aparelho do cliente
     const SHOW_BRAND_TEXT = true;       // true = mostra "LumiFa Iluminação" em texto ao lado da logo
     const CART_STORAGE_KEY = "lumifa_cart_v1";
     const TEAM_DATA_URL   = "equipe.dat";        // códigos originais das parceiras, protegidos por senha
@@ -500,7 +602,7 @@
       $('waFab').href = waBase + '?text=' + encodeURIComponent('Olá! Vim pelo catálogo da LumiFa Iluminação.');
       $('footerWa').href = $('waFab').href;
 
-      setupLogo();
+      setupTheme();   // já chama setupLogo()
       setupHeaderHeight();
       setupCategoryScroller();
       loadCart();
@@ -551,16 +653,52 @@
     // ---------- Logo ----------
     function setupLogo() {
       const img = $('logoImg');
+      const list = isDark() ? [LOGO_DARK, ...LOGO_CANDIDATES] : LOGO_CANDIDATES;
       let i = 0;
       if (SHOW_BRAND_TEXT) $('brandText').classList.remove('hidden');
+      img.classList.remove('hidden');
       img.onerror = () => {
         i++;
-        if (i < LOGO_CANDIDATES.length) { img.src = LOGO_CANDIDATES[i]; return; }
+        if (i < list.length) { img.src = list[i]; return; }
         img.onerror = null;
         img.classList.add('hidden');
         $('brandText').classList.remove('hidden');
       };
-      img.src = LOGO_CANDIDATES[0];
+      img.src = list[0];
+    }
+
+    // ---------- Tema claro / escuro ----------
+    const isDark = () => document.documentElement.classList.contains('dark');
+
+    function applyTheme(theme, animate) {
+      const root = document.documentElement;
+      if (animate) { root.classList.add('theme-anim'); clearTimeout(applyTheme._t); applyTheme._t = setTimeout(() => root.classList.remove('theme-anim'), 400); }
+      root.classList.toggle('dark', theme === 'dark');
+      const btn = $('themeToggle');
+      if (btn) {
+        const dark = theme === 'dark';
+        btn.setAttribute('aria-label', dark ? 'Ativar modo claro' : 'Ativar modo escuro');
+        btn.title = dark ? 'Modo claro' : 'Modo escuro';
+      }
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#14110E' : '#D4AF37');
+      if ($('logoImg')) setupLogo();
+    }
+
+    function toggleTheme() {
+      const next = isDark() ? 'light' : 'dark';
+      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+      applyTheme(next, true);
+    }
+
+    function setupTheme() {
+      applyTheme(isDark() ? 'dark' : 'light', false);
+      // Sem escolha salva, acompanha o modo do celular/computador do cliente
+      const mq = window.matchMedia && matchMedia('(prefers-color-scheme: dark)');
+      if (mq && mq.addEventListener) mq.addEventListener('change', e => {
+        let saved = null;
+        try { saved = localStorage.getItem(THEME_KEY); } catch (_) {}
+        if (!saved) applyTheme(e.matches ? 'dark' : 'light', true);
+      });
     }
 
     // Mantém a barra de busca colada logo abaixo do cabeçalho, qualquer que seja a altura da logo
@@ -878,32 +1016,32 @@
       if (moreObserver) { moreObserver.unobserve(sentinel); moreObserver.observe(sentinel); }
       if (!batch.length) return;
       grid.insertAdjacentHTML('beforeend', batch.map(p => `
-        <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
+        <div class="bg-surface border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
 
-          <div class="relative aspect-square bg-white overflow-hidden cursor-pointer flex items-center justify-center p-3" data-action="open" data-code="${esc(p.code)}">
+          <div class="relative aspect-square bg-stage img-stage overflow-hidden cursor-pointer flex items-center justify-center p-3" data-action="open" data-code="${esc(p.code)}">
             <img src="${esc(thumbOf(p.image))}" alt="${esc(p.name)}" loading="lazy" decoding="async" width="600" height="600"
                  class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                  onerror="imgFallback(this, '${esc(p.image)}')">
-            <span class="absolute top-2.5 left-2.5 bg-white border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
+            <span class="absolute top-2.5 left-2.5 bg-surface border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
             ${p.featured ? `<span class="absolute top-2.5 right-2.5 bg-gradient-to-r from-brand-brassLight to-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm"><i class="fa-solid fa-fire mr-1"></i>Mais procurado</span>` : ''}
-            <span class="absolute bottom-2.5 right-2.5 bg-slate-900/85 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
+            <span class="absolute bottom-2.5 right-2.5 bg-ink-900/85 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
           </div>
 
           <div class="p-3.5 sm:p-4 flex-grow flex flex-col justify-between space-y-3">
             <div>
-              <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug"
+              <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-accent transition-colors line-clamp-2 cursor-pointer leading-snug"
                   data-action="open" data-code="${esc(p.code)}" title="${esc(p.name)}">${esc(p.name)}</h3>
               ${teamCardHtml(p)}
               ${p.specs ? `
                 <p class="text-[10px] text-slate-500 mt-2 line-clamp-2 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/50">
-                  <i class="fa-solid fa-sliders text-brand-gold/80 mr-1"></i>${esc(p.specs)}
+                  <i class="fa-solid fa-sliders text-brand-accent/80 mr-1"></i>${esc(p.specs)}
                 </p>` : ''}
             </div>
 
             <div class="card-foot pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
               <div>
                 <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">Valor</span>
-                <span class="${p.price > 0 ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'} font-black text-brand-gold">${priceLabel(p.price)}</span>
+                <span class="${p.price > 0 ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'} font-black text-brand-accent">${priceLabel(p.price)}</span>
               </div>
               <div class="card-actions flex items-center gap-1.5">
                 <button data-action="open" data-code="${esc(p.code)}" title="Ver detalhes" aria-label="Ver detalhes" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition active:scale-90">
@@ -925,10 +1063,10 @@
       if (!p) return;
       $('detailModalContent').innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-          <div class="relative rounded-2xl overflow-hidden bg-white border border-slate-200/80 flex items-center justify-center p-3 aspect-square">
+          <div class="relative rounded-2xl overflow-hidden bg-stage img-stage border border-slate-200/80 flex items-center justify-center p-3 aspect-square">
             <img src="${esc(p.image)}" alt="${esc(p.name)}" class="w-full h-full object-contain mix-blend-multiply rounded-xl cursor-zoom-in"
                  onclick="openLightboxModal(this.src)" onerror="this.onerror=null;this.src=FALLBACK_IMG">
-            <button onclick="openLightboxModal(this.parentElement.querySelector('img').src)" title="Ver em tela cheia" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-white/95 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+            <button onclick="openLightboxModal(this.parentElement.querySelector('img').src)" title="Ver em tela cheia" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-surface/95 hover:bg-brand-gold hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-expand"></i><span>Zoom</span>
             </button>
           </div>
@@ -936,13 +1074,13 @@
           <div class="flex flex-col justify-between h-full space-y-4">
             <div>
               <div class="flex flex-wrap items-center gap-2 mb-2 pr-8">
-                <span class="bg-amber-50 border border-amber-200/60 text-brand-gold text-[11px] font-extrabold px-2.5 py-0.5 rounded-md">CÓD: ${esc(p.code)}</span>
+                <span class="bg-amber-50 border border-amber-200/60 text-brand-accent text-[11px] font-extrabold px-2.5 py-0.5 rounded-md">CÓD: ${esc(p.code)}</span>
                 <span class="text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md font-semibold">${esc(p.category)}</span>
               </div>
               <h2 class="font-serif text-2xl font-bold text-slate-900 leading-snug">${esc(p.name)}</h2>
               <div class="mt-2.5">
                 <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Preço</span>
-                <div class="text-2xl font-black text-brand-gold">${priceLabel(p.price)}</div>
+                <div class="text-2xl font-black text-brand-accent">${priceLabel(p.price)}</div>
               </div>
             </div>
 
@@ -1044,12 +1182,12 @@
         const p = item.product;
         if (p.price > 0) grandTotal += p.price * item.qty; else hasUnpriced = true;
         return `
-          <div class="bg-white p-3 rounded-2xl border border-slate-200 flex items-center gap-3 text-xs shadow-sm">
-            <img src="${esc(thumbOf(p.image))}" alt="" loading="lazy" class="w-14 h-14 rounded-xl object-contain bg-white border border-slate-100 shrink-0" onerror="imgFallback(this, '${esc(p.image)}')">
+          <div class="bg-surface p-3 rounded-2xl border border-slate-200 flex items-center gap-3 text-xs shadow-sm">
+            <img src="${esc(thumbOf(p.image))}" alt="" loading="lazy" class="w-14 h-14 rounded-xl object-contain bg-stage border border-slate-100 shrink-0" onerror="imgFallback(this, '${esc(p.image)}')">
             <div class="flex-grow min-w-0">
-              <span class="font-extrabold text-brand-gold text-[11px]">[${esc(p.code)}]</span>
+              <span class="font-extrabold text-brand-accent text-[11px]">[${esc(p.code)}]</span>
               <h4 class="font-bold text-slate-800 line-clamp-1">${esc(p.name)}</h4>
-              <p class="text-brand-gold font-bold mt-0.5 text-xs">${p.price > 0 ? fmt(p.price * item.qty) : 'Sob consulta'}</p>
+              <p class="text-brand-accent font-bold mt-0.5 text-xs">${p.price > 0 ? fmt(p.price * item.qty) : 'Sob consulta'}</p>
             </div>
             <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50 overflow-hidden shrink-0">
               <button data-code="${esc(p.code)}" data-qty="-1" aria-label="Diminuir" class="px-2.5 py-1 text-slate-500 hover:text-slate-900 font-bold transition">−</button>
