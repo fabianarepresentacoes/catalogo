@@ -27,9 +27,14 @@
   <!-- TEMA: aplica claro/escuro ANTES de desenhar a página (evita "piscar" branco) -->
   <script>
     (function () {
+      // Computador: abre SEMPRE no modo claro. Celular/tablet: segue o modo do aparelho.
+      // O botão troca o tema só durante a visita (sessionStorage), na próxima visita volta à regra acima.
+      var ua = navigator.userAgent || '';
+      var touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+      window.__isPhone = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || (touch && Math.min(screen.width, screen.height) < 900);
       var t = null;
-      try { t = localStorage.getItem('lumifa_theme'); } catch (e) {}
-      if (t !== 'dark' && t !== 'light') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      try { t = sessionStorage.getItem('lumifa_theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') t = (window.__isPhone && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
       if (t === 'dark') document.documentElement.classList.add('dark');
     })();
   </script>
@@ -491,9 +496,10 @@
     const IMAGES_FOLDER   = "imagens/";   // pasta das fotos no GitHub. Na planilha pode ir só o nome: "PROD-001.jpg"
     const LOGO_CANDIDATES = ["imagens/logo.png", "logo.png"];
     const LOGO_DARK       = "imagens/logo-escuro.png?v=2";  // logo dourada (fundo transparente) usada no modo escuro
-    const THEME_KEY       = "lumifa_theme";             // "light" ou "dark", guardado no aparelho do cliente
+    const THEME_KEY       = "lumifa_theme";             // escolha do botão claro/escuro, vale só durante a visita
     const SHOW_BRAND_TEXT = false;      // a logo nova já tem o nome; true = mostra "LumiFa Iluminação" em texto ao lado da logo
     const CART_STORAGE_KEY = "lumifa_cart_v1";
+    const VARIACOES_URL   = "variacoes.json";   // agrupa o mesmo produto em cores/temperaturas diferentes num card só (gerado pelo Claude)
     const TEAM_DATA_URL   = "equipe.dat";        // códigos originais das parceiras, protegidos por senha
     const TEAM_PASS_KEY   = "lumifa_equipe_v1";  // guarda a senha só no aparelho da equipe
 
@@ -539,6 +545,8 @@
     let selectedCategory = "Todos";
     let catDragMoved = false;
     let teamMap = null;      // { "PROD-001": [parceira, código original, página PDF, preço tabela] }
+    let items = [];          // o que aparece na vitrine: produto avulso OU grupo de variações (cor/temperatura)
+    let groupsMap = new Map();
 
     // ================== UTILITÁRIOS ==================
     const $ = id => document.getElementById(id);
@@ -691,17 +699,17 @@
 
     function toggleTheme() {
       const next = isDark() ? 'light' : 'dark';
-      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+      try { sessionStorage.setItem(THEME_KEY, next); } catch (e) {}
       applyTheme(next, true);
     }
 
     function setupTheme() {
       applyTheme(isDark() ? 'dark' : 'light', false);
-      // Sem escolha salva, acompanha o modo do celular/computador do cliente
+      // No celular, sem escolha no botão, acompanha o modo do aparelho (inclusive se mudar com a página aberta)
       const mq = window.matchMedia && matchMedia('(prefers-color-scheme: dark)');
-      if (mq && mq.addEventListener) mq.addEventListener('change', e => {
+      if (window.__isPhone && mq && mq.addEventListener) mq.addEventListener('change', e => {
         let saved = null;
-        try { saved = localStorage.getItem(THEME_KEY); } catch (_) {}
+        try { saved = sessionStorage.getItem(THEME_KEY); } catch (_) {}
         if (!saved) applyTheme(e.matches ? 'dark' : 'light', true);
       });
     }
@@ -804,6 +812,7 @@
 
     // ================== DADOS ==================
     function fetchProductsData() {
+      const varPromise = fetch(VARIACOES_URL + '?t=' + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null);
       Papa.parse(GOOGLE_SHEETS_CSV_URL + '&t=' + Date.now(), {
         download: true,
         header: true,
@@ -843,9 +852,12 @@
             showEmpty('Catálogo vazio', 'Não encontramos produtos na planilha. Tente novamente em instantes.', true);
             return;
           }
-          applyTeam();
-          hydrateCart();
-          initCatalog();
+          varPromise.then(v => {
+            buildItems(v);
+            applyTeam();
+            hydrateCart();
+            initCatalog();
+          });
         },
         error: function (err) {
           console.error('Erro ao carregar dados:', err);
@@ -879,8 +891,8 @@
     // ================== CATEGORIAS ==================
     function getCategories() {
       const counts = new Map();
-      products.forEach(p => counts.set(p.category, (counts.get(p.category) || 0) + 1));
-      return [['Todos', products.length], ...counts.entries()];
+      items.forEach(p => counts.set(p.category, (counts.get(p.category) || 0) + 1));
+      return [['Todos', items.length], ...counts.entries()];
     }
 
     // Monta as pílulas UMA vez. Trocar de categoria só muda o destaque,
@@ -983,10 +995,15 @@
       $('clearSearchBtn').classList.toggle('hidden', !rawQuery);
       $('clearSearchBtn').classList.toggle('flex', !!rawQuery);
 
-      let filtered = products.filter(p =>
-        (selectedCategory === 'Todos' || p.category === selectedCategory) &&
-        terms.every(t => p.haystack.includes(t))
-      );
+      const matches = p => terms.every(t => p.haystack.includes(t));
+      let filtered = items.filter(it => {
+        if (selectedCategory !== 'Todos' && it.category !== selectedCategory) return false;
+        if (!it.isGroup) return matches(it);
+        // grupo aparece se alguma das opções bate com a busca; abre já nessa opção
+        const hit = terms.length ? it.variants.find(matches) : null;
+        it.hit = hit ? hit.code : null;
+        return !terms.length || !!hit;
+      });
 
       const sort = $('sortSelect').value;
       if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
@@ -1020,14 +1037,18 @@
       // Reobserva para que, se a sentinela continuar visível (tela grande), o próximo lote venha também
       if (moreObserver) { moreObserver.unobserve(sentinel); moreObserver.observe(sentinel); }
       if (!batch.length) return;
-      grid.insertAdjacentHTML('beforeend', batch.map(p => `
+      grid.insertAdjacentHTML('beforeend', batch.map(it => {
+        const hitP = it.isGroup && it.hit ? products.find(x => x.code === it.hit) : null;
+        const p = it.isGroup ? Object.assign({}, it, { code: hitP ? hitP.code : it.code, image: hitP ? hitP.image : it.image }) : it;   // opção que o card mostra/abre
+        const teamP = it.isGroup ? (hitP || it.variants[0]) : it;
+        return `
         <div class="bg-surface border border-slate-200/80 rounded-2xl overflow-hidden card-shadow card-hover flex flex-col justify-between group">
 
           <div class="relative aspect-square bg-stage img-stage overflow-hidden cursor-pointer flex items-center justify-center p-3" data-action="open" data-code="${esc(p.code)}">
             <img src="${esc(thumbOf(p.image))}" alt="${esc(p.name)}" loading="lazy" decoding="async" width="600" height="600"
                  class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                  onerror="imgFallback(this, '${esc(p.image)}')">
-            <span class="absolute top-2.5 left-2.5 bg-surface border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${esc(p.code)}</span>
+            <span class="absolute top-2.5 left-2.5 bg-surface border border-slate-200/80 text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-lg shadow-sm">${it.isGroup ? `${it.variants.length} opções` : esc(p.code)}</span>
             ${p.featured ? `<span class="absolute top-2.5 right-2.5 bg-gradient-to-r from-brand-brassLight to-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm"><i class="fa-solid fa-fire mr-1"></i>Mais procurado</span>` : ''}
             <span class="absolute bottom-2.5 right-2.5 bg-ink-900/85 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${esc(p.category)}</span>
           </div>
@@ -1036,8 +1057,9 @@
             <div>
               <h3 class="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-brand-accent transition-colors line-clamp-2 cursor-pointer leading-snug"
                   data-action="open" data-code="${esc(p.code)}" title="${esc(p.name)}">${esc(p.name)}</h3>
-              ${teamCardHtml(p)}
-              ${p.specs ? `
+              ${teamCardHtml(teamP)}
+              ${it.isGroup ? variantSummaryHtml(it) : ''}
+              ${!it.isGroup && p.specs ? `
                 <p class="text-[10px] text-slate-500 mt-2 line-clamp-2 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/50">
                   <i class="fa-solid fa-sliders text-brand-accent/80 mr-1"></i>${esc(p.specs)}
                 </p>` : ''}
@@ -1045,27 +1067,128 @@
 
             <div class="card-foot pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
               <div>
-                <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">Valor</span>
+                <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-wider">${it.isGroup && it.priceMax > it.price ? 'A partir de' : 'Valor'}</span>
                 <span class="${p.price > 0 ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'} font-black text-brand-accent">${priceLabel(p.price)}</span>
               </div>
               <div class="card-actions flex items-center gap-1.5">
                 <button data-action="open" data-code="${esc(p.code)}" title="Ver detalhes" aria-label="Ver detalhes" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition active:scale-90">
                   <i class="fa-solid fa-eye"></i>
                 </button>
-                <button data-action="add" data-code="${esc(p.code)}" class="px-3 h-8 rounded-xl bg-gradient-to-r from-brand-brassLight to-brand-gold hover:brightness-90 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95">
-                  <i class="fa-solid fa-plus"></i> Orçar
+                <button data-action="${it.isGroup ? 'open' : 'add'}" data-code="${esc(p.code)}" class="px-3 h-8 rounded-xl bg-gradient-to-r from-brand-brassLight to-brand-gold hover:brightness-90 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition active:scale-95">
+                  ${it.isGroup ? '<i class="fa-solid fa-palette"></i> Escolher' : '<i class="fa-solid fa-plus"></i> Orçar'}
                 </button>
               </div>
             </div>
           </div>
         </div>
-      `).join(''));
+      `; }).join(''));
+    }
+
+    // ================== VARIAÇÕES (cor / temperatura) ==================
+    // variacoes.json: { grupos: { V123: "nome sem cor/temperatura" }, itens: { "PROD-123": [grupo, cor, temperatura] } }
+    // Cada código continua sendo um produto; o grupo só junta os cards. Sem o arquivo, tudo aparece separado.
+    function buildItems(v) {
+      groupsMap = new Map();
+      const byGroup = new Map();
+      if (v && v.itens) products.forEach(p => {
+        const info = v.itens[p.code];
+        if (!info) return;
+        p.group = info[0]; p.color = info[1] || ''; p.temp = info[2] || '';
+        if (!byGroup.has(p.group)) byGroup.set(p.group, []);
+        byGroup.get(p.group).push(p);
+      });
+      byGroup.forEach((vs, gid) => {
+        // segurança: grupo precisa de 2+ opções, mesma categoria e combinação cor+temperatura única
+        const combos = new Set(vs.map(x => x.color + '|' + x.temp));
+        if (vs.length < 2 || new Set(vs.map(x => x.category)).size > 1 || combos.size !== vs.length) {
+          vs.forEach(x => { x.group = null; x.color = ''; x.temp = ''; });
+          return;
+        }
+        vs.sort((a, b) => (a.rank - b.rank) || (a.order - b.order));
+        const priced = vs.filter(x => x.price > 0).map(x => x.price);
+        const rep = vs[0];
+        groupsMap.set(gid, {
+          id: gid, isGroup: true, variants: vs,
+          name: (v.grupos && v.grupos[gid]) || rep.name,
+          code: rep.code, category: rep.category, image: rep.image,
+          price: priced.length ? Math.min(...priced) : 0,
+          priceMax: priced.length ? Math.max(...priced) : 0,
+          colors: uniq(vs.map(x => x.color).filter(Boolean)),
+          temps: uniq(vs.map(x => x.temp).filter(Boolean)).sort(),
+          rank: Math.min(...vs.map(x => x.rank)), order: Math.min(...vs.map(x => x.order)),
+          featured: vs.some(x => x.featured),
+          get haystack() { return vs.map(x => x.haystack).join(' '); }
+        });
+      });
+      items = [];
+      const seen = new Set();
+      products.forEach(p => {
+        if (!p.group) { items.push(p); return; }
+        if (seen.has(p.group)) return;
+        seen.add(p.group); items.push(groupsMap.get(p.group));
+      });
+    }
+    const uniq = a => [...new Set(a)];
+    const variantLabel = p => [p.color, p.temp].filter(Boolean).join(' · ');
+    // Nome completo para orçamento/WhatsApp: acrescenta cor/temperatura se o nome ainda não tiver
+    function fullName(p) {
+      if (!p.group) return p.name;
+      const falta = [p.color, p.temp].filter(x => x && !norm(p.name).includes(norm(x)));
+      return falta.length ? `${p.name} (${falta.join(' · ')})` : p.name;
+    }
+    const SWATCH = { Preto: '#1F1F1F', Branco: '#FFFFFF', Dourado: '#C9A13A', Cromado: '#C7CCD1', Cobre: '#B87333', Champagne: '#E3D3A8',
+      Bronze: '#8C6A3F', Grafite: '#4A4A4A', Cinza: '#9CA3AF', Prata: '#D5D9DE', 'Rose Gold': '#D9A08B', Nude: '#E3C4A8', Marrom: '#6B4226',
+      Bege: '#E8DCC4', Fendi: '#A89F91', Verde: '#3F8F4F', Azul: '#2F6FB5', Vermelho: '#C0392B', Amarelo: '#F2C94C', Rosa: '#E58FB0',
+      Laranja: '#E67E22', 'Fumê': '#6B6B6B', 'Âmbar': '#D98E04', Corten: '#8B4513', Inox: '#B8BEC4', 'Níquel': '#A8A9AD', 'Titânio': '#878681',
+      Areia: '#D8C8A8', 'Off White': '#F4F1EA', Transparente: 'transparent' };
+    function swatchStyle(color) {
+      const parts = color.split('/').map(c => SWATCH[c.split(' ')[0]] || SWATCH[c] || '#CBD5E1');
+      const bg = parts.length > 1 ? `linear-gradient(135deg, ${parts[0]} 50%, ${parts[1]} 50%)` : parts[0];
+      return `background:${bg}`;
+    }
+    const swatch = (c, size) => `<span class="inline-block rounded-full border border-slate-300 shrink-0" style="width:${size}px;height:${size}px;${swatchStyle(c)}"></span>`;
+
+    function variantSummaryHtml(g) {
+      const cores = g.colors.length ? `<span class="inline-flex items-center gap-0.5">${g.colors.slice(0, 6).map(c => swatch(c, 11)).join('')}${g.colors.length > 6 ? '…' : ''}</span><span>${g.colors.length} ${g.colors.length === 1 ? 'cor' : 'cores'}</span>` : '';
+      const temps = g.temps.length ? `<span><i class="fa-regular fa-sun text-brand-accent/80 mr-0.5"></i>${g.temps.join(' · ')}</span>` : '';
+      return `<p class="text-[10px] text-slate-500 mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/50">${cores}${cores && temps ? '<span class="text-slate-300">|</span>' : ''}${temps}</p>`;
+    }
+
+    // Escolha da opção dentro do produto: trocar a cor tenta manter a temperatura (e vice-versa)
+    function pickVariant(groupId, color, temp, keep) {
+      const g = groupsMap.get(groupId); if (!g) return;
+      const vs = g.variants;
+      const exact = vs.find(x => x.color === color && x.temp === temp);
+      const alt = keep === 'color' ? vs.find(x => x.color === color) : vs.find(x => x.temp === temp);
+      const v = exact || alt;
+      if (v) openDetailModal(v.code);
+    }
+    function variantPickerHtml(p, g) {
+      const chip = (label, active, available, onclick, extra) => `
+        <button type="button" onclick="${onclick}" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5
+          ${active ? 'border-brand-gold bg-amber-50 text-brand-accent ring-2 ring-brand-gold/30' : available ? 'border-slate-200 bg-surface text-slate-700 hover:border-brand-gold' : 'border-dashed border-slate-200 bg-surface text-slate-400 hover:border-brand-gold'}"
+          ${active ? 'aria-pressed="true"' : ''}>${extra || ''}${esc(label)}</button>`;
+      const q = s => esc(JSON.stringify(s));
+      let html = '<div class="mt-3 space-y-3">';
+      if (g.colors.length) {
+        html += `<div><span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1.5">Cor: <span class="text-slate-700">${esc(p.color)}</span></span><div class="flex flex-wrap gap-1.5">` +
+          g.colors.map(c => chip(c, c === p.color, g.variants.some(x => x.color === c && (!p.temp || x.temp === p.temp)),
+            `pickVariant(${q(g.id)}, ${q(c)}, ${q(p.temp)}, 'color')`, swatch(c, 14))).join('') + '</div></div>';
+      }
+      if (g.temps.length) {
+        html += `<div><span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1.5">Temperatura da luz: <span class="text-slate-700">${esc(p.temp)}</span></span><div class="flex flex-wrap gap-1.5">` +
+          g.temps.map(t => chip(t, t === p.temp, g.variants.some(x => x.temp === t && (!p.color || x.color === p.color)),
+            `pickVariant(${q(g.id)}, ${q(p.color)}, ${q(t)}, 'temp')`, '<i class="fa-regular fa-sun text-[11px]"></i>')).join('') + '</div></div>';
+      }
+      if (g.priceMax > g.price) html += `<p class="text-[11px] text-slate-500">Opções a partir de <b class="text-brand-accent">${fmt(g.price)}</b></p>`;
+      return html + '</div>';
     }
 
     // ================== MODAIS ==================
     function openDetailModal(code) {
       const p = products.find(item => item.code === code);
       if (!p) return;
+      const g = p.group ? groupsMap.get(p.group) : null;
       $('detailModalContent').innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
           <div class="relative rounded-2xl overflow-hidden bg-stage img-stage border border-slate-200/80 flex items-center justify-center p-3 aspect-square">
@@ -1082,9 +1205,10 @@
                 <span class="bg-amber-50 border border-amber-200/60 text-brand-accent text-[11px] font-extrabold px-2.5 py-0.5 rounded-md">CÓD: ${esc(p.code)}</span>
                 <span class="text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md font-semibold">${esc(p.category)}</span>
               </div>
-              <h2 class="font-serif text-2xl font-bold text-slate-900 leading-snug">${esc(p.name)}</h2>
+              <h2 class="font-serif text-2xl font-bold text-slate-900 leading-snug">${esc(g ? g.name : p.name)}</h2>
+              ${g ? variantPickerHtml(p, g) : ''}
               <div class="mt-2.5">
-                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Preço</span>
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">${g ? 'Preço desta opção' : 'Preço'}</span>
                 <div class="text-2xl font-black text-brand-accent">${priceLabel(p.price)}</div>
               </div>
             </div>
@@ -1137,7 +1261,7 @@
       saveCart();
       updateCartBadge(true);
       renderCartItems();
-      showToast(`${product.code} adicionado ao orçamento`);
+      showToast(`${product.code}${product.group ? ' (' + variantLabel(product) + ')' : ''} adicionado ao orçamento`);
     }
 
     function updateCartBadge(animate) {
@@ -1191,7 +1315,7 @@
             <img src="${esc(thumbOf(p.image))}" alt="" loading="lazy" class="w-14 h-14 rounded-xl object-contain bg-stage border border-slate-100 shrink-0" onerror="imgFallback(this, '${esc(p.image)}')">
             <div class="flex-grow min-w-0">
               <span class="font-extrabold text-brand-accent text-[11px]">[${esc(p.code)}]</span>
-              <h4 class="font-bold text-slate-800 line-clamp-1">${esc(p.name)}</h4>
+              <h4 class="font-bold text-slate-800 line-clamp-1">${esc(fullName(p))}</h4>
               <p class="text-brand-accent font-bold mt-0.5 text-xs">${p.price > 0 ? fmt(p.price * item.qty) : 'Sob consulta'}</p>
             </div>
             <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50 overflow-hidden shrink-0">
@@ -1220,7 +1344,7 @@
       let total = 0, hasUnpriced = false;
       cart.forEach((item, idx) => {
         const p = item.product;
-        msg += `${idx + 1}. *[${p.code}]* ${p.name}\n`;
+        msg += `${idx + 1}. *[${p.code}]* ${fullName(p)}\n`;
         if (p.price > 0) {
           const sub = p.price * item.qty;
           total += sub;
