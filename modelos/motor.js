@@ -117,6 +117,7 @@
     const r = CFG.root + 'modelos/img/';
     const em = dark ? 'fr-emblema-claro.png' : 'fr-emblema.png';
     const fr = `<span class="brand-fr"><img src="${r + em}" alt="" class="brand-emblem"><span class="brand-words"><b>${esc(CFG.brandName)}</b><small>${esc(CFG.brandSub)}</small></span></span>`;
+    if (mode === 'lumifa') return `<img src="${r + (dark ? 'logo-escuro.png' : 'logo.png')}" alt="LumiFa Iluminação" class="brand-lumifa solo">`;
     if (mode === 'frc') return `<img src="${r + (dark ? 'fr-logo-claro.png' : 'fr-logo.png')}" alt="${esc(CFG.brandName)}" class="brand-circle">`;
     if (mode === 'duo') return `<img src="${r + (dark ? 'logo-escuro.png' : 'logo.png')}" alt="LumiFa Iluminação" class="brand-lumifa"><span class="brand-sep" aria-hidden="true"></span>${fr}`;
     return fr;
@@ -540,12 +541,13 @@
           <button class="btn-wa" onclick="Motor.sendWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Enviar orçamento no WhatsApp</button>
           <small class="c-legal">Valores sujeitos a confirmação de estoque e condições comerciais.</small>
         </footer></aside></div>
+      <button id="m-top" data-scroll-top aria-label="Voltar ao topo" title="Voltar ao topo"><i class="fa-solid fa-arrow-up"></i></button>
       <div id="m-toast"><i class="fa-solid fa-circle-check"></i><span></span></div>
       <div class="team-pill"><i class="fa-solid fa-user-lock"></i> Modo equipe <a href="${CFG.root}talao.html">Talão</a><button onclick="Motor.teamLogout()">Sair</button></div>`);
   }
 
   // Barra de apresentação: trocar de modelo e de logo (só nesta prévia)
-  const MODELS = [['1-galeria', 'Galeria'], ['2-showroom', 'Showroom'], ['3-lojista', 'Portal do Lojista'], ['4-vitrine', 'Vitrine'], ['5-pedido-rapido', 'Pedido Rápido'], ['6-app', 'App']];
+  const MODELS = [['1-galeria', 'Galeria'], ['2-showroom', 'Showroom'], ['3-lojista', 'Portal do Lojista'], ['4-vitrine', 'Vitrine'], ['5-pedido-rapido', 'Pedido Rápido'], ['6-app', 'App'], ['7-hibrido', 'Híbrido']];
   function demoBar() {
     if (new URLSearchParams(location.search).has('limpo')) return;
     const i = MODELS.findIndex(m => m[0] === S.opts.id);
@@ -555,11 +557,11 @@
     document.body.insertAdjacentHTML('beforeend', `
       <div id="demo-bar" role="region" aria-label="Apresentação dos modelos">
         <a href="${link(prev)}" title="Modelo anterior"><i class="fa-solid fa-chevron-left"></i></a>
-        <a href="index.html" class="demo-name" title="Ver todos os modelos"><b>${i + 1}/6</b> ${MODELS[i][1]}</a>
+        <a href="index.html" class="demo-name" title="Ver todos os modelos"><b>${i + 1}/${MODELS.length}</b> ${MODELS[i][1]}</a>
         <a href="${link(next)}" title="Próximo modelo"><i class="fa-solid fa-chevron-right"></i></a>
         <span class="demo-sep"></span>
-        <span class="demo-l">Logo</span>
-        <button data-logo-opt="fr">FR</button><button data-logo-opt="frc">FR círculo</button><button data-logo-opt="duo">LumiFa | FR</button>
+        ${S.opts.demoExtra || `<span class="demo-l">Logo</span>
+        <button data-logo-opt="fr">FR</button><button data-logo-opt="frc">FR círculo</button><button data-logo-opt="duo">LumiFa | FR</button>`}
         <button class="demo-hide" title="Esconder" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
       </div>`);
     $$('[data-logo-opt]').forEach(b => b.onclick = () => setLogo(b.dataset.logoOpt));
@@ -606,6 +608,7 @@
       else if (el.hasAttribute('data-scroll-top')) window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTop(); });
+    window.addEventListener('scroll', () => { const b = $('#m-top'); if (b) b.classList.toggle('is-on', window.scrollY > 700); }, { passive: true });
     if ('IntersectionObserver' in window) {
       const sent = $('[data-more]');
       if (sent) new IntersectionObserver(en => { if (en.some(x => x.isIntersecting) && S.rendered < S.list.length) more(); }, { rootMargin: '1200px 0px' }).observe(sent);
@@ -627,7 +630,7 @@
       if (window.scrollY > y || S.opts.scrollOnCat === 'always') window.scrollTo({ top: y, behavior: 'smooth' });
     }
   }
-  function reset() { S.q = ''; S.cat = 'Todos'; S.price = null; S.colors.clear(); S.temps.clear(); S.sort = 'default'; render(); }
+  function reset() { S.q = ''; S.price = null; S.colors.clear(); S.temps.clear(); S.sort = 'default'; setCat('Todos'); }
 
   function ready() {
     $$('[data-skeleton]').forEach(e => e.remove());
@@ -645,7 +648,10 @@
       const qp = new URLSearchParams(location.search);
       S.logo = qp.get('logo') || store.get('modelos_logo', null, true) || opts.logo || 'duo';
       const savedTheme = store.get('modelos_tema_' + (opts.id || ''), null, true);
-      setTheme(savedTheme || opts.theme || 'light', false);
+      let th = opts.theme || 'light';
+      if (th === 'auto') { const ua = navigator.userAgent || ''; const phone = /Android|iPhone|iPad|iPod|Mobile/i.test(ua); th = phone && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+      setTheme(savedTheme || th, false);
+      if (opts.brandName) CFG.brandName = opts.brandName;
       const go = () => { injectShell(); demoBar(); renderBrand(); bind(); load(); };
       document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', go) : go();
     },

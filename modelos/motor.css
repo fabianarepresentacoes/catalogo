@@ -178,6 +178,12 @@ body.is-team .team-pill { display: flex; }
 @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
 .skel { background: linear-gradient(90deg, var(--surface-2) 0, color-mix(in srgb, var(--surface-2) 40%, var(--surface)) 50%, var(--surface-2) 100%); background-size: 800px 100%; animation: shimmer 1.3s infinite linear; border-radius: var(--radius); }
 
+#m-top { position: fixed; right: 22px; bottom: var(--top-bottom, 88px); z-index: 61; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--text); box-shadow: 0 10px 24px -8px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all .25s; }
+#m-top.is-on { opacity: 1; pointer-events: auto; transform: none; }
+#m-top:hover { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 640px) { #m-top { right: 16px; bottom: var(--top-bottom-m, 136px); width: 42px; height: 42px; } }
+.brand-lumifa.solo { height: calc(var(--brand-h, 52px) * 1.05); }
+
 /* ---------- Barra de apresentação (só nas prévias) ---------- */
 #demo-bar { position: fixed; left: 50%; transform: translateX(-50%); top: auto; bottom: var(--demo-bottom, 14px); z-index: 75; display: flex; align-items: center; gap: 4px; background: rgba(20, 17, 14, .92); color: #F5F0E8; padding: 6px; border-radius: 999px; font: 600 12px/1 'Plus Jakarta Sans', system-ui, sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,.35); backdrop-filter: blur(8px); white-space: nowrap; max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none; }
 #demo-bar a, #demo-bar button { color: inherit; text-decoration: none; border: 0; background: none; padding: 8px 10px; border-radius: 999px; font: inherit; }

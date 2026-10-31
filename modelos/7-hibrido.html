@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-skin="atelie">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Modelo 7 · Híbrido | LumiFa Iluminação</title>
+<link rel="icon" href="../imagens/icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="motor.css">
+<style>
+  /* ============ PELES ============
+     Ateliê = visual do Showroom (serifa elegante, cantos arredondados, dourado quente)
+     Loja   = visual do Portal do Lojista (mais reto, direto, cara de site de venda)
+     A estrutura da página é a mesma nas duas. */
+  html[data-skin="atelie"] {
+    --bg: #F7F4EE; --surface: #FFFFFF; --surface-2: #F0EBE2; --stage: #FFFFFF;
+    --text: #1A1612; --muted: #7C7266; --line: #E5DED2;
+    --accent: #96701A; --accent-2: #7A5A12; --on-accent: #fff; --glow: rgba(212,175,55,.10);
+    --radius: 18px; --radius-sm: 12px; --pill: 999px;
+    --font-head: 'Playfair Display', Georgia, serif; --font-body: 'Manrope', system-ui, sans-serif;
+    --hero-bg: radial-gradient(ellipse 70% 90% at 75% 0%, rgba(212,175,55,.14), transparent 60%);
+  }
+  html[data-skin="atelie"].dark {
+    --bg: #0F0D0B; --surface: #191612; --surface-2: #221E18; --stage: #F1ECE3;
+    --text: #F3EEE6; --muted: #A39A8C; --line: #2E2922;
+    --accent: #D6B260; --accent-2: #E9C87A; --on-accent: #17130E; --glow: rgba(214,178,96,.22);
+    --hero-bg: radial-gradient(ellipse 70% 90% at 75% 0%, rgba(214,178,96,.22), transparent 62%);
+  }
+  html[data-skin="loja"] {
+    --bg: #F4F5F7; --surface: #FFFFFF; --surface-2: #F1F2F4; --stage: #FFFFFF;
+    --text: #15171C; --muted: #6B7080; --line: #E3E5EA;
+    --accent: #A47B1C; --accent-2: #876414; --on-accent: #fff; --glow: rgba(0,0,0,0);
+    --radius: 12px; --radius-sm: 8px; --pill: 8px;
+    --font-head: 'Fraunces', Georgia, serif; --font-body: 'Inter', system-ui, sans-serif;
+    --hero-bg: linear-gradient(180deg, #FFFFFF, #F4F5F7);
+  }
+  html[data-skin="loja"].dark {
+    --bg: #101216; --surface: #181B21; --surface-2: #20242B; --stage: #F3F2EF;
+    --text: #EEF0F4; --muted: #9AA0AE; --line: #2A2F38;
+    --accent: #D9B25A; --accent-2: #E8C575; --on-accent: #121418;
+    --hero-bg: linear-gradient(180deg, #14171C, #101216);
+  }
+  :root { --brand-h: 50px; --top-bottom: 92px; }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 0 28px; }
+  @media (max-width: 640px) { .wrap { padding: 0 14px; } :root { --brand-h: 42px; } }
+  html.dark .fa-moon, html:not(.dark) .fa-sun { display: none; }
+
+  /* ---------- Cabeçalho ---------- */
+  header.main { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  .hrow { display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; height: 78px; }
+  .search { position: relative; max-width: 680px; width: 100%; justify-self: center; }
+  .search input { width: 100%; height: 48px; border: 1.5px solid var(--line); border-radius: var(--pill); background: var(--surface-2); padding: 0 16px 0 46px; font-size: 15px; outline: none; color: var(--text); }
+  .search input:focus { border-color: var(--accent); background: var(--surface); }
+  .search i { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .hact { display: flex; gap: 10px; align-items: center; }
+  .tbtn { width: 46px; height: 46px; border-radius: var(--pill); border: 1px solid var(--line); background: var(--surface); color: var(--text); }
+  .tbtn:hover { border-color: var(--accent); color: var(--accent); }
+  .cartbox { display: flex; align-items: center; gap: 12px; border: 0; background: var(--accent); color: var(--on-accent); border-radius: var(--pill); padding: 7px 10px 7px 16px; text-align: left; min-height: 48px; }
+  .cartbox > i { font-size: 18px; }
+  .cartbox small { display: block; font-size: 11px; opacity: .85; }
+  .cartbox b { font-size: 15px; }
+  .cartbox [data-cart-count] { background: var(--on-accent); color: var(--accent); border-radius: 999px; min-width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; padding: 0 7px; }
+  @media (max-width: 900px) {
+    .hrow { grid-template-columns: 1fr auto; height: auto; padding-top: 10px; padding-bottom: 10px; gap: 10px; }
+    .search { grid-column: 1 / -1; grid-row: 2; }
+    .cartbox small, .cartbox b { display: none; } .cartbox { padding: 7px 8px 7px 14px; }
+  }
+  /* barra de navegação + "Todas as categorias" com fotos */
+  .nav2 { border-top: 1px solid var(--line); }
+  .nav2 .wrap { display: flex; align-items: center; gap: 22px; height: 46px; }
+  .allcats { border: 0; background: none; display: inline-flex; gap: 9px; align-items: center; font-weight: 800; font-size: 14px; color: var(--accent); padding: 0; white-space: nowrap; }
+  .allcats i.fa-chevron-down { font-size: 11px; transition: transform .2s; }
+  body.mega-open .allcats i.fa-chevron-down { transform: rotate(180deg); }
+  .quick { display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+  .quick::-webkit-scrollbar { display: none; }
+  .quick button { border: 0; background: none; padding: 0; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .quick button:hover { color: var(--text); }
+  .esp { margin-left: auto; text-decoration: none; font-size: 13.5px; font-weight: 700; color: var(--wa); display: inline-flex; gap: 7px; align-items: center; white-space: nowrap; }
+  @media (max-width: 760px) { .esp span { display: none; } .nav2 .wrap { gap: 16px; } }
+  .mega { position: absolute; left: 0; right: 0; top: 100%; background: var(--surface); border-bottom: 1px solid var(--line); box-shadow: 0 30px 50px -30px rgba(0,0,0,.35); padding: 22px 0 26px; display: none; max-height: calc(100vh - 140px); overflow: auto; }
+  body.mega-open .mega { display: block; }
+  .tiles { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+  .tile { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 10px 10px 12px; text-align: left; display: flex; flex-direction: column; gap: 8px; color: var(--text); transition: border-color .2s, transform .2s; }
+  .tile:hover, .tile.is-on { border-color: var(--accent); transform: translateY(-2px); }
+  .tile .tw { aspect-ratio: 1; border-radius: calc(var(--radius) - 6px); background: var(--stage); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .tile img { width: 78%; height: 78%; object-fit: contain; mix-blend-mode: multiply; }
+  .tile .tw i { font-size: 28px; color: var(--accent); }
+  .tile b { font-size: 13px; line-height: 1.2; }
+  .tile small { color: var(--muted); font-size: 11.5px; }
+  @media (max-width: 1100px) { .tiles { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 640px) { .tiles { grid-template-columns: repeat(3, 1fr); gap: 8px; } .tile small { display: none; } .tile b { font-size: 12px; } }
+
+  /* ---------- Introdução (do modelo 1) ---------- */
+  .hero { background: var(--hero-bg); border-bottom: 1px solid var(--line); }
+  .hero-in { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; padding-top: 60px; padding-bottom: 54px; }
+  .eyebrow { font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .hero h1 { font-family: var(--font-head); font-weight: 500; font-size: clamp(40px, 5.2vw, 72px); line-height: 1.03; margin: 16px 0 18px; letter-spacing: -.01em; }
+  .hero h1 em { color: var(--accent); }
+  .hero p { font-size: 17px; line-height: 1.7; color: var(--muted); max-width: 480px; margin: 0 0 28px; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-solid, .btn-out { display: inline-flex; gap: 10px; align-items: center; text-decoration: none; font-weight: 800; font-size: 14.5px; padding: 15px 24px; border-radius: var(--pill); border: 1px solid transparent; cursor: pointer; }
+  .btn-solid { background: var(--text); color: var(--bg); }
+  .btn-out { border-color: var(--text); color: var(--text); background: none; }
+  .btn-out i { color: var(--wa); }
+  .stats { display: flex; gap: 40px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .stats b { font-family: var(--font-head); font-size: 34px; font-weight: 500; display: block; line-height: 1; }
+  .stats span { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .hero-art { display: grid; grid-template-columns: 1.3fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; height: 500px; }
+  .hero-art figure { margin: 0; background: var(--stage); border: 1px solid var(--line); border-radius: var(--radius); position: relative; overflow: hidden; cursor: pointer; }
+  .hero-art figure:first-child { grid-row: span 2; }
+  .hero-art img { width: 100%; height: 100%; object-fit: contain; padding: 22px; mix-blend-mode: multiply; transition: transform .8s; }
+  .hero-art figure:hover img { transform: scale(1.05); }
+  .hero-art figcaption { position: absolute; left: 12px; bottom: 12px; font-size: 12px; font-weight: 700; color: #3D372F; background: rgba(255,255,255,.9); padding: 5px 10px; border-radius: 999px; }
+  @media (max-width: 900px) { .hero-in { grid-template-columns: 1fr; padding-top: 32px; padding-bottom: 30px; gap: 26px; } .hero-art { height: 300px; } .stats { gap: 26px; } .stats b { font-size: 26px; } }
+
+  /* ---------- Seções com setas (categorias e novidades, do modelo 4) ---------- */
+  .sec { padding-top: 40px; padding-bottom: 6px; }
+  .sec-h { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; margin-bottom: 16px; }
+  .sec-h h2 { font-family: var(--font-head); font-weight: 500; font-size: clamp(26px, 3vw, 36px); margin: 0; line-height: 1.1; }
+  .sec-h p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+  .arrows { display: flex; gap: 8px; }
+  .arrows button { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
+  .arrows button:hover { border-color: var(--accent); color: var(--accent); }
+  .circles { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding: 4px 2px 10px; scroll-behavior: smooth; }
+  .circles::-webkit-scrollbar { display: none; }
+  .circles .cat { border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 9px; width: 118px; flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--text); text-align: center; line-height: 1.25; }
+  .circles .ci { width: 104px; height: 104px; border-radius: 50%; background: var(--stage); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; overflow: hidden; transition: all .2s; }
+  .circles .ci img { width: 72%; height: 72%; object-fit: contain; mix-blend-mode: multiply; transition: transform .4s; }
+  .circles .cat:hover .ci img { transform: scale(1.08); }
+  .circles .cat:hover .ci, .circles .cat.is-on .ci { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .circles .cat.is-on { color: var(--accent); }
+  .circles .ci i { font-size: 28px; color: var(--accent); }
+  .circles small { color: var(--muted); font-weight: 600; font-size: 11.5px; }
+  @media (max-width: 640px) { .circles .cat { width: 92px; font-size: 12px; } .circles .ci { width: 80px; height: 80px; } .arrows { display: none; } }
+  .rail { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 4 * 16px) / 5); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 6px; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail > * { scroll-snap-align: start; }
+  @media (max-width: 1100px) { .rail { grid-auto-columns: calc((100% - 2 * 16px) / 3); } }
+  @media (max-width: 640px) { .rail { grid-auto-columns: 62%; gap: 10px; } }
+
+  /* ---------- Vitrine com barra lateral (do modelo 3) ---------- */
+  .layout { display: grid; grid-template-columns: 268px minmax(0, 1fr); gap: 28px; padding-top: 34px; padding-bottom: 60px; align-items: start; }
+  aside.side { position: sticky; top: 140px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 18px 12px; max-height: calc(100vh - 160px); overflow: auto; }
+  .side h3 { font-size: 15px; margin: 14px 0 6px; }
+  .side-cats { display: flex; flex-direction: column; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .side-cats .cat { border: 0; background: none; text-align: left; display: flex; justify-content: space-between; padding: 7px 10px; margin: 0 -10px; border-radius: 8px; font-size: 14px; color: var(--text); }
+  .side-cats .cat:hover { background: var(--surface-2); }
+  .side-cats .cat.is-on { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 700; }
+  .side-cats .cat-n { color: var(--muted); font-size: 12px; }
+  .side-close { display: none; }
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    aside.side { position: fixed; inset: 0 auto 0 0; width: min(330px, 88vw); max-height: none; z-index: 85; border-radius: 0; transform: translateX(-105%); transition: transform .3s; top: 0; }
+    body.filters-open aside.side { transform: none; box-shadow: 20px 0 60px rgba(0,0,0,.3); }
+    body.filters-open::after { content: ''; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 84; }
+    .side-close { display: flex; position: sticky; top: 0; background: var(--surface); padding: 12px 0; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); z-index: 2; }
+    .side-close b { font-size: 17px; }
+    .side-close button { border: 0; background: var(--accent); color: var(--on-accent); border-radius: 8px; padding: 9px 14px; font-weight: 700; }
+  }
+  .content-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .content-head h2 { font-family: var(--font-head); font-size: clamp(26px, 3vw, 36px); font-weight: 500; margin: 0; line-height: 1.1; }
+  .content-head [data-count] { color: var(--muted); font-size: 14px; }
+  .tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .tools select, .fbtn { height: 42px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--pill); padding: 0 14px; font-size: 13.5px; font-weight: 700; color: var(--text); outline: none; }
+  .fbtn { display: none; gap: 8px; align-items: center; }
+  @media (max-width: 960px) { .fbtn { display: inline-flex; } }
+  .view { display: inline-flex; border: 1px solid var(--line); border-radius: var(--pill); overflow: hidden; background: var(--surface); }
+  .view button { border: 0; background: none; width: 42px; height: 40px; color: var(--muted); }
+  .view button.is-on { background: var(--text); color: var(--surface); }
+  [data-applied] { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 16px; }
+  @media (max-width: 560px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; overflow: hidden; min-width: 0; transition: box-shadow .25s, border-color .25s, transform .25s; }
+  .card:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); box-shadow: 0 22px 44px -24px var(--glow), 0 14px 30px -20px rgba(0,0,0,.28); transform: translateY(-3px); }
+  html[data-skin="atelie"] .card { padding: 9px; }
+  html[data-skin="atelie"] .cm { border-radius: calc(var(--radius) - 6px); border-bottom: 0; }
+  .cm { position: relative; aspect-ratio: 1; background: var(--stage); cursor: pointer; border-bottom: 1px solid var(--line); overflow: hidden; }
+  .cm img { width: 100%; height: 100%; object-fit: contain; padding: 11%; mix-blend-mode: multiply; transition: transform .6s; }
+  .card:hover .cm img { transform: scale(1.05); }
+  .flag { position: absolute; top: 9px; left: 9px; font-size: 11px; font-weight: 800; padding: 5px 9px; border-radius: 999px; background: #17130E; color: #E9C87A; }
+  .flag.new { background: #fff; color: #17130E; border: 1px solid #E5DED2; }
+  html[data-skin="loja"] .flag { border-radius: 5px; background: #FEF3C7; color: #92400E; text-transform: uppercase; font-size: 10.5px; letter-spacing: .04em; }
+  html[data-skin="loja"] .flag.new { background: #DCFCE7; color: #166534; border: 0; }
+  .cb { padding: 13px 10px 10px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  html[data-skin="loja"] .cb { padding: 12px; }
+  .ccode { font-size: 12px; font-weight: 800; color: var(--accent); letter-spacing: .02em; display: flex; justify-content: space-between; gap: 6px; }
+  .ccode { white-space: nowrap; }
+  .ccode span { color: var(--muted); font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .cname { font-size: 14.5px; font-weight: 600; line-height: 1.36; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; min-height: 2.72em; }
+  .cname:hover { color: var(--accent); }
+  .cspecs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; min-height: 20px; }
+  .cspecs span:not(.sw):not(.sws) { font-size: 11px; background: var(--surface-2); color: var(--muted); padding: 3px 7px; border-radius: 999px; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  html[data-skin="loja"] .cspecs span:not(.sw):not(.sws) { border-radius: 4px; }
+  .cprice { margin-top: auto; padding-top: 6px; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .cprice b { font-size: 19px; font-weight: 800; letter-spacing: -.02em; color: var(--accent); }
+  html[data-skin="loja"] .cprice b { color: var(--text); font-size: 20px; }
+  .cprice small { font-size: 11px; color: var(--muted); }
+  .buy { display: flex; gap: 6px; }
+  .buy .stepper { flex-shrink: 0; border-radius: var(--pill); }
+  .buy .stepper button { width: 30px; height: 40px; }
+  .buy .stepper input { width: 32px; height: 40px; font-size: 14px; }
+  .addbtn { flex: 1; height: 42px; border: 0; background: var(--accent); color: var(--on-accent); border-radius: var(--pill); font-weight: 800; font-size: 13.5px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+  .addbtn:hover { background: var(--accent-2); }
+  .addbtn.alt { background: none; border: 1.5px solid var(--accent); color: var(--accent); }
+  .addbtn.alt:hover { background: var(--accent); color: var(--on-accent); }
+  @media (max-width: 560px) { .buy .stepper { display: none; } .cprice b { font-size: 17px; } .cname { font-size: 13.5px; } .ccode span { display: none; } .cspecs span:nth-child(n+3) { display: none; } }
+  /* visão em lista */
+  .grid.as-list { grid-template-columns: 1fr; gap: 8px; }
+  .grid.as-list .card { flex-direction: row; align-items: center; padding: 0; transform: none; }
+  .grid.as-list .cm { width: 116px; flex-shrink: 0; border-bottom: 0; border-right: 1px solid var(--line); border-radius: 0; align-self: stretch; aspect-ratio: auto; min-height: 104px; }
+  .grid.as-list .cb { flex-direction: row; align-items: center; gap: 18px; padding: 10px 16px; }
+  .grid.as-list .cmain { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+  .grid.as-list .cname { min-height: 0; -webkit-line-clamp: 1; }
+  .grid.as-list .cprice { margin: 0; padding: 0; width: 150px; justify-content: flex-end; flex-direction: column; align-items: flex-end; gap: 0; }
+  .grid.as-list .buy { width: 270px; }
+  .grid.as-list .flag { display: none; }
+  @media (max-width: 760px) { .grid.as-list .cb { flex-wrap: wrap; gap: 8px; } .grid.as-list .cprice { width: auto; align-items: flex-start; } .grid.as-list .buy { width: 100%; } .grid.as-list .cm { width: 92px; } }
+  .cmain { display: contents; }
+  .rail .card { height: 100%; }
+  .more { text-align: center; margin: 26px 0; }
+  .more button, .empty button { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: var(--pill); padding: 13px 26px; font-weight: 800; }
+  .empty { text-align: center; padding: 60px 20px; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted); }
+  .empty h3 { color: var(--text); margin: 0 0 6px; font-family: var(--font-head); font-weight: 500; font-size: 26px; }
+
+  /* ---------- Atendimento e rodapé ---------- */
+  .band { border-top: 1px solid var(--line); background: var(--surface); }
+  .band-in { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; padding-top: 52px; padding-bottom: 52px; }
+  .band h3 { font-family: var(--font-head); font-weight: 500; font-size: clamp(28px, 3.2vw, 40px); margin: 10px 0 12px; line-height: 1.1; }
+  .band p { color: var(--muted); line-height: 1.7; margin: 0 0 20px; }
+  .band ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .band li { display: flex; gap: 14px; align-items: center; font-weight: 600; }
+  .band li i { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  @media (max-width: 800px) { .band-in { grid-template-columns: 1fr; } }
+  footer { background: #15120E; color: #B9AF9F; padding: 40px 0 110px; font-size: 13px; }
+  .frow { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .wa-fab { position: fixed; right: 20px; bottom: 20px; z-index: 60; width: 56px; height: 56px; border-radius: 50%; background: var(--wa); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28px; text-decoration: none; box-shadow: 0 12px 28px rgba(18,140,74,.35); }
+  @media (max-width: 640px) { .wa-fab { bottom: 72px; width: 52px; height: 52px; } }
+</style>
+<script>
+  // pele escolhida (?pele=loja ou atelie) — vale durante a visita
+  (function () { var p = new URLSearchParams(location.search).get('pele'); try { p = p || sessionStorage.getItem('modelos_pele'); } catch (e) {} if (p === 'loja' || p === 'atelie') document.documentElement.setAttribute('data-skin', p); })();
+</script>
+</head>
+<body>
+  <header class="main">
+    <div class="wrap hrow">
+      <a href="./7-hibrido.html" class="brand" data-brand aria-label="LumiFa Iluminação - início"></a>
+      <label class="search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" data-search placeholder="Buscar por código (ex.: 2306), nome, potência, 3000K..."></label>
+      <div class="hact">
+        <button class="tbtn" data-theme-toggle aria-label="Trocar tema"><i class="fa-regular fa-moon"></i><i class="fa-regular fa-sun"></i></button>
+        <button class="cartbox" data-open-cart><i class="fa-solid fa-clipboard-list"></i><span><small><span data-cart-lines>0 itens</span> no orçamento</small><b data-cart-total>R$ 0,00</b></span><span data-cart-count>0</span></button>
+      </div>
+    </div>
+    <div class="nav2"><div class="wrap">
+      <button class="allcats" onclick="toggleMega()"><i class="fa-solid fa-bars"></i> Todas as categorias <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="quick"><button data-set-cat="Pendentes">Pendentes</button><button data-set-cat="Lustres">Lustres</button><button data-set-cat="Painéis de LED">Painéis de LED</button><button data-set-cat="Spots">Spots</button><button data-set-cat="Arandelas">Arandelas</button><button data-set-cat="Lâmpadas & Filamentos">Lâmpadas</button><button data-set-cat="Iluminação Externa & Jardim">Jardim</button></div>
+      <a class="esp" href="https://wa.me/5511959781849?text=Ol%C3%A1!%20Vim%20pelo%20cat%C3%A1logo%20da%20LumiFa%20e%20gostaria%20de%20falar%20com%20uma%20especialista." target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><span>Fale com nossa especialista</span></a>
+    </div></div>
+    <div class="mega"><div class="wrap"><div class="tiles" data-cats="tile"></div></div></div>
+  </header>
+
+  <section class="hero"><div class="wrap hero-in">
+    <div>
+      <span class="eyebrow">Catálogo de iluminação</span>
+      <h1>A luz certa para <em>cada projeto</em></h1>
+      <p>Pendentes, lustres, arandelas, spots e soluções em LED de fabricantes selecionados. Escolha os produtos, monte seu orçamento e receba o atendimento de uma especialista em iluminação.</p>
+      <div class="hero-cta">
+        <a href="#produtos" class="btn-solid">Ver produtos <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="https://wa.me/5511959781849?text=Ol%C3%A1!%20Vim%20pelo%20cat%C3%A1logo%20da%20LumiFa%20e%20gostaria%20de%20falar%20com%20uma%20especialista." target="_blank" rel="noopener" class="btn-out"><i class="fa-brands fa-whatsapp"></i> Fale com nossa especialista</a>
+      </div>
+      <div class="stats"><div><b data-stat-items>—</b><span>Produtos</span></div><div><b data-stat-cats>—</b><span>Categorias</span></div><div><b>4</b><span>Fabricantes</span></div></div>
+    </div>
+    <div class="hero-art" data-hero-art><figure class="skel" data-skeleton></figure><figure class="skel" data-skeleton></figure><figure class="skel" data-skeleton></figure></div>
+  </div></section>
+
+  <main>
+    <section class="sec wrap">
+      <div class="sec-h"><div><h2>Explore por categoria</h2><p>Toque em uma categoria para ver os produtos.</p></div>
+        <div class="arrows"><button onclick="slide('cats',-1)" aria-label="Anteriores"><i class="fa-solid fa-chevron-left"></i></button><button onclick="slide('cats',1)" aria-label="Próximas"><i class="fa-solid fa-chevron-right"></i></button></div></div>
+      <nav class="circles" id="cats" data-cats="circle" data-drag aria-label="Categorias"></nav>
+    </section>
+
+    <section class="sec wrap">
+      <div class="sec-h"><div><h2>Novidades do catálogo</h2><p>Os últimos produtos que chegaram.</p></div>
+        <div class="arrows"><button onclick="slide('novos',-1)" aria-label="Anteriores"><i class="fa-solid fa-chevron-left"></i></button><button onclick="slide('novos',1)" aria-label="Próximos"><i class="fa-solid fa-chevron-right"></i></button></div></div>
+      <div class="rail" id="novos"><div class="skel" data-skeleton style="height:380px"></div><div class="skel" data-skeleton style="height:380px"></div></div>
+    </section>
+
+    <div class="wrap layout" id="produtos">
+      <aside class="side" aria-label="Filtros">
+        <div class="side-close"><b>Filtros</b><button onclick="document.body.classList.remove('filters-open')">Ver resultados</button></div>
+        <h3>Categorias</h3>
+        <div class="side-cats" data-cats="side"></div>
+        <div data-facets></div>
+      </aside>
+      <section data-results>
+        <div class="content-head">
+          <div><h2 data-cat-title="Todos os produtos">Todos os produtos</h2><span data-count>Carregando...</span></div>
+          <div class="tools">
+            <button class="fbtn" onclick="document.body.classList.add('filters-open')"><i class="fa-solid fa-sliders"></i> Filtros</button>
+            <select data-sort aria-label="Ordenar"><option value="default">Mais relevantes</option><option value="new">Lançamentos</option><option value="priceAsc">Menor preço</option><option value="priceDesc">Maior preço</option><option value="name">Nome A–Z</option></select>
+            <div class="view"><button class="is-on" data-view="grid" aria-label="Ver em blocos" title="Blocos"><i class="fa-solid fa-grip"></i></button><button data-view="list" aria-label="Ver em lista" title="Lista"><i class="fa-solid fa-list"></i></button></div>
+          </div>
+        </div>
+        <div data-applied hidden></div>
+        <div class="grid" data-grid><div class="skel" data-skeleton style="height:400px"></div><div class="skel" data-skeleton style="height:400px"></div><div class="skel" data-skeleton style="height:400px"></div></div>
+        <div class="empty" data-empty hidden><h3>Nenhum produto encontrado</h3><p>Revise os filtros ou busque pelo código.</p><button data-reset>Limpar filtros</button></div>
+        <div class="more" data-more hidden><button data-more-btn>Carregar mais produtos</button></div>
+      </section>
+    </div>
+  </main>
+
+  <section class="band"><div class="wrap band-in">
+    <div><span class="eyebrow">Atendimento</span><h3>Fale com nossa especialista</h3><p>Montou a lista? Envie o orçamento pelo WhatsApp e receba disponibilidade, prazos e condições para lojistas, arquitetos e consumidores.</p>
+      <a href="https://wa.me/5511959781849?text=Ol%C3%A1!%20Vim%20pelo%20cat%C3%A1logo%20da%20LumiFa%20e%20gostaria%20de%20falar%20com%20uma%20especialista." target="_blank" rel="noopener" class="btn-solid"><i class="fa-brands fa-whatsapp"></i> Chamar no WhatsApp</a></div>
+    <ul><li><i class="fa-solid fa-clipboard-check"></i>Orçamento sem compromisso, em poucos cliques</li><li><i class="fa-solid fa-store"></i>Condições especiais para lojistas</li><li><i class="fa-solid fa-shield-halved"></i>Produtos com garantia dos fabricantes</li></ul>
+  </div></section>
+  <footer><div class="wrap frow"><a href="./7-hibrido.html" class="brand" data-brand data-dark></a><span>© <span data-year></span> LumiFa Iluminação · (11) 95978-1849 · Imagens meramente ilustrativas.</span></div></footer>
+  <a class="wa-fab" href="https://wa.me/5511959781849?text=Ol%C3%A1!%20Vim%20pelo%20cat%C3%A1logo%20da%20LumiFa." target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="motor.js"></script>
+<script>
+function slide(id, dir) { const r = document.getElementById(id); r.scrollBy({ left: dir * r.clientWidth * .8, behavior: 'smooth' }); }
+function toggleMega(force) {
+  const on = force === undefined ? !document.body.classList.contains('mega-open') : force;
+  document.body.classList.toggle('mega-open', on);
+  if (on) document.querySelectorAll('.mega img[data-catimg]').forEach(i => { if (!i.src) i.src = Motor.catImage(i.dataset.catimg); });
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('.mega [data-cat]') || (!e.target.closest('.mega') && !e.target.closest('.allcats'))) toggleMega(false);
+  const v = e.target.closest('[data-view]'); if (!v) return;
+  document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('is-on', b === v));
+  document.querySelector('[data-grid]').classList.toggle('as-list', v.dataset.view === 'list');
+  try { sessionStorage.setItem('modelos_vista', v.dataset.view); } catch (_) {}
+});
+function setSkin(s) {
+  document.documentElement.setAttribute('data-skin', s);
+  try { sessionStorage.setItem('modelos_pele', s); } catch (e) {}
+  document.querySelectorAll('[data-skin-opt]').forEach(b => b.classList.toggle('is-on', b.dataset.skinOpt === s));
+}
+const card = (it, H) => {
+  const specs = H.shortSpecs(it, 3).map(s => `<span title="${H.esc(s)}">${H.esc(s.replace(/^(Potência|Temperatura de cor|Tensão|Base|Dimensões|Proteção|Fluxo|Cabo|Ângulo|Material|Acabamento):\s*/i, ''))}</span>`).join('');
+  return `
+  <article class="card">
+    <div class="cm" data-open="${H.esc(it.code)}">${H.img(it)}${it.featured ? '<span class="flag"><i class="fa-solid fa-fire"></i> Mais procurado</span>' : it.isNew ? '<span class="flag new">Novidade</span>' : ''}</div>
+    <div class="cb">
+      <div class="cmain">
+        <div class="ccode">${it.isGroup ? H.options(it) : H.esc(it.code)}<span>${H.esc(it.category)}</span></div>
+        <h3 class="cname" data-open="${H.esc(it.code)}">${H.esc(it.name)}</h3>
+        ${it.isGroup ? `<div class="cspecs">${H.swatches(it, 13)}${it.temps.length ? `<span>${H.esc(it.temps.join(' · '))}</span>` : ''}</div>` : `<div class="cspecs">${specs}</div>`}
+        ${H.team(it)}
+      </div>
+      <div class="cprice">${H.from(it) ? '<small>a partir de</small>' : ''}<b>${H.priceLabel(it.price)}</b>${it.price > 0 ? '<small>un.</small>' : ''}</div>
+      <div class="buy">${it.isGroup
+        ? `<button class="addbtn alt" data-open="${H.esc(it.code)}"><i class="fa-solid fa-swatchbook"></i> Escolher opção</button>`
+        : `<div class="stepper"><button type="button" onclick="this.nextElementSibling.value=Math.max(1,+this.nextElementSibling.value-1)">−</button><input type="number" min="1" value="1" aria-label="Quantidade"><button type="button" onclick="this.previousElementSibling.value=+this.previousElementSibling.value+1">+</button></div><button class="addbtn" data-qty-add="${H.esc(it.code)}"><i class="fa-solid fa-plus"></i> Orçar</button>`}
+      </div>
+    </div>
+  </article>`;
+};
+Motor.init({
+  id: '7-hibrido', logo: 'lumifa', theme: 'auto', brandName: 'LumiFa Iluminação',
+  headerOffset: () => document.querySelector('header.main').offsetHeight + 12,
+  scrollOnCat: 'always', scrollAnchor: '#produtos',
+  demoExtra: `<span class="demo-l">Visual</span><button data-skin-opt="atelie" onclick="setSkin('atelie')">Ateliê</button><button data-skin-opt="loja" onclick="setSkin('loja')">Loja</button>`,
+  catTemplates: {
+    side: (c, n) => `<button class="cat" data-cat="${Motor.H.esc(c)}"><span>${Motor.H.esc(c)}</span><span class="cat-n">${n}</span></button>`,
+    circle: (c, n) => `<button class="cat" data-cat="${Motor.H.esc(c)}"><span class="ci">${c === 'Todos' ? '<i class="fa-solid fa-border-all"></i>' : `<img data-catimg="${Motor.H.esc(c)}" alt="">`}</span>${Motor.H.esc(c === 'Todos' ? 'Ver tudo' : c)}<small>${n} itens</small></button>`,
+    tile: (c, n) => `<button class="tile" data-cat="${Motor.H.esc(c)}"><span class="tw">${c === 'Todos' ? '<i class="fa-solid fa-border-all"></i>' : `<img data-catimg="${Motor.H.esc(c)}" alt="">`}</span><b>${Motor.H.esc(c === 'Todos' ? 'Ver tudo' : c)}</b><small>${n} produtos</small></button>`
+  },
+  card,
+  onRender() {
+    document.querySelectorAll('.circles img[data-catimg]').forEach(img => { if (!img.src) img.src = Motor.catImage(img.dataset.catimg); });
+  },
+  onReady(M) {
+    const H = M.H, S = M.state;
+    setSkin(document.documentElement.getAttribute('data-skin'));
+    try { if (sessionStorage.getItem('modelos_vista') === 'list') document.querySelector('[data-view="list"]').click(); } catch (_) {}
+    document.querySelector('[data-stat-items]').textContent = S.items.length.toLocaleString('pt-BR');
+    document.querySelector('[data-stat-cats]').textContent = M.categories().length - 1;
+    const f = M.featured(30).filter(i => /Pendentes|Lustres|Arandelas|Plafons/.test(i.category));
+    const pick = (f.length >= 3 ? f : [...M.byCat('Pendentes', 2), ...M.byCat('Lustres', 1)]).slice(0, 3);
+    document.querySelector('[data-hero-art]').innerHTML = pick.map(it => `<figure data-open="${H.esc(it.code)}">${H.img(it)}<figcaption>${H.esc(it.category)}</figcaption></figure>`).join('');
+    const nw = M.newest(16);
+    document.getElementById('novos').innerHTML = (nw.length ? nw : S.items.slice(-12)).map(i => card(i, H)).join('');
+    document.querySelector('[data-year]').textContent = new Date().getFullYear();
+  }
+});
+</script>
+</body>
+</html>
