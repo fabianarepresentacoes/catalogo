@@ -9,8 +9,9 @@
   <meta property="og:title" content="LumiFa Iluminação | Catálogo Digital">
   <meta property="og:description" content="Iluminação decorativa, comercial, industrial e LED. Monte seu orçamento e envie pelo WhatsApp.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="imagens/logo.jpg">
-  <link rel="icon" href="imagens/logo.jpg">
+  <meta property="og:image" content="https://lumifabr.github.io/imagens/og.jpg">
+  <link rel="icon" type="image/png" href="imagens/icone.png">
+  <link rel="apple-touch-icon" href="imagens/icone-180.png">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -258,9 +259,9 @@
     <header id="siteHeader" class="sticky top-0 z-40 glass-header border-b border-brand-border/80 shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-4">
 
-        <!-- Logo (tenta imagens/logo.jpg, logo.jpg, imagens/logo.png, logo.png) -->
+        <!-- Logo LumiFa (imagens/logo.png; no modo escuro imagens/logo-escuro.png) -->
         <a href="./" class="flex items-center gap-3 min-w-0" aria-label="LumiFa Iluminação - início">
-          <img id="logoImg" src="imagens/logo.jpg" alt="LumiFa Iluminação"
+          <img id="logoImg" src="imagens/logo.png" alt="LumiFa Iluminação"
                class="h-12 sm:h-16 w-auto max-w-[120px] sm:max-w-[280px] shrink min-w-0 object-contain">
           <!-- Texto da marca: aparece se a logo não carregar (ou se SHOW_BRAND_TEXT = true) -->
           <div id="brandText" class="hidden leading-tight shrink-0">
@@ -488,7 +489,7 @@
     const THUMBS_FOLDER   = "miniaturas/"; // versões leves (600px .webp) geradas automaticamente a partir de "imagens/"
     const PAGE_SIZE       = 48;            // quantos produtos aparecem por vez; mais vão carregando ao rolar
     const IMAGES_FOLDER   = "imagens/";   // pasta das fotos no GitHub. Na planilha pode ir só o nome: "PROD-001.jpg"
-    const LOGO_CANDIDATES = ["imagens/logo.jpg", "logo.jpg", "imagens/logo.png", "logo.png"];
+    const LOGO_CANDIDATES = ["imagens/logo.png", "logo.png"];
     const LOGO_DARK       = "imagens/logo-escuro.png";  // logo dourada (fundo transparente) usada no modo escuro
     const THEME_KEY       = "lumifa_theme";             // "light" ou "dark", guardado no aparelho do cliente
     const SHOW_BRAND_TEXT = true;       // true = mostra "LumiFa Iluminação" em texto ao lado da logo
