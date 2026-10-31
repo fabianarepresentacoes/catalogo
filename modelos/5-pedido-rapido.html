@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Modelo 5 · Pedido Rápido | Fabiana Representações</title>
+<link rel="icon" href="img/fr-emblema.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Fraunces:wght@500;600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="motor.css">
+<style>
+  :root {
+    --bg: #F6F4F0; --surface: #FFFFFF; --surface-2: #F3F0EA; --stage: #FFFFFF;
+    --text: #1B1915; --muted: #757068; --line: #E5E0D7;
+    --accent: #946F1A; --accent-2: #7A5B13; --on-accent: #fff;
+    --radius: 12px; --radius-sm: 8px;
+    --font-head: 'Fraunces', Georgia, serif; --font-body: 'Outfit', system-ui, sans-serif;
+    --brand-h: 44px; --brand-fs: 17px;
+  }
+  html.dark { --bg: #12110E; --surface: #1B1915; --surface-2: #24211C; --stage: #F1EDE6; --text: #F0ECE5; --muted: #A39C91; --line: #302C26; --accent: #D8B35E; --accent-2: #EAC777; --on-accent: #17140F; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 0 24px; }
+  @media (max-width: 640px) { .wrap { padding: 0 12px; } }
+  header.main { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; }
+  .hrow { display: flex; gap: 20px; align-items: center; height: 72px; }
+  .search { flex: 1; position: relative; max-width: 620px; margin-left: auto; }
+  .search input { width: 100%; height: 46px; border: 1.5px solid var(--line); border-radius: 999px; padding: 0 18px 0 44px; outline: none; font-size: 15px; background: var(--surface-2); color: var(--text); }
+  .search input:focus { border-color: var(--accent); background: var(--surface); }
+  .search i { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .hbtn { height: 46px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); padding: 0 16px; display: inline-flex; gap: 8px; align-items: center; font-weight: 600; font-size: 14px; color: var(--text); white-space: nowrap; }
+  .hbtn.round { width: 46px; padding: 0; justify-content: center; }
+  .hbtn.gold { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  html.dark .fa-moon, html:not(.dark) .fa-sun { display: none; }
+  @media (max-width: 860px) { .hrow { flex-wrap: wrap; height: auto; padding: 10px 0; gap: 10px; } .search { order: 3; flex-basis: 100%; max-width: none; } .hbtn .t { display: none; } .hbtn { padding: 0 14px; } .hrow .brand { margin-right: auto; } }
+
+  .intro { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; padding: 28px 0 16px; flex-wrap: wrap; }
+  .intro h1 { font-family: var(--font-head); font-weight: 500; font-size: clamp(28px, 3vw, 38px); margin: 0 0 6px; }
+  .intro p { margin: 0; color: var(--muted); font-size: 15px; max-width: 620px; }
+  .paste { border: 1px dashed var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--accent); border-radius: var(--radius-sm); padding: 12px 16px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; }
+
+  .tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 12px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs .cat { white-space: nowrap; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius-sm); padding: 9px 14px; font-weight: 600; font-size: 13.5px; color: var(--muted); }
+  .tabs .cat.is-on { background: var(--text); color: var(--surface); border-color: var(--text); }
+  .tabs .cat-n { margin-left: 6px; opacity: .6; font-size: 12px; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .filters select { height: 38px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius-sm); padding: 0 10px; font-size: 13.5px; font-weight: 600; color: var(--text); outline: none; }
+  .filters [data-count] { margin-left: auto; color: var(--muted); font-size: 14px; }
+  [data-applied] { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+  .table { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 120px; }
+  .table .thead { border-radius: var(--radius) var(--radius) 0 0; }
+  .thead, .row { display: grid; grid-template-columns: 74px 110px 1fr 150px 130px 120px 130px; align-items: center; gap: 14px; padding: 0 16px; }
+  .thead { height: 44px; background: var(--surface-2); font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; border-bottom: 1px solid var(--line); position: sticky; top: 72px; z-index: 5; }
+  .row { min-height: 84px; border-bottom: 1px solid var(--line); padding-top: 8px; padding-bottom: 8px; }
+  .row:hover { background: color-mix(in srgb, var(--accent) 4%, var(--surface)); }
+  .row .ph { width: 64px; height: 64px; border-radius: 8px; background: var(--stage); border: 1px solid var(--line); cursor: pointer; overflow: hidden; }
+  .row .ph img { width: 100%; height: 100%; object-fit: contain; padding: 5px; mix-blend-mode: multiply; }
+  .row .cd { font-weight: 700; font-size: 13.5px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .row .nm { min-width: 0; }
+  .row .nm b { display: block; font-weight: 600; font-size: 14.5px; line-height: 1.35; cursor: pointer; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .row .nm b:hover { color: var(--accent); }
+  .row .nm small { display: flex; gap: 8px; flex-wrap: wrap; color: var(--muted); font-size: 12.5px; margin-top: 3px; align-items: center; }
+  .row .ct { font-size: 13px; color: var(--muted); }
+  .row .pr { font-weight: 700; font-size: 16px; text-align: right; font-variant-numeric: tabular-nums; }
+  .row .pr small { display: block; font-size: 11px; color: var(--muted); font-weight: 500; }
+  .row .ad { display: flex; justify-content: flex-end; }
+  .addq { border: 0; background: var(--accent); color: var(--on-accent); border-radius: var(--radius-sm); height: 40px; padding: 0 14px; font-weight: 700; font-size: 13.5px; display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+  .addq:hover { background: var(--accent-2); }
+  .addq.ghost { background: none; border: 1px solid var(--line); color: var(--text); }
+  .addq.in { background: #15803D; }
+  .row .stepper button { width: 30px; height: 38px; } .row .stepper input { width: 40px; height: 38px; }
+  .row.is-group .cd::after { content: ''; }
+  .vrows { background: var(--surface-2); border-bottom: 1px solid var(--line); }
+  .vrows .row { min-height: 60px; border-bottom: 1px dashed var(--line); background: transparent; }
+  .vrows .row:last-child { border-bottom: 0; }
+  .vrows .row .ph { width: 44px; height: 44px; margin-left: 10px; }
+  .vlabel { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; font-size: 14px; }
+  .toggle i { transition: transform .2s; }
+  .row.open .toggle i { transform: rotate(180deg); }
+  @media (max-width: 1050px) { .thead, .row { grid-template-columns: 64px 92px 1fr 120px 120px 120px; } .row .ct, .thead .ct { display: none; } }
+  @media (max-width: 760px) {
+    .thead { display: none; }
+    .row { grid-template-columns: 64px 1fr auto; grid-template-areas: "ph nm nm" "ph pr ad" "ph q q"; gap: 6px 12px; padding: 12px; }
+    .row .ph { grid-area: ph; align-self: start; } .row .cd { display: none; } .row .nm { grid-area: nm; } .row .pr { grid-area: pr; text-align: left; } .row .qt { grid-area: q; display: none; } .row .ad { grid-area: ad; }
+    .row .nm b::before { content: attr(data-code) ' · '; color: var(--accent); font-weight: 700; font-size: 12.5px; }
+    .vrows .row .ph { margin-left: 0; }
+  }
+  .more { text-align: center; padding: 18px; }
+  .more button, .empty button { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 11px 22px; font-weight: 700; color: var(--text); }
+  .empty { text-align: center; padding: 50px 0; color: var(--muted); }
+
+  .sumbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: #17140F; color: #F4EFE6; transform: translateY(110%); transition: transform .3s; }
+  .sumbar.is-on { transform: none; }
+  .sumbar .wrap { display: flex; align-items: center; gap: 16px; height: 74px; }
+  .sumbar .s1 small { display: block; color: #B7AE9F; font-size: 12px; }
+  .sumbar .s1 b { font-size: 22px; color: #E9C87A; }
+  .sumbar .sp { flex: 1; }
+  .sumbar button { height: 46px; border-radius: 999px; border: 1px solid #4A4237; background: none; color: #fff; padding: 0 18px; font-weight: 700; font-size: 14px; display: inline-flex; gap: 8px; align-items: center; }
+  .sumbar button.wa { background: var(--wa); border-color: var(--wa); }
+  @media (max-width: 640px) { .sumbar .wrap { height: 66px; gap: 8px; } .sumbar .rev .t { display: none; } .sumbar button { padding: 0 14px; } .sumbar .s1 b { font-size: 18px; } }
+  body:has(.sumbar.is-on) { --demo-bottom: 88px; }
+
+  .pastebox { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .pastebox.is-open { display: flex; }
+  .pastebox > div { background: var(--surface); border-radius: var(--radius); width: min(560px, 100%); padding: 24px; }
+  .pastebox h3 { font-family: var(--font-head); font-weight: 500; font-size: 26px; margin: 0 0 6px; }
+  .pastebox p { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+  .pastebox textarea { width: 100%; min-height: 180px; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px; font-family: ui-monospace, monospace; font-size: 14px; background: var(--surface-2); color: var(--text); }
+  .pastebox .pb { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+  .pastebox .msg { font-size: 13px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+  <header class="main">
+    <div class="wrap hrow">
+      <a href="./5-pedido-rapido.html" class="brand" data-brand aria-label="Início"></a>
+      <label class="search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" data-search placeholder="Digite o código ou o nome do produto"></label>
+      <button class="hbtn round" data-theme-toggle aria-label="Trocar tema"><i class="fa-regular fa-moon"></i><i class="fa-regular fa-sun"></i></button>
+      <button class="hbtn gold" data-open-cart><i class="fa-solid fa-clipboard-list"></i><span class="t">Orçamento</span><b data-cart-count>0</b></button>
+    </div>
+  </header>
+
+  <main class="wrap" data-results>
+    <section class="intro">
+      <div><h1>Pedido rápido</h1><p>Toda a linha em formato de lista: encontre pelo código, informe a quantidade e adicione. Produtos com várias cores ou temperaturas abrem as opções na própria linha.</p></div>
+      <button class="paste" onclick="document.querySelector('.pastebox').classList.add('is-open')"><i class="fa-solid fa-paste"></i> Colar lista de códigos</button>
+    </section>
+    <nav class="tabs" data-cats data-drag></nav>
+    <div class="filters">
+      <select data-sort aria-label="Ordenar"><option value="default">Relevância</option><option value="name">Nome A–Z</option><option value="priceAsc">Menor preço</option><option value="priceDesc">Maior preço</option><option value="new">Lançamentos</option></select>
+      <select data-quick-price aria-label="Faixa de preço"><option value="">Qualquer preço</option><option value="p1">Até R$ 50</option><option value="p2">R$ 50 a 200</option><option value="p3">R$ 200 a 500</option><option value="p4">R$ 500 a 1.000</option><option value="p5">Acima de R$ 1.000</option></select>
+      <span data-count>Carregando...</span>
+    </div>
+    <div data-applied hidden></div>
+    <div class="table">
+      <div class="thead"><span>Foto</span><span>Código</span><span>Produto</span><span class="ct">Categoria</span><span style="text-align:right">Preço un.</span><span>Qtd.</span><span></span></div>
+      <div data-grid><div class="skel" data-skeleton style="height:300px;margin:12px"></div></div>
+      <div class="empty" data-empty hidden><p>Nenhum produto encontrado.</p><button data-reset>Limpar busca</button></div>
+      <div class="more" data-more hidden><button data-more-btn>Carregar mais</button></div>
+    </div>
+  </main>
+
+  <div class="sumbar" data-cart-bar><div class="wrap">
+    <div class="s1"><small><span data-cart-lines>0 itens</span> no orçamento</small><b data-cart-total>R$ 0,00</b></div>
+    <span class="sp"></span>
+    <button class="rev" data-open-cart><i class="fa-solid fa-list-check"></i><span class="t">Revisar</span></button>
+    <button class="wa" onclick="Motor.sendWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Enviar</button>
+  </div></div>
+
+  <div class="pastebox" onclick="if(event.target===this)this.classList.remove('is-open')"><div>
+    <h3>Colar lista de códigos</h3>
+    <p>Um produto por linha: código e quantidade. Ex.: <code>2306 10</code> ou <code>PROD-2458; 4</code></p>
+    <textarea id="pasteTxt" placeholder="2306 10&#10;2458 4&#10;PROD-3615 20"></textarea>
+    <div class="msg" id="pasteMsg"></div>
+    <div class="pb"><button class="hbtn" onclick="this.closest('.pastebox').classList.remove('is-open')">Cancelar</button><button class="hbtn gold" onclick="pasteAdd()"><i class="fa-solid fa-plus"></i> Adicionar ao orçamento</button></div>
+  </div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="motor.js"></script>
+<script>
+const qtyCell = code => `<div class="stepper"><button type="button" onclick="this.nextElementSibling.value=Math.max(1,+this.nextElementSibling.value-1)">−</button><input type="number" min="1" value="1" aria-label="Quantidade"><button type="button" onclick="this.previousElementSibling.value=+this.previousElementSibling.value+1">+</button></div>`;
+function rowAdd(btn, code) {
+  const q = Math.max(1, +btn.closest('.row').querySelector('.qt input').value || 1);
+  Motor.add(code, q);
+  btn.classList.add('in'); btn.innerHTML = '<i class="fa-solid fa-check"></i> Adicionado';
+  setTimeout(() => { btn.classList.remove('in'); btn.innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar'; }, 1400);
+}
+function variantRows(gid) {
+  const H = Motor.H, g = Motor.state.groups.get(gid);
+  return g.variants.map(v => `
+    <div class="row">
+      <span class="ph" data-open="${H.esc(v.code)}">${H.img(v)}</span>
+      <span class="cd">${H.esc(v.code)}</span>
+      <span class="nm"><b data-code="${H.esc(v.code)}" data-open="${H.esc(v.code)}"><span class="vlabel">${v.color ? H.swatch(v.color, 14) : ''}${H.esc([v.color, v.temp].filter(Boolean).join(' · ') || v.name)}</span></b></span>
+      <span class="ct"></span>
+      <span class="pr">${H.priceLabel(v.price)}</span>
+      <span class="qt">${qtyCell(v.code)}</span>
+      <span class="ad"><button class="addq" onclick="rowAdd(this,'${H.esc(v.code)}')"><i class="fa-solid fa-plus"></i> Adicionar</button></span>
+    </div>`).join('');
+}
+function toggleGroup(btn, gid) {
+  const row = btn.closest('.row'); const next = row.nextElementSibling;
+  if (next && next.classList.contains('vrows')) { next.remove(); row.classList.remove('open'); return; }
+  row.insertAdjacentHTML('afterend', `<div class="vrows">${variantRows(gid)}</div>`); row.classList.add('open');
+}
+function pasteAdd() {
+  const S = Motor.state; let ok = 0; const miss = [];
+  document.getElementById('pasteTxt').value.split(/\n+/).map(l => l.trim()).filter(Boolean).forEach(l => {
+    const m = l.match(/(?:PROD[-\s]?)?(\d{1,5})\D+(\d+)?/i) || l.match(/(?:PROD[-\s]?)?(\d{1,5})/i);
+    if (!m) { miss.push(l); return; }
+    const n = m[1]; const code = [...S.byCode.keys()].find(c => c.replace(/\D/g, '').replace(/^0+/, '') === n.replace(/^0+/, ''));
+    if (!code) { miss.push(l); return; }
+    Motor.add(code, Math.max(1, +(m[2] || 1))); ok++;
+  });
+  document.getElementById('pasteMsg').innerHTML = `${ok} produto(s) adicionado(s).` + (miss.length ? ` Não encontrados: <b>${miss.map(Motor.H.esc).join(', ')}</b>` : '');
+  if (!miss.length && ok) setTimeout(() => document.querySelector('.pastebox').classList.remove('is-open'), 900);
+}
+document.addEventListener('change', e => { if (e.target.matches('[data-quick-price]')) { Motor.state.price = e.target.value || null; Motor.render(); } });
+Motor.init({
+  id: '5-pedido-rapido', logo: 'fr', addGroupDirect: true, pageSize: 60,
+  headerOffset: () => document.querySelector('header.main').offsetHeight + 10,
+  card: (it, H) => it.isGroup ? `
+    <div class="row is-group">
+      <span class="ph" data-open="${H.esc(it.code)}">${H.img(it)}</span>
+      <span class="cd">${H.esc(it.variants.length)} opções</span>
+      <span class="nm"><b data-code="${H.esc(it.variants.length + ' opções')}" data-open="${H.esc(it.code)}">${H.esc(it.name)}</b><small>${H.swatches(it, 12, 8)}${it.temps.length ? `<span><i class="fa-regular fa-sun"></i> ${H.esc(it.temps.join(' · '))}</span>` : ''}${H.team(it)}</small></span>
+      <span class="ct">${H.esc(it.category)}</span>
+      <span class="pr">${H.from(it) ? '<small>a partir de</small>' : ''}${H.priceLabel(it.price)}</span>
+      <span class="qt"></span>
+      <span class="ad"><button class="addq ghost toggle" onclick="toggleGroup(this,'${H.esc(it.id)}')">Opções <i class="fa-solid fa-chevron-down"></i></button></span>
+    </div>` : `
+    <div class="row">
+      <span class="ph" data-open="${H.esc(it.code)}">${H.img(it)}</span>
+      <span class="cd">${H.esc(it.code)}</span>
+      <span class="nm"><b data-code="${H.esc(it.code)}" data-open="${H.esc(it.code)}">${H.esc(it.name)}</b><small>${H.shortSpecs(it, 3).map(s => `<span>${H.esc(s)}</span>`).join('<span>·</span>')}${H.team(it)}</small></span>
+      <span class="ct">${H.esc(it.category)}</span>
+      <span class="pr">${H.priceLabel(it.price)}</span>
+      <span class="qt">${qtyCell(it.code)}</span>
+      <span class="ad"><button class="addq" onclick="rowAdd(this,'${H.esc(it.code)}')"><i class="fa-solid fa-plus"></i> Adicionar</button></span>
+    </div>`,
+  onRender() { const s = document.querySelector('[data-quick-price]'); if (s) s.value = Motor.state.price || ''; }
+});
+</script>
+</body>
+</html>

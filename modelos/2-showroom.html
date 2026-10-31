@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Modelo 2 · Showroom | Fabiana Representações</title>
+<link rel="icon" href="img/fr-emblema.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="motor.css">
+<style>
+  :root {
+    --bg: #F7F4EE; --surface: #FFFFFF; --surface-2: #EFEAE1; --stage: #FFFFFF;
+    --text: #1A1612; --muted: #7C7266; --line: #E4DDD1;
+    --accent: #9A7420; --accent-2: #7E5E15; --on-accent: #fff; --glow: rgba(212,175,55,.0);
+    --radius: 18px; --radius-sm: 12px;
+    --font-head: 'Playfair Display', Georgia, serif; --font-body: 'Manrope', system-ui, sans-serif;
+    --brand-h: 50px; --brand-fs: 18px;
+  }
+  html.dark {
+    --bg: #0F0D0B; --surface: #191612; --surface-2: #221E18; --stage: #F1ECE3;
+    --text: #F3EEE6; --muted: #A39A8C; --line: #2E2922;
+    --accent: #D6B260; --accent-2: #E9C87A; --on-accent: #17130E; --glow: rgba(214,178,96,.22);
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
+  @media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+  header.main { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  .hrow { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 78px; }
+  .hnav { display: flex; gap: 30px; font-size: 14px; font-weight: 600; }
+  .hnav a { text-decoration: none; color: var(--muted); }
+  .hnav a:hover { color: var(--accent); }
+  .hact { display: flex; align-items: center; gap: 8px; }
+  .ibtn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--text); display: inline-flex; align-items: center; justify-content: center; position: relative; }
+  .ibtn:hover { border-color: var(--accent); color: var(--accent); }
+  .ibtn [data-cart-count] { position: absolute; top: -4px; right: -4px; background: var(--accent); color: var(--on-accent); font-size: 11px; font-weight: 800; min-width: 20px; height: 20px; border-radius: 999px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+  .ibtn [data-cart-count].is-zero { display: none; }
+  .cta-top { background: var(--accent); color: var(--on-accent); border: 0; border-radius: 999px; padding: 12px 20px; font-weight: 800; font-size: 14px; display: inline-flex; gap: 9px; align-items: center; }
+  .cta-top [data-cart-count] { background: var(--on-accent); color: var(--accent); border-radius: 999px; min-width: 22px; height: 22px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
+  html.dark .fa-moon, html:not(.dark) .fa-sun { display: none; }
+  @media (max-width: 900px) { .hnav { display: none; } .cta-top span:first-of-type { display: none; } .hrow { height: 66px; } }
+
+  .hero { position: relative; overflow: hidden; text-align: center; padding: 90px 0 70px; }
+  .hero::before { content: ''; position: absolute; left: 50%; top: -260px; width: 1100px; height: 700px; transform: translateX(-50%); background: radial-gradient(ellipse at center, var(--glow), transparent 62%); pointer-events: none; }
+  .hero::after { content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 70px; background: linear-gradient(var(--accent), transparent); }
+  .kicker { display: inline-flex; gap: 10px; align-items: center; font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .kicker::before, .kicker::after { content: ''; width: 28px; height: 1px; background: currentColor; opacity: .6; }
+  .hero h1 { font-family: var(--font-head); font-weight: 500; font-size: clamp(40px, 6vw, 82px); line-height: 1.04; margin: 20px auto 18px; max-width: 900px; position: relative; }
+  .hero h1 i { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 17px; max-width: 600px; margin: 0 auto 32px; line-height: 1.65; }
+  .bigsearch { position: relative; max-width: 620px; margin: 0 auto; }
+  .bigsearch input { width: 100%; height: 62px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); padding: 0 150px 0 56px; font-size: 16px; outline: none; color: var(--text); box-shadow: 0 20px 50px -25px rgba(0,0,0,.6); }
+  .bigsearch input:focus { border-color: var(--accent); }
+  .bigsearch > i { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .bigsearch button { position: absolute; right: 7px; top: 7px; height: 48px; border-radius: 999px; border: 0; background: var(--accent); color: var(--on-accent); font-weight: 800; padding: 0 24px; }
+  .chips-hint { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .chips-hint button { border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 999px; padding: 5px 12px; font-size: 13px; }
+  .chips-hint button:hover { color: var(--accent); border-color: var(--accent); }
+  .pedestal { display: flex; justify-content: center; gap: 22px; margin-top: 56px; }
+  .pedestal figure { margin: 0; width: 190px; aspect-ratio: 1; border-radius: 50%; background: var(--stage); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 0 1px var(--line), 0 30px 60px -30px var(--glow); transition: transform .4s; }
+  .pedestal figure:nth-child(2) { transform: translateY(-24px); }
+  .pedestal figure:hover { transform: translateY(-8px) scale(1.03); }
+  .pedestal figure:nth-child(2):hover { transform: translateY(-30px) scale(1.03); }
+  .pedestal img { width: 70%; height: 70%; object-fit: contain; mix-blend-mode: multiply; }
+  @media (max-width: 700px) { .hero { padding: 54px 0 40px; } .pedestal { gap: 10px; margin-top: 36px; } .pedestal figure { width: 30%; } .bigsearch input { height: 54px; padding-right: 20px; font-size: 15px; } .bigsearch button { display: none; } }
+
+  .sec-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin: 0 0 22px; flex-wrap: wrap; }
+  .sec-head h2 { font-family: var(--font-head); font-weight: 500; font-size: clamp(28px, 3.4vw, 42px); margin: 0; line-height: 1.1; }
+  .sec-head p { color: var(--muted); margin: 6px 0 0; font-size: 14px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 70px; }
+  .tile { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 12px 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 10px; transition: border-color .2s, transform .2s; color: var(--text); }
+  .tile:hover, .tile.is-on { border-color: var(--accent); transform: translateY(-3px); }
+  .tile .tw { aspect-ratio: 1; border-radius: 12px; background: var(--stage); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .tile img { width: 78%; height: 78%; object-fit: contain; mix-blend-mode: multiply; }
+  .tile b { font-size: 14px; font-weight: 700; line-height: 1.2; }
+  .tile small { color: var(--muted); font-size: 12px; }
+  @media (max-width: 1000px) { .tiles { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .tiles { grid-template-columns: repeat(3, 1fr); gap: 8px; } .tile { padding: 8px; border-radius: 14px; } .tile b { font-size: 12px; } .tile small { display: none; } }
+
+  .bar { position: sticky; top: 78px; z-index: 40; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(12px); padding: 12px 0; margin-bottom: 18px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 900px) { .bar { top: 66px; } }
+  .bar-in { display: flex; gap: 14px; align-items: center; }
+  .pills { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+  .pills::-webkit-scrollbar { display: none; }
+  .pills .cat { white-space: nowrap; border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 700; }
+  .pills .cat:hover { color: var(--text); border-color: var(--muted); }
+  .pills .cat.is-on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .pills .cat-n { opacity: .6; margin-left: 6px; font-weight: 600; }
+  .sel { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px; padding: 9px 14px; font-size: 13px; font-weight: 700; outline: none; }
+  [data-applied] { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; display: flex; flex-direction: column; min-width: 0; transition: border-color .25s, box-shadow .25s, transform .25s; }
+  .card:hover { border-color: color-mix(in srgb, var(--accent) 60%, transparent); box-shadow: 0 24px 50px -24px var(--glow), 0 20px 40px -30px rgba(0,0,0,.5); transform: translateY(-4px); }
+  .cm { position: relative; aspect-ratio: 1; background: var(--stage); border-radius: 12px; overflow: hidden; cursor: pointer; }
+  .cm img { width: 100%; height: 100%; object-fit: contain; padding: 12%; mix-blend-mode: multiply; transition: transform .6s; }
+  .card:hover .cm img { transform: scale(1.06); }
+  .tag { position: absolute; top: 10px; left: 10px; background: #17130E; color: #E9C87A; font-size: 11px; font-weight: 800; padding: 5px 9px; border-radius: 999px; letter-spacing: .02em; }
+  .tag.new { background: #fff; color: #17130E; }
+  .code { position: absolute; bottom: 10px; left: 10px; font-size: 11px; font-weight: 800; color: #5C5348; background: rgba(255,255,255,.85); padding: 3px 8px; border-radius: 999px; }
+  .cb { padding: 14px 6px 6px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .cb h3 { margin: 0; font-size: 14.5px; font-weight: 600; line-height: 1.38; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+  .cb h3:hover { color: var(--accent); }
+  .meta { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .cf { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .price { font-weight: 800; font-size: 17px; color: var(--accent); }
+  .price small { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 700; }
+  .orcar { border: 1px solid var(--accent); color: var(--accent); background: none; border-radius: 999px; padding: 9px 14px; font-weight: 800; font-size: 13px; white-space: nowrap; }
+  .orcar:hover { background: var(--accent); color: var(--on-accent); }
+  @media (max-width: 560px) { .cf { flex-direction: column; align-items: stretch; } .orcar { text-align: center; } .cb h3 { font-size: 13.5px; } }
+  .more { text-align: center; margin: 30px 0 10px; }
+  .more button, .empty button { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px; padding: 13px 26px; font-weight: 700; }
+  .empty { text-align: center; padding: 70px 0; color: var(--muted); }
+  .empty h3 { font-family: var(--font-head); color: var(--text); font-size: 28px; font-weight: 500; margin: 0 0 6px; }
+
+  .band { margin: 80px 0 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface); }
+  .band-in { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; padding: 56px 0; }
+  .band h3 { font-family: var(--font-head); font-weight: 500; font-size: clamp(28px, 3.4vw, 44px); margin: 0 0 12px; line-height: 1.1; }
+  .band p { color: var(--muted); line-height: 1.7; margin: 0; }
+  .band ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .band li { display: flex; gap: 14px; align-items: center; font-weight: 600; }
+  .band li i { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  @media (max-width: 800px) { .band-in { grid-template-columns: 1fr; } }
+  footer { padding: 40px 0 110px; color: var(--muted); font-size: 13px; }
+  .frow { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .wa-fab { position: fixed; right: 20px; bottom: 20px; z-index: 60; height: 54px; border-radius: 999px; background: var(--wa); color: #fff; display: flex; align-items: center; gap: 10px; padding: 0 20px 0 16px; font-weight: 800; text-decoration: none; box-shadow: 0 12px 28px rgba(0,0,0,.35); }
+  .wa-fab i { font-size: 24px; }
+  @media (max-width: 640px) { .wa-fab span { display: none; } .wa-fab { padding: 0 15px; bottom: 70px; } }
+</style>
+</head>
+<body>
+  <header class="main">
+    <div class="wrap hrow">
+      <a href="./2-showroom.html" class="brand" data-brand aria-label="Início"></a>
+      <nav class="hnav"><a href="#categorias">Categorias</a><a href="#produtos">Produtos</a><a href="#atendimento">Atendimento</a></nav>
+      <div class="hact">
+        <button class="ibtn" data-theme-toggle aria-label="Trocar tema"><i class="fa-regular fa-moon"></i><i class="fa-regular fa-sun"></i></button>
+        <button class="cta-top" data-open-cart><i class="fa-solid fa-clipboard-list"></i><span>Meu orçamento</span><span data-cart-count>0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="kicker">Showroom digital</span>
+      <h1>Iluminação que <i>transforma</i> ambientes</h1>
+      <p>Uma curadoria de pendentes, lustres, arandelas e soluções em LED para lojas, projetos e residências. Encontre pelo nome ou código e peça seu orçamento.</p>
+      <form class="bigsearch" onsubmit="event.preventDefault(); document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">
+        <i class="fa-solid fa-magnifying-glass"></i><input type="search" data-search placeholder="Ex.: pendente dourado, PROD-2306, 3000K"><button>Buscar</button>
+      </form>
+      <div class="chips-hint">Mais buscados:
+        <button onclick="Motor.state.q='pendente';Motor.render();document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">Pendente</button>
+        <button onclick="Motor.state.q='painel';Motor.render();document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">Painel LED</button>
+        <button onclick="Motor.state.q='spot';Motor.render();document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">Spot</button>
+        <button onclick="Motor.state.q='3000k';Motor.render();document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">Luz quente</button>
+      </div>
+      <div class="pedestal" data-pedestal></div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <section id="categorias">
+      <div class="sec-head"><div><h2>Explore por categoria</h2><p>Toque em uma categoria para filtrar a vitrine.</p></div></div>
+      <div class="tiles" data-cats="tile"></div>
+    </section>
+
+    <section id="produtos" data-results>
+      <div class="sec-head"><div><h2 data-cat-title="A vitrine completa">A vitrine completa</h2><p data-count>Carregando...</p></div></div>
+      <div class="bar"><div class="bar-in">
+        <div class="pills" data-cats data-drag></div>
+        <select class="sel" data-sort aria-label="Ordenar"><option value="default">Destaques</option><option value="new">Novidades</option><option value="priceAsc">Menor preço</option><option value="priceDesc">Maior preço</option><option value="name">A–Z</option></select>
+      </div></div>
+      <div data-applied hidden></div>
+      <div class="grid" data-grid>
+        <div class="skel" data-skeleton style="height:360px"></div><div class="skel" data-skeleton style="height:360px"></div><div class="skel" data-skeleton style="height:360px"></div><div class="skel" data-skeleton style="height:360px"></div>
+      </div>
+      <div class="empty" data-empty hidden><h3>Nada por aqui</h3><p>Não encontramos produtos com esses filtros.</p><button data-reset>Ver toda a vitrine</button></div>
+      <div class="more" data-more hidden><button data-more-btn>Ver mais produtos</button></div>
+    </section>
+  </main>
+
+  <section class="band" id="atendimento"><div class="wrap band-in">
+    <div><span class="kicker">Atendimento</span><h3>Representação com atenção a cada pedido</h3><p>Montou a lista? Envie seu orçamento pelo WhatsApp e receba disponibilidade, prazos e condições para lojistas e profissionais.</p></div>
+    <ul><li><i class="fa-solid fa-clipboard-check"></i>Orçamento em poucos cliques</li><li><i class="fa-solid fa-store"></i>Condições especiais para lojistas</li><li><i class="fa-solid fa-shield-halved"></i>Garantia dos fabricantes</li></ul>
+  </div></section>
+  <footer><div class="wrap frow"><a href="./2-showroom.html" class="brand" data-brand></a><span>© <span data-year></span> Fabiana Representações · (11) 95978-1849 · fabianarep.contato@gmail.com</span></div></footer>
+  <a class="wa-fab" href="https://wa.me/5511959781849" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><span>Fale conosco</span></a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="motor.js"></script>
+<script>
+Motor.init({
+  id: '2-showroom', logo: 'fr', theme: 'dark', scrollOnCat: 'always',
+  headerOffset: () => document.querySelector('header.main').offsetHeight + 70,
+  catTemplates: {
+    tile: (c, n, on, icon) => c === 'Todos' ? '' : `<button class="tile" data-cat="${Motor.H.esc(c)}"><span class="tw"><img data-catimg="${Motor.H.esc(c)}" alt=""></span><b>${Motor.H.esc(c)}</b><small>${n} produtos</small></button>`
+  },
+  card: (it, H) => `
+    <article class="card">
+      <div class="cm" data-open="${H.esc(it.code)}">${H.img(it)}
+        ${it.featured ? '<span class="tag"><i class="fa-solid fa-fire"></i> Mais procurado</span>' : it.isNew ? '<span class="tag new">Novidade</span>' : ''}
+        <span class="code">${it.isGroup ? H.options(it) : H.esc(it.code)}</span>
+      </div>
+      <div class="cb">
+        <h3 data-open="${H.esc(it.code)}">${H.esc(it.name)}</h3>
+        <div class="meta">${H.swatches(it, 12)}${H.temps(it) ? `<span><i class="fa-regular fa-sun"></i> ${H.esc(H.temps(it))}</span>` : `<span>${H.esc(it.category)}</span>`}</div>
+        ${H.team(it)}
+        <div class="cf"><span class="price">${H.from(it) ? '<small>a partir de</small>' : ''}${H.priceLabel(it.price)}</span><button class="orcar" data-add="${H.esc(it.code)}">${it.isGroup ? 'Escolher' : '+ Orçar'}</button></div>
+      </div>
+    </article>`,
+  onRender() {
+    document.querySelectorAll('img[data-catimg]').forEach(img => { if (!img.src) img.src = Motor.catImage(img.dataset.catimg); });
+  },
+  onReady(M) {
+    const p = M.featured(30).filter(i => /Pendentes|Lustres|Arandelas|Plafons/.test(i.category));
+    const pick = (p.length >= 3 ? p : M.state.items.filter(i => /Pendentes|Lustres/.test(i.category))).slice(0, 3);
+    document.querySelector('[data-pedestal]').innerHTML = pick.map(it => `<figure data-open="${M.H.esc(it.code)}">${M.H.img(it)}</figure>`).join('');
+    document.querySelector('[data-year]').textContent = new Date().getFullYear();
+  }
+});
+</script>
+</body>
+</html>
