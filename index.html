@@ -569,6 +569,9 @@
       if (!v) return FALLBACK_IMG;
       const gh = v.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/i);
       if (gh) return `https://raw.githubusercontent.com/${gh[1]}/${gh[2]}/${gh[3]}`;
+      // Links completos do próprio site (endereço antigo ou novo) viram caminho local: funciona em qualquer endereço
+      const local = v.match(/^https?:\/\/[^/]+\.github\.io\/(?:[^/]+\/)?(imagens\/.+)$/i);
+      if (local) return local[1];
       if (/^(https?:)?\/\//i.test(v) || v.startsWith('data:') || v.includes('/')) return v;
       return IMAGES_FOLDER + encodeURI(v);
     }

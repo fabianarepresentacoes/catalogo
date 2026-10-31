@@ -578,6 +578,7 @@
 
     // ================== CATÁLOGO ==================
     function imagemDe(code, img) {
+      img = (img || '').replace(/^https?:\/\/[^/]+\.github\.io\/(?:[^/]+\/)?(imagens\/)/i, '$1');
       return { mini: THUMBS_FOLDER + encodeURIComponent(code) + '.webp', grande: img || (IMAGES_FOLDER + encodeURIComponent(code) + '.jpg') };
     }
     function trocaImg(el) {
