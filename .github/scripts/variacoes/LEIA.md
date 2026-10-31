@@ -11,3 +11,5 @@ Gera `variacoes.json` (usado pelo site) e `variacoes.csv` (aba "Variações" da 
 Entradas (caminhos fixos em /home/claude, ajustar se preciso): `p1.json` = get_values da aba Página1,
 `bd.json` = linhas da aba Banco_de_Dados. Depois de rodar, gravar `variacoes.json` e `variacoes.csv`
 na raiz do repositório (ver o final da conversa de 31/10/2026).
+
+- `nomes.py`: nome do card sem cor/temperatura SÓ quando ela varia no grupo (ex.: grupo todo Preto mantém "Preto" no nome). Rodar depois de group.py.
